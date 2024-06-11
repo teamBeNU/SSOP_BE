@@ -20,7 +20,7 @@ public class UserService {
 
     // 단축키 Ctrl + Alt + m 사용해서 코드 리팩토링
     private void validateDuplicateUser(User user) {
-        userRepo.findByName(user.getEmail())
+        userRepo.findByEmail(user.getEmail())
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 사용중인 이메일입니다..");
                 });
