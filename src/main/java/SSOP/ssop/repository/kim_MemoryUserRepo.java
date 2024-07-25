@@ -1,10 +1,12 @@
+// 김영한.ver
+
 package SSOP.ssop.repository;
 
 import SSOP.ssop.domain.User;
 
 import java.util.*;
 
-public class MemoryUserRepo implements UserRepo {
+public class kim_MemoryUserRepo implements kim_UserRepo {
     private static Map<Long, User> store = new HashMap<>();
     private static long sequence = 0L;
 

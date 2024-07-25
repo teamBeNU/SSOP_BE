@@ -5,7 +5,7 @@ public class User {
     private String user_name;
     private Long user_id;
     private String user_birth;
-    private String user_tel;
+    private String user_phone;
     private String password;
     private String email;
     private String social_type;
@@ -34,12 +34,12 @@ public class User {
         this.user_birth = user_birth;
     }
 
-    public String getUser_tel() {
-        return user_tel;
+    public String getUser_phone() {
+        return user_phone;
     }
 
-    public void setUser_tel(String user_tel) {
-        this.user_tel = user_tel;
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
     }
 
     public String getPassword() {
