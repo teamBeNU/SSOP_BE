@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
@@ -18,22 +18,22 @@ public class UserController {
         this.userService = new UserService(jdbcTemplate);
     }
 
-    @PostMapping("user/join")
+    @PostMapping("join")
     public void saveUser(@RequestBody User user) {
         userService.saveUser(user);
     }
 
-    @GetMapping("user/info")
+    @GetMapping("info")
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
-    @PutMapping("/user/modify")
+    @PutMapping("modify")
     public void updateUser(@RequestBody User user) {
         userService.updateUser(user);
     }
 
-    @DeleteMapping("user/delete")
+    @DeleteMapping("delete")
     public void deleteUser(@RequestParam long id) {
         userService.deleteUser(id);
     }
