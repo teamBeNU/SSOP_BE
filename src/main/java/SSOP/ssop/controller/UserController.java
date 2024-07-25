@@ -18,22 +18,22 @@ public class UserController {
         this.userService = new UserService(jdbcTemplate);
     }
 
-    @PostMapping("join")
+    @PostMapping("/join")
     public void saveUser(@RequestBody User user) {
         userService.saveUser(user);
     }
 
-    @GetMapping("info")
+    @GetMapping("/info")
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
-    @PutMapping("modify")
+    @PutMapping("/modify")
     public void updateUser(@RequestBody User user) {
         userService.updateUser(user);
     }
 
-    @DeleteMapping("delete")
+    @DeleteMapping("/delete")
     public void deleteUser(@RequestParam long id) {
         userService.deleteUser(id);
     }
