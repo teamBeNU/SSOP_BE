@@ -1,19 +1,17 @@
 package SSOP.ssop.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
-// JPA -> lombok DB 자동생성 및 연동
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class TeamSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,159 +73,7 @@ public class TeamSp {
     @Column(name = "showMovie")
     private Boolean showMovie;
 
-    public long getTeam_id() {
-        return team_id;
-    }
-
-    public void setTeam_id(long team_id) {
-        this.team_id = team_id;
-    }
-
-    public String getTeam_name() {
-        return team_name;
-    }
-
-    public void setTeam_name(String team_name) {
+    public void updateTeamName(String team_name) {
         this.team_name = team_name;
-    }
-
-    public String getTeam_comment() {
-        return team_comment;
-    }
-
-    public void setTeam_comment(String team_comment) {
-        this.team_comment = team_comment;
-    }
-
-    public Boolean getIsTemplate() {
-        return isTemplate;
-    }
-
-    public void setIsTemplate(Boolean isTemplate) {
-        this.isTemplate = isTemplate;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public int getInviteCode() {
-        return inviteCode;
-    }
-
-    public void setInviteCode(int inviteCode) {
-        this.inviteCode = inviteCode;
-    }
-
-    public Boolean getShowAge() {
-        return showAge;
-    }
-
-    public void setShowAge(Boolean showAge) {
-        this.showAge = showAge;
-    }
-
-    public Boolean getShowSchool() {
-        return showSchool;
-    }
-
-    public void setShowSchool(Boolean showSchool) {
-        this.showSchool = showSchool;
-    }
-
-    public Boolean getShowGrade() {
-        return showGrade;
-    }
-
-    public void setShowGrade(Boolean showGrade) {
-        this.showGrade = showGrade;
-    }
-
-    public Boolean getShowStudNum() {
-        return showStudNum;
-    }
-
-    public void setShowStudNum(Boolean showStudNum) {
-        this.showStudNum = showStudNum;
-    }
-
-    public Boolean getShowMajor() {
-        return showMajor;
-    }
-
-    public void setShowMajor(Boolean showMajor) {
-        this.showMajor = showMajor;
-    }
-
-    public List<String> getShowRole() {
-        return showRole;
-    }
-
-    public void setShowRole(List<String> showRole) {
-        this.showRole = showRole;
-    }
-
-    public Boolean getShowClub() {
-        return showClub;
-    }
-
-    public void setShowClub(Boolean showClub) {
-        this.showClub = showClub;
-    }
-
-    public Boolean getShowTel() {
-        return showTel;
-    }
-
-    public void setShowTel(Boolean showTel) {
-        this.showTel = showTel;
-    }
-
-    public Boolean getShowSNS() {
-        return showSNS;
-    }
-
-    public void setShowSNS(Boolean showSNS) {
-        this.showSNS = showSNS;
-    }
-
-    public Boolean getShowEmail() {
-        return showEmail;
-    }
-
-    public void setShowEmail(Boolean showEmail) {
-        this.showEmail = showEmail;
-    }
-
-    public Boolean getShowMBTI() {
-        return showMBTI;
-    }
-
-    public void setShowMBTI(Boolean showMBTI) {
-        this.showMBTI = showMBTI;
-    }
-
-    public Boolean getShowMusic() {
-        return showMusic;
-    }
-
-    public void setShowMusic(Boolean showMusic) {
-        this.showMusic = showMusic;
-    }
-
-    public Boolean getShowMovie() {
-        return showMovie;
-    }
-
-    public void setShowMovie(Boolean showMovie) {
-        this.showMovie = showMovie;
-    }
-
-    public void setTemplate(Boolean template) {
-        isTemplate = template;
     }
 }
