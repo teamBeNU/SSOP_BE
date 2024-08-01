@@ -32,6 +32,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    // 특정 유저 정보 출력
+    public UserDto getUser(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        return new UserDto(user);
+    }
+
     // 유저 정보 업데이트 -> 일단 pw만
     public void updateUser(UserDto userDto) {
         User user = userRepository.findById(userDto.getUser_id())

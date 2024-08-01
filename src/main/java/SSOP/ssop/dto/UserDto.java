@@ -1,10 +1,13 @@
 package SSOP.ssop.dto;
 
 import SSOP.ssop.domain.User;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
-// 어노테이션 추가하기
+@Getter
+@Setter
 public class UserDto {
     private String user_name;
     private Long user_id;
@@ -14,7 +17,7 @@ public class UserDto {
     private String email;
     private String social_type;
 
-    public UserDto(long user_id, String user_name, LocalDate user_birth, String user_tel, String password, String email, String social_type) {
+    public UserDto(long user_id, String user_name, LocalDate user_birth, String user_phone, String password, String email, String social_type) {
         this.user_id = user_id;
         this.user_name = user_name;
         this.user_birth = user_birth;
@@ -34,27 +37,4 @@ public class UserDto {
         this.social_type = user.getSocial_type();
     }
 
-    public String getUser_name() {
-        return user_name;
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public LocalDate getUser_birth() {
-        return user_birth;
-    }
-
-    public String getUser_phone() {
-        return user_phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
 }
