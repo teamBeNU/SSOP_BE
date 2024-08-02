@@ -3,7 +3,9 @@ package SSOP.ssop.controller;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.UserDto;
 import SSOP.ssop.service.UserService;
-import org.springframework.jdbc.core.JdbcTemplate;
+import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,28 +16,44 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(JdbcTemplate jdbcTemplate) {
-        this.userService = new UserService(jdbcTemplate);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
+    // 유저 생성
     @PostMapping("/join")
     public void saveUser(@RequestBody User user) {
         userService.saveUser(user);
     }
 
-    @GetMapping("/info")
+    // 모든 유저 정보 출력
+    @GetMapping
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
-    @PutMapping("/modify")
-    public void updateUser(@RequestBody User user) {
-        userService.updateUser(user);
+    // 특정 유저 정보 출력
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("userId") long userId) {
+        UserDto userDto = userService.getUser(userId);
+        if (userDto != null) {
+            return ResponseEntity.ok(userDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    @DeleteMapping("/delete")
-    public void deleteUser(@RequestParam long id) {
-        userService.deleteUser(id);
+    // 유저 password 수정
+    @PatchMapping("/{userId}")
+    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserDto userDto) {
+        userDto.setUserId(userId);
+        userService.updateUser(userDto);
+    }
+
+    // 유저 삭제
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable("userId") long userId) {
+        userService.deleteUser(userId);
     }
 
 }
