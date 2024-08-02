@@ -3,11 +3,9 @@ package SSOP.ssop.controller;
 import SSOP.ssop.domain.Card;
 import SSOP.ssop.dto.response.CardResponse;
 import SSOP.ssop.service.CardService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,13 +20,21 @@ public class CardController {
         this.cardService = cardService;
     }
 
+    // 카드 생성
+    @PostMapping("/create")
+    public void saveCard(@RequestBody Card card) {
+        cardService.saveCard(card);
+    }
+
+    // 카드 조회
     @GetMapping("/mine")
-    public ResponseEntity<List<CardResponse>> getCardsById(@RequestParam Long id) {
-        List<CardResponse> cards = cardService.getCardsById(id);
-        if (cards.isEmpty()) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<CardResponse> getMyCards(@PathVariable("userId") long userId) {
+        CardResponse cardResponse = cardService.getMyCards(userId);
+        if (cardResponse == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.ok(cardResponse);
         }
-        return ResponseEntity.ok(cards);
     }
 
 }

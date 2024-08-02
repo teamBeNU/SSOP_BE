@@ -1,30 +1,31 @@
 package SSOP.ssop.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
+@Getter
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long card_id;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "template_id")
-    private Template template;
+    @Column(nullable = false)
+    private String card_template;
 
-    @Column(nullable = false, name = "card_background")
-    private String background;
-
+    @Column(nullable = false)
+    private String card_background;
 
     // card_essential
-    @Column(nullable = false, name = "card_name")
-    private String name;
+    @Column(nullable = false)
+    private String card_name;
 
-    @Column(nullable = false, name = "card_introduction")
-    private String introduction;
+    @Column(nullable = false)
+    private String card_introduction;
 
     // card_optional
     private String card_SNS;
@@ -33,18 +34,17 @@ public class Card {
     private String card_music;
 
     // template_essential
-    @Column(nullable = false, name = "card_tel")
-    private String tel;
+    @Column(nullable = false)
+    private String card_tel;
 
-    @Column(nullable = false, name = "card_birth")
-    private String birth;
+    @Column(nullable = false)
+    private String card_birth;
 
-    @Column(nullable = false, name = "card_school")
-    private String school;
+    @Column(nullable = false)
+    private String card_school;
 
-    @Column(nullable = false, name = "card_grade")
-    private String grade;
-
+    @Column(nullable = false)
+    private Integer card_grade;
 
     // template_optional
     private int card_studentId;
@@ -52,27 +52,43 @@ public class Card {
     private String card_student_role;
     private String card_student_club;
 
-    protected Card() {}
+    public Card() {}
 
-    // getter
-    public Long getId() {
-        return id;
+    protected Card(String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, Integer card_grade) {
+        if( card_template == null || card_background == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null || card_grade == null) {
+            throw new IllegalArgumentException();
+        }
+        this.card_template = card_template;
+        this.card_background = card_background;
+        this.card_name = card_name;
+        this.card_introduction = card_introduction;
+        this.card_tel = card_tel;
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        this.card_birth = card_birth;
+
+        this.card_school = card_school;
+        this.card_grade = card_grade;
     }
 
-    public String getTemplate() {
-        return template.toString();
+    public Long getCard_id() {
+        return card_id;
     }
 
-    public String getBackground() {
-        return background;
+    public String getCard_template() {
+        return card_template;
     }
 
-    public String getName() {
-        return name;
+    public String getCard_background() {
+        return card_background;
     }
 
-    public String getIntroduction() {
-        return introduction;
+    public String getCard_name() {
+        return card_name;
+    }
+
+    public String getCard_introduction() {
+        return card_introduction;
     }
 
     public String getCard_SNS() {
@@ -91,20 +107,20 @@ public class Card {
         return card_music;
     }
 
-    public String getTel() {
-        return tel;
+    public String getCard_tel() {
+        return card_tel;
     }
 
-    public String getBirth() {
-        return birth;
+    public String getCard_birth() {
+        return card_birth;
     }
 
-    public String getSchool() {
-        return school;
+    public String getCard_school() {
+        return card_school;
     }
 
-    public String getGrade() {
-        return grade;
+    public Integer getCard_grade() {
+        return card_grade;
     }
 
     public int getCard_studentId() {

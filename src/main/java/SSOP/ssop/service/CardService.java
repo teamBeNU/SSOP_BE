@@ -19,21 +19,15 @@ public class CardService {
         this.cardRepository = cardRepository;
     }
 
-    @Transactional(readOnly = true)
-    public List<CardResponse> getCardsById(Long id) {
-
-        if ( cardRepository.findCardsById(id).isEmpty()) {
-            throw new CardNotFoundException("No cards found for user with ID: " + id);
-        }
-        return  cardRepository.findCardsById(id).stream()
-                .map(CardResponse::new)
-                .collect(Collectors.toList());
+    // 카드 생성
+    public void saveCard(Card card) {
+        cardRepository.save(card);
     }
 
-    @Transactional
-    public class CardNotFoundException extends RuntimeException {
-        public CardNotFoundException(String message) {
-            super(message);
-        }
+    // 카드 조회
+    public CardResponse getMyCards(long userId) {
+        Card card = cardRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+        return new CardResponse(card);
     }
 }
