@@ -20,13 +20,14 @@ public class CardService {
     }
 
     // 카드 생성
-    public void saveCard(Card card) {
+    public void saveCard(long userId, Card card) {
+        card.setUserId(userId);
         cardRepository.save(card);
     }
 
     // 카드 조회
-    public CardResponse getMyCards(long userId) {
-        Card card = cardRepository.findById(userId)
+    public CardResponse getMyCards(long card_id) {
+        Card card = cardRepository.findById(card_id)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
         return new CardResponse(card);
     }

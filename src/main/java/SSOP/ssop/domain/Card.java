@@ -138,4 +138,8 @@ public class Card {
     public String getCard_student_club() {
         return card_student_club;
     }
+
+    public void setUserId(long userId) {
+
+    }
 }
