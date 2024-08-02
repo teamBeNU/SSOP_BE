@@ -6,7 +6,7 @@ spring:
       driver-class-name: com.mysql.cj.jdbc.Driver
     jpa :
       hibernate:
-        ddl-auto: none #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
+        ddl-auto: update #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지 -> 자동 업데이트
       properties:
         hibernate:
           format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정

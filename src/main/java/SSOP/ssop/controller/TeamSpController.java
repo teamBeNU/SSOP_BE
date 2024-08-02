@@ -1,13 +1,13 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.TeamSp;
-import SSOP.ssop.dto.TeamSpDto;
 import SSOP.ssop.service.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,7 +36,18 @@ public class TeamSpController {
         }
     }
 
-    // 팀스페이스 조회
+    // 모든 팀스페이스 조회
+    @GetMapping
+    public ResponseEntity<List<TeamSp>> getAllTeams() {
+        List<TeamSp> teams = teamSpService.getAllTeams();
+        if (teams.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.ok(teams); // 200 OK
+        }
+    }
+
+    // 특정 팀스페이스 조회
     @GetMapping("/{team_id}")
     public ResponseEntity<TeamSp> getTeamById(@PathVariable("team_id") long teamId) {
         TeamSp teamSp = teamSpService.getTeamById(teamId);
@@ -48,8 +59,14 @@ public class TeamSpController {
 
     // 팀스페이스 이름 수정
     @PatchMapping("/{team_id}")
-    public void updateTeamSp(@PathVariable("team_id") long teamId, @RequestBody TeamSpDto teamSpDto) {
-        teamSpService.updateTeamSp(teamSpDto);
+    public ResponseEntity<Map<String, String>> updateTeamSp(@PathVariable("team_id") long teamId, @RequestBody TeamSp teamSp) {
+        TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp);
+        if (updatedTeamSp != null) {
+            return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "팀스페이스 업데이트 실패"));
+        }
     }
 
     // 팀스페이스 삭제
@@ -57,11 +74,9 @@ public class TeamSpController {
     public ResponseEntity<Map<String, String>> deleteTeamSp(@PathVariable("team_id") long teamId) {
         if (teamSpService.getTeamById(teamId) != null) {
             teamSpService.deleteTeamSp(teamId);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(Map.of("message", "팀스페이스가 삭제되었습니다."));
+            return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));
         } else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "팀스페이스를 찾을 수 없습니다."));
         }
     }
-
 }

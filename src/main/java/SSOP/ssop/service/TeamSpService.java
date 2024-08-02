@@ -1,7 +1,6 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.TeamSp;
-import SSOP.ssop.dto.TeamSpDto;
 import SSOP.ssop.repository.TeamSpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,12 +10,8 @@ import java.util.List;
 @Service
 public class TeamSpService {
 
-    private final TeamSpRepository teamSpRepository;
-
     @Autowired
-    public TeamSpService(TeamSpRepository repository, TeamSpRepository teamSpRepository) {
-        this.teamSpRepository = teamSpRepository;
-    }
+    private TeamSpRepository teamSpRepository;
 
     // 팀스페이스 생성
     public TeamSp saveTeamSp(TeamSp teamSp) {
@@ -34,11 +29,11 @@ public class TeamSpService {
     }
 
     // 팀스페이스 이름 수정
-    public void updateTeamSp(TeamSpDto teamSpDto) {
-        TeamSp teamSp = teamSpRepository.findById(teamSpDto.getTeam_id())
-                .orElseThrow(IllegalAccessError::new);
-        teamSp.updateTeamName(teamSpDto.getTeam_name());
-        teamSpRepository.save(teamSp);
+    public TeamSp updateTeamSp(long id, TeamSp teamSp) {
+        TeamSp existingTeamSp = teamSpRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
+        existingTeamSp.updateTeamName(teamSp.getTeam_name());
+        return teamSpRepository.save(existingTeamSp);
     }
 
     // 팀스페이스 삭제
