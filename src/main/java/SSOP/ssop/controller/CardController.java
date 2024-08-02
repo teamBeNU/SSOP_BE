@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/card")
 public class CardController {
@@ -23,18 +25,20 @@ public class CardController {
         cardService.saveCard(userId, card);
     }
 
-//    public void saveCard(@RequestBody Card card) {
-//        cardService.saveCard(card);
-//    }
+    // 모든 카드 출력
+    @GetMapping
+    public List<CardResponse> getCards() {
+        return cardService.getCards();
+    }
 
     // 카드 조회
     @GetMapping("/mine")
     public ResponseEntity<CardResponse> getMyCards(@RequestParam("card_id") long card_id) {
         CardResponse cardResponse = cardService.getMyCards(card_id);
-        if (cardResponse == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } else {
+        if (cardResponse != null) {
             return ResponseEntity.ok(cardResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 

@@ -52,9 +52,9 @@ public class Card {
     private String card_student_role;
     private String card_student_club;
 
-    public Card() {}
+    protected Card() {}
 
-    protected Card(String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, Integer card_grade) {
+    public Card(String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, Integer card_grade) {
         if( card_template == null || card_background == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null || card_grade == null) {
             throw new IllegalArgumentException();
         }

@@ -25,6 +25,13 @@ public class CardService {
         cardRepository.save(card);
     }
 
+    // 전체 카드 조회
+    public List<CardResponse> getCards() {
+        return cardRepository.findAll().stream()
+                .map(CardResponse::new)
+                .collect(Collectors.toList());
+    }
+
     // 카드 조회
     public CardResponse getMyCards(long card_id) {
         Card card = cardRepository.findById(card_id)
