@@ -42,9 +42,9 @@ public class TeamSpService {
     }
 
     // 팀스페이스 삭제
-    public void deleteTeamSp(long id) {
-        if (teamSpRepository.existsById(id)) {
-            teamSpRepository.deleteById(id);
+    public void deleteTeamSp(long team_id) {
+        if (teamSpRepository.existsById(team_id)) {
+            teamSpRepository.deleteById(team_id);
         }
     }
 }

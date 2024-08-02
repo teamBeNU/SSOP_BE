@@ -7,7 +7,7 @@ import java.util.*;
 
 public interface TeamSpRepository extends JpaRepository<TeamSp, Long> {
 
-    Optional<TeamSp> findByTeamName(String teamName);
-    Optional<TeamSp> findByTeamId(long team_id);
+//    Optional<TeamSp> findByTeamName(String team_name);
+//    Optional<TeamSp> findByTeamId(long team_id);
 
 }

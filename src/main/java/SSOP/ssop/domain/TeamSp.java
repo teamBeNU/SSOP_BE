@@ -15,6 +15,7 @@ import java.util.List;
 public class TeamSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "team_id")
     private long team_id;
 
     @Column(name = "team_name", nullable = false)
@@ -23,7 +24,7 @@ public class TeamSp {
     @Column(name = "team_comment", nullable = false)
     private String team_comment;
 
-    @Column(name = "is_template", nullable = false)
+    @Column(name = "isTemplate", nullable = false)
     private Boolean isTemplate;
 
     @Column(name = "template")
