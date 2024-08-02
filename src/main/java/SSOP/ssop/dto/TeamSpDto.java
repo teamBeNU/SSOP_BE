@@ -13,7 +13,6 @@ public class TeamSpDto {
     private String team_comment;
     private Boolean isTemplate;
     private String template;
-    private Integer inviteCode;
 
     private Boolean showAge;
     private Boolean showSchool;
@@ -30,12 +29,11 @@ public class TeamSpDto {
     private Boolean showMovie;
 
     // 초기화 생성자
-    public TeamSpDto(String team_name, String team_comment, Boolean isTemplate, String template, Integer inviteCode, Boolean showAge, Boolean showSchool, Boolean showGrade, Boolean showStudNum, Boolean showMajor, List<String> showRole, Boolean showClub, Boolean showTel, Boolean showSNS, Boolean showEmail, Boolean showMBTI, Boolean showMusic, Boolean showMovie) {
+    public TeamSpDto(String team_name, String team_comment, Boolean isTemplate, String template, Boolean showAge, Boolean showSchool, Boolean showGrade, Boolean showStudNum, Boolean showMajor, List<String> showRole, Boolean showClub, Boolean showTel, Boolean showSNS, Boolean showEmail, Boolean showMBTI, Boolean showMusic, Boolean showMovie) {
         this.team_name = team_name;
         this.team_comment = team_comment;
         this.isTemplate = isTemplate;
         this.template = template;
-        this.inviteCode = inviteCode;
 
         this.showAge = showAge;
         this.showSchool = showSchool;
@@ -54,12 +52,10 @@ public class TeamSpDto {
 
     // TeamSp 객체를 DTO로 변환하는 생성자
     public TeamSpDto(TeamSp teamSp) {
-        this.team_id = teamSp.getTeam_id();
         this.team_name = teamSp.getTeam_name();
         this.team_comment = teamSp.getTeam_comment();
         this.isTemplate = teamSp.getIsTemplate();
         this.template = teamSp.getTemplate();
-        this.inviteCode = teamSp.getInviteCode();
 
         this.showAge = teamSp.getShowAge();
         this.showSchool = teamSp.getShowSchool();

@@ -8,12 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Getter
-@Setter
 public class TeamSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -79,16 +74,14 @@ public class TeamSp {
     protected TeamSp() {};
 
     // 전체 필드를 초기화하는 생성자
-    public TeamSp(long team_id, String team_name, String team_comment, Boolean isTemplate, String template, int inviteCode,
+    public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
                   Boolean showAge, Boolean showSchool, Boolean showGrade, Boolean showStudNum, Boolean showMajor,
                   List<String> showRole, Boolean showClub, Boolean showTel, Boolean showSNS, Boolean showEmail,
                   Boolean showMBTI, Boolean showMusic, Boolean showMovie) {
-        this.team_id = team_id;
         this.team_name = team_name;
         this.team_comment = team_comment;
         this.isTemplate = isTemplate;
         this.template = template;
-        this.inviteCode = inviteCode;
         this.showAge = showAge;
         this.showSchool = showSchool;
         this.showGrade = showGrade;
