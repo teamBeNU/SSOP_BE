@@ -33,8 +33,8 @@ public class UserController {
     }
 
     // 특정 유저 정보 출력
-    @GetMapping("/{user_id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("user_id") long userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUser(@PathVariable("userId") long userId) {
         UserDto userDto = userService.getUser(userId);
         if (userDto != null) {
             return ResponseEntity.ok(userDto);
@@ -44,14 +44,14 @@ public class UserController {
     }
 
     // 유저 password 수정
-    @PatchMapping("/{user_id}")
-    public void updateUser(@PathVariable("user_id") long userId, @RequestBody UserDto userDto) {
+    @PatchMapping("/{userId}")
+    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserDto userDto) {
         userService.updateUser(userDto);
     }
 
     // 유저 삭제
-    @DeleteMapping("/{user_id}")
-    public void deleteUser(@PathVariable("user_id") long userId) {
+    @DeleteMapping("/{userId}")
+    public void deleteUser(@PathVariable("userId") long userId) {
         userService.deleteUser(userId);
     }
 

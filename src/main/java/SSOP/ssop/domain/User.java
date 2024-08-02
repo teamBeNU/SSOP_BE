@@ -1,5 +1,6 @@
 package SSOP.ssop.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,7 +16,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    @JsonProperty("user_id")
+    private long userId;
 
     private String user_name;
     private LocalDate user_birth;
@@ -46,4 +48,31 @@ public class User {
         this.password = password;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public LocalDate getUser_birth() {
+        return user_birth;
+    }
+
+    public String getUser_phone() {
+        return user_phone;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getSocial_type() {
+        return social_type;
+    }
 }

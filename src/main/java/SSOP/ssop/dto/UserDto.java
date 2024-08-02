@@ -6,19 +6,17 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 public class UserDto {
     private String user_name;
-    private Long user_id;
+    private Long userId;
     private LocalDate user_birth;
     private String user_phone;
     private String password;
     private String email;
     private String social_type;
 
-    public UserDto(long user_id, String user_name, LocalDate user_birth, String user_phone, String password, String email, String social_type) {
-        this.user_id = user_id;
+    public UserDto(long userId, String user_name, LocalDate user_birth, String user_phone, String password, String email, String social_type) {
+        this.userId = userId;
         this.user_name = user_name;
         this.user_birth = user_birth;
         this.user_phone = user_phone;
@@ -28,7 +26,7 @@ public class UserDto {
     }
 
     public UserDto(User user) {
-        this.user_id = user.getUser_id();
+        this.userId = user.getUserId();
         this.user_name = user.getUser_name();
         this.user_birth = user.getUser_birth();
         this.user_phone = user.getUser_phone();
@@ -37,4 +35,59 @@ public class UserDto {
         this.social_type = user.getSocial_type();
     }
 
+    public String getUser_name() {
+        return user_name;
+    }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public LocalDate getUser_birth() {
+        return user_birth;
+    }
+
+    public void setUser_birth(LocalDate user_birth) {
+        this.user_birth = user_birth;
+    }
+
+    public String getUser_phone() {
+        return user_phone;
+    }
+
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSocial_type() {
+        return social_type;
+    }
+
+    public void setSocial_type(String social_type) {
+        this.social_type = social_type;
+    }
 }
