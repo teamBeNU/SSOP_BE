@@ -46,6 +46,7 @@ public class UserController {
     // 유저 password 수정
     @PatchMapping("/{userId}")
     public void updateUser(@PathVariable("userId") long userId, @RequestBody UserDto userDto) {
+        userDto.setUserId(userId);
         userService.updateUser(userDto);
     }
 
