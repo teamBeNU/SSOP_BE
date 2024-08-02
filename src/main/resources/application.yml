@@ -1,6 +1,14 @@
 spring:
-  datasource:
-    url: "jdbc:mysql://localhost/ssop"
-    username: "root"
-    password: ""
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    datasource:
+      url: "jdbc:mysql://localhost/ssop"
+      username: "root"
+      password: "root"
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa :
+      hibernate:
+        ddl-auto: none #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
+      properties:
+        hibernate:
+          format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정
+          show_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL 보여줄 지 결정
+          dialect: org.hibernate.dialect.MySQL8Dialect #한국어로 방언, 사투리란 뜻으로 알아서 db끼리 다른 sql 조금씩 수정
