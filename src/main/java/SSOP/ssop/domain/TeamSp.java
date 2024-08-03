@@ -3,8 +3,6 @@ package SSOP.ssop.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Entity

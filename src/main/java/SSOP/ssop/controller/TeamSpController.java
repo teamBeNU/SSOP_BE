@@ -23,8 +23,15 @@ public class TeamSpController {
 
     // 팀스페이스 생성
     @PostMapping("/create")
-    public void saveTeamSp(@RequestBody TeamSp teamSp) {
-        teamSpService.saveTeamSp(teamSp);
+    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp) {
+        try {
+            teamSpService.saveTeamSp(teamSp);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("message", "팀스페이스 생성 완료"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "팀스페이스 생성 실패"));
+        }
     }
 
     // 모든 팀스페이스 조회
