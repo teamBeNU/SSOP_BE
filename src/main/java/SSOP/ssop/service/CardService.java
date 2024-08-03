@@ -38,4 +38,14 @@ public class CardService {
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
         return new CardResponse(card);
     }
+
+    // 카드 수정
+
+
+    // 카드 삭제
+    public void deleteCard(long card_id) {
+        Card card = cardRepository.findById(card_id)
+                .orElseThrow(IllegalArgumentException::new);
+        cardRepository.delete(card);
+    }
 }

@@ -42,4 +42,13 @@ public class CardController {
         }
     }
 
+    // 카드 수정
+
+
+    // 카드 삭제
+    @DeleteMapping
+    public void deleteCard(@RequestParam("card_id") long card_id) {
+        cardService.deleteCard(card_id);
+    }
+
 }
