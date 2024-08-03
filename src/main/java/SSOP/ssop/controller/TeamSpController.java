@@ -47,12 +47,12 @@ public class TeamSpController {
 
     // 특정 팀스페이스 조회
     @GetMapping("/{team_id}")
-    public ResponseEntity<TeamSp> getTeamById(@PathVariable("team_id") long teamId) {
+    public ResponseEntity<?> getTeamById(@PathVariable("team_id") long teamId) {
         TeamSp teamSp = teamSpService.getTeamById(teamId);
         // 팀스페이스 존재 유무
         return teamSp != null
                 ? ResponseEntity.ok(teamSp)
-                : ResponseEntity.notFound().build(); // 404 Not Found
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
     }
 
     // 팀스페이스 이름 수정

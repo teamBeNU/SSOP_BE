@@ -42,8 +42,8 @@ public class TeamSpService {
     }
 
     // 특정 id 팀스페이스 조회
-    public TeamSp getTeamById(long id) {
-        return teamSpRepository.findById(id).orElse(null);
+    public TeamSp getTeamById(long team_id) {
+        return teamSpRepository.findById(team_id).orElse(null);
     }
 
     // 팀스페이스 이름 수정
