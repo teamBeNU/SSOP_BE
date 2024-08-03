@@ -18,7 +18,7 @@ public class CardResponse {
     private String card_tel;
     private String card_birth;
     private String card_school;
-    private String card_grade;
+    private Integer card_grade;
 
     private Integer card_studentId;
     private String card_student_major;
@@ -30,7 +30,7 @@ public class CardResponse {
         this.card_student_role = card_student_role;
         this.card_student_major = card_student_major;
         this.card_studentId = card_studentId;
-        this.card_grade = card_grade;
+        this.card_grade = Integer.valueOf(card_grade);
         this.card_school = card_school;
         this.card_birth = card_birth;
         this.card_tel = card_tel;
@@ -61,13 +61,14 @@ public class CardResponse {
         this.card_tel = card.getCard_tel();
         this.card_birth = card.getCard_birth();
         this.card_school = card.getCard_school();
-        this.card_grade = String.valueOf(card.getCard_grade());
+        this.card_grade = card.getCard_grade();
 
         this.card_studentId = card.getCard_studentId();
         this.card_student_major = card.getCard_student_major();
         this.card_student_role = card.getCard_student_role();
         this.card_student_club = card.getCard_student_club();
     }
+
 
     public long getCard_id() {
         return card_id;
@@ -165,11 +166,11 @@ public class CardResponse {
         this.card_school = card_school;
     }
 
-    public String getCard_grade() {
+    public Integer getCard_grade() {
         return card_grade;
     }
 
-    public void setCard_grade(String card_grade) {
+    public void setCard_grade(Integer card_grade) {
         this.card_grade = card_grade;
     }
 

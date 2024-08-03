@@ -1,6 +1,7 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.Card;
+import SSOP.ssop.dto.request.CardUpdateRequest;
 import SSOP.ssop.dto.response.CardResponse;
 import SSOP.ssop.service.CardService;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,11 @@ public class CardController {
     }
 
     // 카드 수정
+    @PatchMapping
+    public void updateCard(@RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
+        request.setCard_id(card_id);
+        cardService.updateCard(request);
+    }
 
 
     // 카드 삭제

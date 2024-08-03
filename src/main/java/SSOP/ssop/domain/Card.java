@@ -1,8 +1,10 @@
 package SSOP.ssop.domain;
 
+import SSOP.ssop.dto.response.CardResponse;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class Card {
     private Integer card_grade;
 
     // template_optional
-    private int card_studentId;
+    private Integer card_studentId;
     private String card_student_major;
     private String card_student_role;
     private String card_student_club;
@@ -69,6 +71,57 @@ public class Card {
 
         this.card_school = card_school;
         this.card_grade = card_grade;
+    }
+
+    public void updateCard(String card_template, String card_background, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, Integer card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
+        if(card_template != null){
+            this.card_template = card_template;
+        }
+        if(card_background != null){
+            this.card_background = card_background;
+        }
+        if(card_name != null){
+            this.card_name = card_name;
+        }
+        if(card_introduction != null){
+            this.card_introduction = card_introduction;
+        }
+        if(card_SNS != null){
+            this.card_SNS = card_SNS;
+        }
+        if(card_email != null){
+            this.card_email = card_email;
+        }
+        if(card_MBTI != null){
+            this.card_MBTI = card_MBTI;
+        }
+        if(card_music != null){
+            this.card_music = card_music;
+        }
+        if(card_tel != null){
+            this.card_tel = card_tel;
+        }
+        if(card_birth != null){
+            this.card_birth = card_birth;
+        }
+        if(card_school != null){
+            this.card_school = card_school;
+        }
+        if(card_grade != null){
+            this.card_grade = card_grade;
+        }
+        if(card_studentId != null){
+            this.card_studentId = card_studentId;
+        }
+        if(card_student_major != null){
+            this.card_student_major = card_student_major;
+        }
+        if(card_student_role != null){
+            this.card_student_role = card_student_role;
+        }
+        if(card_student_club != null){
+            this.card_student_club = card_student_club;
+        }
     }
 
     public Long getCard_id() {
@@ -123,7 +176,7 @@ public class Card {
         return card_grade;
     }
 
-    public int getCard_studentId() {
+    public Integer getCard_studentId() {
         return card_studentId;
     }
 

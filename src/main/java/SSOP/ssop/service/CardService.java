@@ -1,6 +1,7 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.Card;
+import SSOP.ssop.dto.request.CardUpdateRequest;
 import SSOP.ssop.dto.response.CardResponse;
 import SSOP.ssop.repository.CardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,13 @@ public class CardService {
     }
 
     // 카드 수정
+    public void updateCard(CardUpdateRequest request) {
+        Card card = cardRepository.findById(request.getCard_id())
+                .orElseThrow(IllegalArgumentException::new);
 
+        card.updateCard(request.getCard_template(), request.getCard_background(), request.getCard_name(), request.getCard_introduction(), request.getCard_SNS(), request.getCard_email(), request.getCard_MBTI(), request.getCard_music(), request.getCard_tel(), request.getCard_birth(), request.getCard_school(), request.getCard_grade(), request.getCard_studentId(), request.getCard_student_major(), request.getCard_student_role(), request.getCard_student_club());
+        cardRepository.save(card);
+    }
 
     // 카드 삭제
     public void deleteCard(long card_id) {
