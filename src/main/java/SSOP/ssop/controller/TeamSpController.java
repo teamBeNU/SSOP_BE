@@ -1,6 +1,6 @@
 package SSOP.ssop.controller;
 
-import SSOP.ssop.domain.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.service.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

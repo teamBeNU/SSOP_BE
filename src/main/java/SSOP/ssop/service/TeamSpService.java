@@ -1,6 +1,6 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.repository.TeamSpRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package SSOP.ssop.repository;
 
-import SSOP.ssop.domain.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSp;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
