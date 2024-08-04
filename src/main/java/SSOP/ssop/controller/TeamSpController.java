@@ -1,6 +1,7 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.service.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teamsp")
@@ -53,6 +55,17 @@ public class TeamSpController {
         return teamSp != null
                 ? ResponseEntity.ok(teamSp)
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
+    }
+
+    // 특정 팀스페이스 참여 정보 조회
+    @GetMapping("/{team_id}/member")
+    public ResponseEntity<?> getTeamMemberById(@PathVariable("team_id") long teamId) {
+        Optional<TeamSpMember> teamSpMember = teamSpService.getTeamMemberById(teamId);
+        // 팀스페이스 존재 유무
+        // Optional 객체가 값을 포함하고 있는지 확인
+        return teamSpMember.isPresent()
+                ? ResponseEntity.ok(teamSpMember.get())  // 값이 있을 경우 200 OK 응답
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 팀스페이스입니다."));  // 값이 없을 경우 404 NOT FOUND 응답
     }
 
     // 팀스페이스 이름 수정

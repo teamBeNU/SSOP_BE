@@ -1,11 +1,13 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.repository.TeamSpRepository;
+import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
+import java.util.Optional;
 import java.util.Random;
 import java.util.List;
 
@@ -15,9 +17,8 @@ public class TeamSpService {
     @Autowired
     private TeamSpRepository teamSpRepository;
 
-    private static final SecureRandom random = new SecureRandom();
-    private static final int MIN_CODE = 100000;
-    private static final int MAX_CODE = 999999;
+    @Autowired
+    private TeamSpMemberRepository teamSpMemberRepository;
 
     // 팀스페이스 생성
     public void saveTeamSp(TeamSp teamSp) {
@@ -44,6 +45,11 @@ public class TeamSpService {
     // 특정 id 팀스페이스 조회
     public TeamSp getTeamById(long team_id) {
         return teamSpRepository.findById(team_id).orElse(null);
+    }
+
+    // 특정 id 팀스페이스 참여 정보 조회
+    public Optional<TeamSpMember> getTeamMemberById(long team_id) {
+        return teamSpMemberRepository.findById(team_id);
     }
 
     // 팀스페이스 이름 수정

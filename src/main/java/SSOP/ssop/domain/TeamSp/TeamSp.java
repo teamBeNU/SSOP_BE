@@ -36,6 +36,9 @@ public class TeamSp {
     @Column(name = "showRole")
     private List<String> showRole;
 
+    @OneToOne(mappedBy = "teamSp", cascade = CascadeType.ALL)
+    private TeamSpMember teamSpMember;
+
     // 기본 생성자
     protected TeamSp() {}
 
@@ -108,5 +111,13 @@ public class TeamSp {
 
     public void setShowRole(List<String> showRole) {
         this.showRole = showRole;
+    }
+
+    public TeamSpMember getTeamSpMember() {
+        return teamSpMember;
+    }
+
+    public void setTeamSpMember(TeamSpMember teamSpMember) {
+        this.teamSpMember = teamSpMember;
     }
 }
