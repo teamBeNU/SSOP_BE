@@ -28,6 +28,8 @@ public class User {
     private String email;
     private String social_type;
 
+    // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
+    public User(){};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {
         if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
