@@ -6,11 +6,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Entity
+@NoArgsConstructor
 @Getter
 public class User {
 
@@ -26,7 +28,6 @@ public class User {
     private String email;
     private String social_type;
 
-    protected User() {};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {
         if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
