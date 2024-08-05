@@ -3,6 +3,7 @@ package SSOP.ssop.dto.card.response;
 import SSOP.ssop.domain.card.*;
 
 public class ShowAllCardResponse {
+    private long userId;
     private long card_id;
     private String card_template;
     private String card_background;
@@ -13,6 +14,7 @@ public class ShowAllCardResponse {
     private TemplateOptional templateOptional;
 
     public ShowAllCardResponse(Card card) {
+        this.userId = card.getUser().getUserId();
         this.card_id = card.getCard_id();
         this.card_template = card.getCard_template();
         this.card_background = card.getCard_background();
@@ -22,6 +24,14 @@ public class ShowAllCardResponse {
 
         this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
         this. templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     public CardEssential getCardEssential() {

@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter;
 public class Card {
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
-    private Long userId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class Card {
     private int card_grade;
 
     // template_optional
-    private int card_studentId;
+    private Integer card_studentId;
     private String card_student_major;
     private String card_student_role;
     private String card_student_club;
@@ -59,11 +59,10 @@ public class Card {
     protected Card() {
     }
 
-    public Card(long userId, String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade) {
+    public Card(User user, Long card_id, String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade) {
         if( card_template == null || card_background == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null) {
             throw new IllegalArgumentException();
         }
-        this.userId = userId;
         this.card_template = card_template;
         this.card_background = card_background;
         this.card_name = card_name;
@@ -77,7 +76,8 @@ public class Card {
         this.card_grade = card_grade;
     }
 
-    public void updateCard(String card_template, String card_background, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, int card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
+
+    public void updateCard(String card_template, String card_background, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, Integer card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
         if(card_template != null){
             this.card_template = card_template;
         }
@@ -111,7 +111,9 @@ public class Card {
         if(card_school != null){
             this.card_school = card_school;
         }
-        this.card_grade = card_grade;
+        if(card_grade != null){
+            this.card_grade = card_grade;
+        }
         if(card_studentId != null){
             this.card_studentId = card_studentId;
         }
@@ -130,7 +132,11 @@ public class Card {
         return user;
     }
 
-    public Long getCard_id() {
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public long getCard_id() {
         return card_id;
     }
 
@@ -178,7 +184,7 @@ public class Card {
         return card_school;
     }
 
-    public int getCard_grade() {
+    public Integer getCard_grade() {
         return card_grade;
     }
 
@@ -196,9 +202,5 @@ public class Card {
 
     public String getCard_student_club() {
         return card_student_club;
-    }
-
-    public void setUserId(long userId) {
-
     }
 }

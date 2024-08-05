@@ -35,7 +35,7 @@ public class CardController {
 
     // 내 카드 조회
     @GetMapping("/mine/{userId}")
-    public List<CardResponse> getMyCards(@PathVariable("userId") long userId) {
+    public List<ShowAllCardResponse> getMyCards(@PathVariable("userId") long userId) {
         return cardService.getMyCards(userId);
     }
 

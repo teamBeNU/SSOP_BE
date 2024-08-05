@@ -25,9 +25,6 @@ public class User {
     private String email;
     private String social_type;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Card> cards;
-
     protected User() {};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {

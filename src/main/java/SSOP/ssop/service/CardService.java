@@ -1,10 +1,13 @@
 package SSOP.ssop.service;
 
+import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.ShowAllCardResponse;
 import SSOP.ssop.repository.CardRepository;
+import SSOP.ssop.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class CardService {
 
-    private final CardRepository cardRepository;
+    @Autowired
+    private CardRepository cardRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public CardService(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
@@ -21,7 +28,10 @@ public class CardService {
 
     // 카드 생성
     public void createCard(long userId, Card card) {
-        card.setUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+
+        card.setUser(user);
         cardRepository.save(card);
     }
 
@@ -33,9 +43,9 @@ public class CardService {
     }
 
     // 내 카드 조회
-    public List<CardResponse> getMyCards(long userId) {
-        return cardRepository.findById(userId).stream()
-                .map(CardResponse::new)
+    public List<ShowAllCardResponse> getMyCards(long userId) {
+        return cardRepository.findByUser_UserId(userId).stream()
+                .map(ShowAllCardResponse::new)
                 .collect(Collectors.toList());
     }
 
