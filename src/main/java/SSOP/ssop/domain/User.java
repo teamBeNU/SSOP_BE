@@ -78,4 +78,8 @@ public class User {
     public String getSocial_type() {
         return social_type;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

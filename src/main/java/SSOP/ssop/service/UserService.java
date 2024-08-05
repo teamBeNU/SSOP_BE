@@ -1,11 +1,13 @@
 package SSOP.ssop.service;
 
+import SSOP.ssop.config.JwtProvider;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.LoginDto;
 import SSOP.ssop.dto.UserDto;
 import SSOP.ssop.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,12 +16,18 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
-    public UserService(UserRepository userRepository) {
+    // 생성자 주입
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
         this.userRepository = userRepository;
+        this.passwordEncoder = (BCryptPasswordEncoder) passwordEncoder;
+        this.jwtProvider = jwtProvider;
     }
 
     // 회원가입
@@ -29,6 +37,9 @@ public class UserService {
         if (existingUser.isPresent()) {
             return Map.of("message", "해당 이메일은 이미 등록되어 있습니다.");
         } else {
+            // 비밀번호 암호화
+            String encryptedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(encryptedPassword);
             userRepository.save(user);
             return Map.of("message", "회원가입이 완료되었습니다.");
         }
@@ -36,12 +47,15 @@ public class UserService {
 
     // 로그인
     public Map<String, Object> login(LoginDto loginDto) {
+
         User user = userRepository.findByEmail(loginDto.getEmail()).orElse(null);
 
-        if (user == null || !user.getPassword().equals(loginDto.getPassword())) {
-            return Map.of("message", "로그인 실패");
+        if (user != null && passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            // JWT 토큰 반환
+            String jwtToken = jwtProvider.generateJwtToken(user.getUserId(), user.getEmail(), user.getUser_name());
+            return Map.of("token", jwtToken);
         } else {
-            return Map.of("사용자 ID: " , user.getUserId());
+            return Map.of("message", "로그인 실패");
         }
     }
 
