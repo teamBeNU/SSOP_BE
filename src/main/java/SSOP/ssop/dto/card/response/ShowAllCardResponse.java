@@ -1,10 +1,6 @@
 package SSOP.ssop.dto.card.response;
 
-import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
-
-import java.util.List;
-import java.util.Map;
 
 public class ShowAllCardResponse {
     private long card_id;
