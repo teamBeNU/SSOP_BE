@@ -12,7 +12,7 @@ spring:
           format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정
           show_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL 보여줄 지 결정
           dialect: org.hibernate.dialect.MySQL8Dialect #한국어로 방언, 사투리란 뜻으로 알아서 db끼리 다른 sql 조금씩 수정
-    jwt:
-      header: Authorization
-      secret: ${jwt_secret}
-      token-validity-in-seconds: 86400    # 초, 24시간
+jwt:
+  header: Authorization
+  secret: ${jwt_secret}
+  token-validity-in-seconds: 86400    # 초, 24시간
