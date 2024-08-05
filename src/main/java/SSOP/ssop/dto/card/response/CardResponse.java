@@ -1,8 +1,14 @@
-package SSOP.ssop.dto.response;
+package SSOP.ssop.dto.card.response;
 
-import SSOP.ssop.domain.Card;
+import SSOP.ssop.domain.card.*;
 
 public class CardResponse {
+
+    private CardEssential cardEssential;
+    private CardOptional cardOptional;
+    private TemplateEssential templateEssential;
+    private TemplateOptional templateOptional;
+
     private long card_id;
     private String card_template;
     private String card_background;
@@ -18,19 +24,19 @@ public class CardResponse {
     private String card_tel;
     private String card_birth;
     private String card_school;
-    private Integer card_grade;
+    private int card_grade;
 
     private Integer card_studentId;
     private String card_student_major;
     private String card_student_role;
     private String card_student_club;
 
-    public CardResponse(String card_student_club, String card_student_role, String card_student_major, Integer card_studentId, String card_grade, String card_school, String card_birth, String card_tel, String card_music, String card_MBTI, String card_email, String card_SNS, String card_introduction, String card_name, String card_background, String card_template, long card_id) {
+    public CardResponse(String card_student_club, String card_student_role, String card_student_major, Integer card_studentId, int card_grade, String card_school, String card_birth, String card_tel, String card_music, String card_MBTI, String card_email, String card_SNS, String card_introduction, String card_name, String card_background, String card_template, long card_id) {
         this.card_student_club = card_student_club;
         this.card_student_role = card_student_role;
         this.card_student_major = card_student_major;
         this.card_studentId = card_studentId;
-        this.card_grade = Integer.valueOf(card_grade);
+        this.card_grade = card_grade;
         this.card_school = card_school;
         this.card_birth = card_birth;
         this.card_tel = card_tel;
@@ -68,7 +74,6 @@ public class CardResponse {
         this.card_student_role = card.getCard_student_role();
         this.card_student_club = card.getCard_student_club();
     }
-
 
     public long getCard_id() {
         return card_id;
@@ -166,11 +171,11 @@ public class CardResponse {
         this.card_school = card_school;
     }
 
-    public Integer getCard_grade() {
+    public int getCard_grade() {
         return card_grade;
     }
 
-    public void setCard_grade(Integer card_grade) {
+    public void setCard_grade(int card_grade) {
         this.card_grade = card_grade;
     }
 

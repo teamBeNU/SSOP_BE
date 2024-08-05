@@ -1,12 +1,11 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.Card;
-import SSOP.ssop.dto.request.CardUpdateRequest;
-import SSOP.ssop.dto.response.CardResponse;
+import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
+import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.ShowAllCardResponse;
 import SSOP.ssop.repository.CardRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,20 +20,28 @@ public class CardService {
     }
 
     // 카드 생성
-    public void saveCard(long userId, Card card) {
+    public void createCard(long userId, Card card) {
         card.setUserId(userId);
         cardRepository.save(card);
     }
 
     // 전체 카드 조회
-    public List<CardResponse> getCards() {
+    public List<ShowAllCardResponse> getAllCards() {
         return cardRepository.findAll().stream()
+                .map(ShowAllCardResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    // 내 카드 조회
+    public List<CardResponse> getMyCards(long userId) {
+        return cardRepository.findById(userId).stream()
                 .map(CardResponse::new)
                 .collect(Collectors.toList());
     }
 
-    // 카드 조회
-    public CardResponse getMyCards(long card_id) {
+
+    // 특정 카드 조회
+    public CardResponse getCard(long card_id) {
         Card card = cardRepository.findById(card_id)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
         return new CardResponse(card);

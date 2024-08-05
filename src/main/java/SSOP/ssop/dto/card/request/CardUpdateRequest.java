@@ -1,4 +1,4 @@
-package SSOP.ssop.dto.request;
+package SSOP.ssop.dto.card.request;
 
 public class CardUpdateRequest {
     private long card_id;

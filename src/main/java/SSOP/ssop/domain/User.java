@@ -1,14 +1,13 @@
 package SSOP.ssop.domain;
 
+import SSOP.ssop.domain.card.Card;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -26,6 +25,9 @@ public class User {
     private String email;
     private String social_type;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Card> cards;
+
     protected User() {};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {
@@ -42,6 +44,10 @@ public class User {
         this.password = password;
         this.email = email;
         this.social_type = "default";
+    }
+
+    public User(long userId) {
+        this.userId = userId;
     }
 
     public void updatePassword(String password){
