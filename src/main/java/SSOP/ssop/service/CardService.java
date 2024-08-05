@@ -39,7 +39,6 @@ public class CardService {
                 .collect(Collectors.toList());
     }
 
-
     // 특정 카드 조회
     public CardResponse getCard(long card_id) {
         Card card = cardRepository.findById(card_id)
