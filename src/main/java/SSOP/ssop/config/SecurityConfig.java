@@ -2,6 +2,7 @@ package SSOP.ssop.config;
 
 import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.service.UserDetailService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,7 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -38,16 +38,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 상태 비저장 세션 관리
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable()) // 기본 로그인 및 HTTP 기본 인증 비활성화
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터 추가
-                .addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class) // JwtAuthorizationFilter 추가
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()); // 모든 요청 인증 필요
-        return http.build();
-    }
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider())) // JWT 인증 필터 추가
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider(), userDetailService)) // JwtAuthorizationFilter 추가
+                .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll()); // 모든 요청 허용
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return http.build();
     }
 
     @Bean
@@ -61,12 +56,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider());
-    }
-
-    @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider(), userDetailService);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

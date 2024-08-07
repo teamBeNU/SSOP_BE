@@ -1,18 +1,13 @@
 package SSOP.ssop.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Entity
-@NoArgsConstructor
 @Getter
 public class User {
 
@@ -82,4 +77,12 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "TeamSpMember",
+//            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}
+//            inverseJoinColumns = {@JoinColumn(name="")})
+//    private Set<TeamSpMember> authority;
+//    )
 }
