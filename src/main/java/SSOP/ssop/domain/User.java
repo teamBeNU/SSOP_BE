@@ -1,10 +1,7 @@
 package SSOP.ssop.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -26,7 +23,8 @@ public class User {
     private String email;
     private String social_type;
 
-    protected User() {};
+    // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
+    public User(){};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {
         if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
@@ -75,4 +73,16 @@ public class User {
     public String getSocial_type() {
         return social_type;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "TeamSpMember",
+//            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}
+//            inverseJoinColumns = {@JoinColumn(name="")})
+//    private Set<TeamSpMember> authority;
+//    )
 }
