@@ -1,11 +1,11 @@
 package SSOP.ssop.dto;
 
 import SSOP.ssop.domain.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
 public class UserDto {
     private String user_name;
     private Long userId;
@@ -14,16 +14,6 @@ public class UserDto {
     private String password;
     private String email;
     private String social_type;
-
-    public UserDto(long userId, String user_name, LocalDate user_birth, String user_phone, String password, String email, String social_type) {
-        this.userId = userId;
-        this.user_name = user_name;
-        this.user_birth = user_birth;
-        this.user_phone = user_phone;
-        this.password = password;
-        this.email = email;
-        this.social_type = social_type;
-    }
 
     public UserDto(User user) {
         this.userId = user.getUserId();
