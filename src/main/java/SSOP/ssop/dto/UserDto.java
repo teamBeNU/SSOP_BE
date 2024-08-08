@@ -15,6 +15,9 @@ public class UserDto {
     private String email;
     private String social_type;
 
+    public UserDto() {
+    }
+
     public UserDto(User user) {
         this.userId = user.getUserId();
         this.user_name = user.getUser_name();

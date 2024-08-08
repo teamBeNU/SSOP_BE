@@ -35,27 +35,41 @@ public class UserController {
     }
 
     // 모든 유저 정보 출력
-    @GetMapping
+    @GetMapping("/total")
     public List<UserDto> getUsers() {
         return userService.getUsers();
     }
 
     // 특정 유저 정보 출력
-    @GetMapping("/{userId}")
-    public Map<String, Object> getUser(@PathVariable("userId") long userId) {
+    @GetMapping
+    public Map<String, Object> getUser(@RequestParam("userId") long userId) {
         return userService.getUser(userId);
     }
 
-    // 유저 password 수정
-    @PatchMapping("/{userId}")
-    public void updateUser(@PathVariable("userId") long userId, @RequestBody UserDto userDto) {
+    // 유저 비밀번호 수정
+    @PatchMapping("/password")
+    public ResponseEntity<?> updatePassword(@RequestParam("userId") long userId, @RequestBody UserDto userDto) {
         userDto.setUserId(userId);
-        userService.updateUser(userDto);
+        return userService.updatePassword(userDto);
+    }
+
+    // 유저 전화번호 수정
+    @PatchMapping("/phone")
+    public ResponseEntity<?> updatePhone(@RequestParam("userId") long userId, @RequestBody UserDto userDto) {
+        userDto.setUserId(userId);
+        return userService.updatePhone(userDto);
+    }
+
+    // 유저 이메일 수정
+    @PatchMapping("/email")
+    public ResponseEntity<?> updateEmail(@RequestParam("userId") long userId, @RequestBody UserDto userDto) {
+        userDto.setUserId(userId);
+        return userService.updateEmail(userDto);
     }
 
     // 유저 삭제
-    @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable("userId") long userId) {
+    @DeleteMapping
+    public void deleteUser(@RequestParam("userId") long userId) {
         userService.deleteUser(userId);
     }
 

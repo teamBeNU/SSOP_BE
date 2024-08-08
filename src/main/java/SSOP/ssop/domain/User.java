@@ -78,7 +78,15 @@ public class User {
         this.password = password;
     }
 
-//    @ManyToMany
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    //    @ManyToMany
 //    @JoinTable(
 //            name = "TeamSpMember",
 //            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}

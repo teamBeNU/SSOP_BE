@@ -5,6 +5,8 @@ import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.LoginDto;
 import SSOP.ssop.dto.UserDto;
 import SSOP.ssop.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -79,12 +81,46 @@ public class UserService {
         }
     }
 
-    // 유저 정보 업데이트 -> 일단 pw만
-    public void updateUser(UserDto userDto) {
-        User user = userRepository.findById(userDto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+    // 유저 비밀번호 수정
+    public ResponseEntity<?> updatePassword(UserDto userDto) {
+        if (!userRepository.existsById(userDto.getUserId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
+        }
+
+        User user = userRepository.findById(userDto.getUserId()).get();
         user.setPassword(passwordEncoder.encode(userDto.getPassword())); // 비밀번호 암호화
         userRepository.save(user);
+
+        return ResponseEntity.ok().body(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
+    }
+
+    // 유저 전화번호 수정
+    public ResponseEntity<?> updatePhone(UserDto userDto) {
+        if (!userRepository.existsById(userDto.getUserId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
+        }
+
+        User user = userRepository.findById(userDto.getUserId()).get();
+        user.setUser_phone(userDto.getUser_phone());
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(Map.of("message", "전화번호가 성공적으로 변경되었습니다."));
+    }
+
+    // 유저 이메일 수정
+    public ResponseEntity<?> updateEmail(UserDto userDto) {
+        if (!userRepository.existsById(userDto.getUserId())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
+        }
+
+        User user = userRepository.findById(userDto.getUserId()).get();
+        user.setEmail(userDto.getEmail());
+        userRepository.save(user);
+
+        return ResponseEntity.ok().body(Map.of("message", "이메일이 성공적으로 변경되었습니다."));
     }
 
     // userId로 유저 삭제

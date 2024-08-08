@@ -37,7 +37,7 @@ public class TeamSpController {
     }
 
     // 모든 팀스페이스 조회
-    @GetMapping
+    @GetMapping("/total")
     public ResponseEntity<List<TeamSp>> getAllTeams() {
         List<TeamSp> teams = teamSpService.getAllTeams();
         if (teams.isEmpty()) {
@@ -47,9 +47,8 @@ public class TeamSpController {
         }
     }
 
-    // 특정 팀스페이스 조회
-    @GetMapping("/{team_id}")
-    public ResponseEntity<?> getTeamById(@PathVariable("team_id") long teamId) {
+    @GetMapping
+    public ResponseEntity<?> getTeamById(@RequestParam("team_id") long teamId) {
         TeamSp teamSp = teamSpService.getTeamById(teamId);
         // 팀스페이스 존재 유무
         return teamSp != null
@@ -57,9 +56,9 @@ public class TeamSpController {
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
     }
 
-    // 특정 팀스페이스 참여 정보 조회
-    @GetMapping("/{team_id}/member")
-    public ResponseEntity<?> getTeamMemberById(@PathVariable("team_id") long teamId) {
+    // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
+    @GetMapping("/member")
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") long teamId) {
         Optional<TeamSpMember> teamSpMember = teamSpService.getTeamMemberById(teamId);
         // 팀스페이스 존재 유무
         // Optional 객체가 값을 포함하고 있는지 확인
@@ -68,9 +67,9 @@ public class TeamSpController {
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "존재하지 않는 팀스페이스입니다."));  // 값이 없을 경우 404 NOT FOUND 응답
     }
 
-    // 팀스페이스 이름 수정
-    @PatchMapping("/{team_id}")
-    public ResponseEntity<Map<String, String>> updateTeamSp(@PathVariable("team_id") long teamId, @RequestBody TeamSp teamSp) {
+    // 팀스페이스 이름 수정 (team_id를 쿼리 파라미터로)
+    @PatchMapping
+    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp) {
         TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp);
         if (updatedTeamSp != null) {
             return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
@@ -80,9 +79,9 @@ public class TeamSpController {
         }
     }
 
-    // 팀스페이스 삭제
-    @DeleteMapping("/{team_id}")
-    public ResponseEntity<Map<String, String>> deleteTeamSp(@PathVariable("team_id") long teamId) {
+    // 팀스페이스 삭제 (team_id를 쿼리 파라미터로)
+    @DeleteMapping
+    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") long teamId) {
         if (teamSpService.getTeamById(teamId) != null) {
             teamSpService.deleteTeamSp(teamId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));
