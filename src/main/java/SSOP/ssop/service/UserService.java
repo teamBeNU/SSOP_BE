@@ -110,17 +110,18 @@ public class UserService {
     }
 
     // 유저 이메일 수정
-    public ResponseEntity<?> updateEmail(UserDto userDto) {
+    public ResponseEntity<?> updateNameBirth(UserDto userDto) {
         if (!userRepository.existsById(userDto.getUserId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "존재하지 않는 사용자입니다."));
         }
 
         User user = userRepository.findById(userDto.getUserId()).get();
-        user.setEmail(userDto.getEmail());
+        user.setUser_name(userDto.getUser_name());
+        user.setUser_birth(userDto.getUser_birth());
         userRepository.save(user);
 
-        return ResponseEntity.ok().body(Map.of("message", "이메일이 성공적으로 변경되었습니다."));
+        return ResponseEntity.ok().body(Map.of("message", "회원 정보가 성공적으로 변경되었습니다."));
     }
 
     // userId로 유저 삭제

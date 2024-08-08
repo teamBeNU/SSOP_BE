@@ -60,11 +60,11 @@ public class UserController {
         return userService.updatePhone(userDto);
     }
 
-    // 유저 이메일 수정
-    @PatchMapping("/email")
-    public ResponseEntity<?> updateEmail(@RequestParam("userId") long userId, @RequestBody UserDto userDto) {
+    // 유저 이름 & 생년월일 수정
+    @PatchMapping("/namebirth")
+    public ResponseEntity<?> updateNameBirth(@RequestParam("userId") long userId, @RequestBody UserDto userDto) {
         userDto.setUserId(userId);
-        return userService.updateEmail(userDto);
+        return userService.updateNameBirth(userDto);
     }
 
     // 유저 삭제

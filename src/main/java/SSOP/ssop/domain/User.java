@@ -82,8 +82,12 @@ public class User {
         this.user_phone = user_phone;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public void setUser_birth(LocalDate user_birth) {
+        this.user_birth = user_birth;
     }
 
     //    @ManyToMany
