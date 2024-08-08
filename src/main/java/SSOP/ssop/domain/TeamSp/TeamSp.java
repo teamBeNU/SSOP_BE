@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Getter
 public class TeamSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,12 +28,10 @@ public class TeamSp {
     private int inviteCode;
 
     @Embedded
-    private TeamSpOptional teamSpOptional;
+    private StudentOptional studentOptional;
 
-    @ElementCollection
-    @CollectionTable(name = "team_roles", joinColumns = @JoinColumn(name = "team_id"))
-    @Column(name = "showRole")
-    private List<String> showRole;
+    @Embedded
+    private WorkerOptional workerOptional;
 
     @OneToOne(mappedBy = "teamSp", cascade = CascadeType.ALL)
     private TeamSpMember teamSpMember;
@@ -42,15 +39,41 @@ public class TeamSp {
     // 기본 생성자
     protected TeamSp() {}
 
-    // 전체 필드를 초기화하는 생성자
+    // Template 값에 따라 변수 반환
+    // Template이 "student"일 때만 StudentOptional을 반환
+    public StudentOptional getStudentOptional() {
+        if ("student".equals(template)) {
+            return (studentOptional != null && studentOptional.checkNullValue()) ? null : studentOptional;
+        }
+        return null;
+    }
+
+    // Template이 "worker"일 때만 WorkerOptional을 반환
+    public WorkerOptional getWorkerOptional() {
+        if ("free".equals(template)) {
+            return (workerOptional != null && workerOptional.checkNullValue()) ? null : workerOptional;
+        }
+        return null;
+    }
+
+    // 각 파일에 모두 null값이면 변수값 null로 반환
+    public void setStudentOptional(StudentOptional studentOptional) {
+        this.studentOptional = studentOptional.checkNullValue() ? null : studentOptional;
+    }
+
+    public void setWorkerOptional(WorkerOptional workerOptional) {
+        this.workerOptional = workerOptional.checkNullValue() ? null : workerOptional;
+    }
+
+    // 전체 필드를 초기화 생성자
     public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
-                  TeamSpOptional teamSpOptional, List<String> showRole) {
+                  StudentOptional studentOptional, WorkerOptional workerOptional) {
         this.team_name = team_name;
         this.team_comment = team_comment;
         this.isTemplate = isTemplate;
         this.template = template;
-        this.teamSpOptional = teamSpOptional;
-        this.showRole = showRole;
+        setStudentOptional(studentOptional);
+        setWorkerOptional(workerOptional);
     }
 
     public void updateTeamName(String team_name) {
@@ -85,8 +108,16 @@ public class TeamSp {
         this.team_comment = team_comment;
     }
 
-    public Boolean getTemplate() {
+    public Boolean getIsTemplate() {
         return isTemplate;
+    }
+
+    public void setIsTemplate(Boolean isTemplate) {
+        this.isTemplate = isTemplate;
+    }
+
+    public String getTemplate() {
+        return template;
     }
 
     public void setTemplate(String template) {
@@ -95,22 +126,6 @@ public class TeamSp {
 
     public int getInviteCode() {
         return inviteCode;
-    }
-
-    public TeamSpOptional getTeamSpOptional() {
-        return teamSpOptional;
-    }
-
-    public void setTeamSpOptional(TeamSpOptional teamSpOptional) {
-        this.teamSpOptional = teamSpOptional;
-    }
-
-    public List<String> getShowRole() {
-        return showRole;
-    }
-
-    public void setShowRole(List<String> showRole) {
-        this.showRole = showRole;
     }
 
     public TeamSpMember getTeamSpMember() {

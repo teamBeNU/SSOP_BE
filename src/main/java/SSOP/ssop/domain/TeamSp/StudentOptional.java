@@ -1,48 +1,65 @@
 package SSOP.ssop.domain.TeamSp;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Embeddable
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TeamSpOptional {
-    @Column(name = "showAge")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class StudentOptional {
+    @Column(name = "student_showAge")
     private Boolean showAge;
 
-    @Column(name = "showSchool")
+    @Column(name = "student_showSchool")
     private Boolean showSchool;
 
-    @Column(name = "showGrade")
+    @Column(name = "student_showGrade")
     private Boolean showGrade;
 
-    @Column(name = "showStudNum")
+    @Column(name = "student_showStudNum")
     private Boolean showStudNum;
 
-    @Column(name = "showMajor")
+    @Column(name = "student_showMajor")
     private Boolean showMajor;
 
-    @Column(name = "showClub")
+    @Column(name = "student_showClub")
     private Boolean showClub;
 
-    @Column(name = "showTel")
+    @ElementCollection
+    @CollectionTable(name = "student_roles", joinColumns = @JoinColumn(name = "team_id"))
+    @Column(name = "student_showRole")
+    private List<String> showRole;
+
+    @Column(name = "student_showTel")
     private Boolean showTel;
 
-    @Column(name = "showSNS")
+    @Column(name = "student_showSNS")
     private Boolean showSNS;
 
-    @Column(name = "showEmail")
+    @Column(name = "student_showEmail")
     private Boolean showEmail;
 
-    @Column(name = "showMBTI")
+    @Column(name = "student_showMBTI")
     private Boolean showMBTI;
 
-    @Column(name = "showMusic")
+    @Column(name = "student_showMusic")
     private Boolean showMusic;
 
-    @Column(name = "showMovie")
+    @Column(name = "student_showMovie")
     private Boolean showMovie;
+
+    public boolean checkNullValue() {
+        return showAge == null && showSchool == null && showGrade == null &&
+                showStudNum == null && showMajor == null && showClub == null &&
+                (showRole == null || showRole.isEmpty()) && showTel == null &&
+                showSNS == null && showEmail == null && showMBTI == null &&
+                showMusic == null && showMovie == null;
+    }
 
     public Boolean getShowAge() {
         return showAge;
@@ -90,6 +107,14 @@ public class TeamSpOptional {
 
     public void setShowClub(Boolean showClub) {
         this.showClub = showClub;
+    }
+
+    public List<String> getShowRole() {
+        return showRole;
+    }
+
+    public void setShowRole(List<String> showRole) {
+        this.showRole = showRole;
     }
 
     public Boolean getShowTel() {
