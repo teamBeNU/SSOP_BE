@@ -35,21 +35,35 @@ public class CardService {
         cardRepository.save(card);
     }
 
-    // 전체 카드 조회
+    // 모든 카드 조회
     public List<ShowAllCardResponse> getAllCards() {
         return cardRepository.findAll().stream()
                 .map(ShowAllCardResponse::new)
                 .collect(Collectors.toList());
     }
 
-    // 내 카드 조회
+    // 내 카드 목록 조회
     public List<ShowAllCardResponse> getMyCards(long userId) {
         return cardRepository.findByUser_UserId(userId).stream()
                 .map(ShowAllCardResponse::new)
                 .collect(Collectors.toList());
     }
 
-    // 특정 카드 조회
+    // 상대 카드 목록 조회
+    public List<ShowAllCardResponse> getSavedCards(long card_id, long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+
+        if(!user.getSaved_card_list().contains(card_id)) {
+            throw new IllegalArgumentException("해당 카드는 보유 중이 아닙니다.");
+        }
+
+        return cardRepository.findById(card_id).stream()
+                .map(ShowAllCardResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    // 특정 카드 상세 조회
     public CardResponse getCard(long card_id) {
         Card card = cardRepository.findById(card_id)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));

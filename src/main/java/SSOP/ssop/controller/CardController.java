@@ -33,13 +33,19 @@ public class CardController {
         return cardService.getAllCards();
     }
 
-    // 내 카드 조회
+    // 내 카드 목록 조회
     @GetMapping("/view/mine")
     public List<ShowAllCardResponse> getMyCards(@RequestParam("userId") long userId) {
         return cardService.getMyCards(userId);
     }
 
-    // 특정 카드 조회
+    // 상대 카드 목록 조회
+    @GetMapping("/view/saved")
+    public List<ShowAllCardResponse> getSavedCards(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId) {
+        return cardService.getSavedCards(card_id, userId);
+    }
+
+    // 특정 카드 상세 조회
     @GetMapping("/view")
     public ResponseEntity<CardResponse> getCardsById(@RequestParam("card_id") long card_id) {
         CardResponse cardResponse = cardService.getCard(card_id);
@@ -50,7 +56,7 @@ public class CardController {
         }
     }
 
-    // 카드 수정
+    // 카드 수정 (내카드)
     @PatchMapping("/edit")
     public void updateCard(@RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
         request.setCard_id(card_id);
@@ -58,7 +64,7 @@ public class CardController {
     }
 
 
-    // 카드 삭제
+    // 카드 삭제 (내카드 & 상대카드)
     @DeleteMapping("/delete")
     public void deleteCard(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId) {
         cardService.deleteCard(card_id, userId);

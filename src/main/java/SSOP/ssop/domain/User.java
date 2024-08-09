@@ -83,7 +83,7 @@ public class User {
         return social_type;
     }
 
-    public List<String> getSave_list() {
+    public List<String> getSaved_card_list() {
         return saved_card_list;
     }
 }
