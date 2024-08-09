@@ -22,7 +22,7 @@ public class Card {
     private String card_template;
 
     @Column(nullable = false)
-    private String card_background;
+    private String card_cover;
 
     // card_essential
     @Column(nullable = false)
@@ -62,12 +62,12 @@ public class Card {
     protected Card() {
     }
 
-    public Card(User user, Long card_id, String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade, String memo) {
-        if( card_template == null || card_background == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null) {
+    public Card(User user, Long card_id, String card_template, String card_cover, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade, String memo) {
+        if( card_template == null || card_cover == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null) {
             throw new IllegalArgumentException();
         }
         this.card_template = card_template;
-        this.card_background = card_background;
+        this.card_cover = card_cover;
         this.card_name = card_name;
         this.card_introduction = card_introduction;
         this.card_tel = card_tel;
@@ -82,12 +82,12 @@ public class Card {
     }
 
 
-    public void updateCard(String card_template, String card_background, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, Integer card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
+    public void updateCard(String card_template, String card_cover, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, Integer card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
         if(card_template != null){
             this.card_template = card_template;
         }
-        if(card_background != null){
-            this.card_background = card_background;
+        if(card_cover != null){
+            this.card_cover = card_cover;
         }
         if(card_name != null){
             this.card_name = card_name;
@@ -149,8 +149,8 @@ public class Card {
         return card_template;
     }
 
-    public String getCard_background() {
-        return card_background;
+    public String getcard_cover() {
+        return card_cover;
     }
 
     public String getCard_name() {

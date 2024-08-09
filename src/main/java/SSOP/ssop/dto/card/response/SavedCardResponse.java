@@ -5,7 +5,7 @@ import SSOP.ssop.domain.card.*;
 public class SavedCardResponse {
 
     private long card_id;
-    private String card_background;
+    private String card_cover;
     private CardEssential cardEssential;
     private CardOptional cardOptional;
     private TemplateEssential templateEssential;
@@ -13,7 +13,7 @@ public class SavedCardResponse {
 
     public SavedCardResponse(Card card) {
         this.card_id = card.getUser().getUserId();
-        this.card_background = card.getCard_background();
+        this.card_cover = card.getcard_cover();
         this.cardEssential = new CardEssential(card.getCard_name(), card.getCard_introduction());
         this.cardOptional = new CardOptional(card.getCard_SNS(), card.getCard_email(), card.getCard_MBTI(), card.getCard_music());
         this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
@@ -24,8 +24,8 @@ public class SavedCardResponse {
         return card_id;
     }
 
-    public String getCard_background() {
-        return card_background;
+    public String getcard_cover() {
+        return card_cover;
     }
 
     public CardEssential getCardEssential() {

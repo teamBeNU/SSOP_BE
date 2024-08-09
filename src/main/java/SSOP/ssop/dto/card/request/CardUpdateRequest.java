@@ -3,7 +3,7 @@ package SSOP.ssop.dto.card.request;
 public class CardUpdateRequest {
     private long card_id;
     private String card_template;
-    private String card_background;
+    private String card_cover;
 
     private String card_name;
     private String card_introduction;
@@ -36,8 +36,8 @@ public class CardUpdateRequest {
         return card_template;
     }
 
-    public String getCard_background() {
-        return card_background;
+    public String getcard_cover() {
+        return card_cover;
     }
 
     public String getCard_name() {

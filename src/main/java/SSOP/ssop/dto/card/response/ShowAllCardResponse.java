@@ -6,7 +6,7 @@ public class ShowAllCardResponse {
     private long userId;
     private long card_id;
     private String card_template;
-    private String card_background;
+    private String card_cover;
 
     private CardEssential cardEssential;
     private CardOptional cardOptional;
@@ -17,7 +17,7 @@ public class ShowAllCardResponse {
         this.userId = card.getUser().getUserId();
         this.card_id = card.getCard_id();
         this.card_template = card.getCard_template();
-        this.card_background = card.getCard_background();
+        this.card_cover = card.getcard_cover();
 
         this.cardEssential = new CardEssential(card.getCard_name(), card.getCard_introduction());
         this.cardOptional = new CardOptional(card.getCard_SNS(), card.getCard_email(), card.getCard_MBTI(), card.getCard_music());
@@ -82,11 +82,11 @@ public class ShowAllCardResponse {
         this.card_template = card_template;
     }
 
-    public String getCard_background() {
-        return card_background;
+    public String getcard_cover() {
+        return card_cover;
     }
 
-    public void setCard_background(String card_background) {
-        this.card_background = card_background;
+    public void setcard_cover(String card_cover) {
+        this.card_cover = card_cover;
     }
 }
