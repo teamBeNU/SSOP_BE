@@ -22,26 +22,26 @@ public class CardController {
     }
 
     // 카드 생성
-    @PostMapping("/create/{userId}")
-    public void createCard(@PathVariable("userId") long userId, @RequestBody Card card) {
+    @PostMapping("/create")
+    public void createCard(@RequestParam("userId") long userId, @RequestBody Card card) {
         cardService.createCard(userId, card);
     }
 
     // 모든 카드 조회
-    @GetMapping
+    @GetMapping("/view/total")
     public List<ShowAllCardResponse> getAllCards() {
         return cardService.getAllCards();
     }
 
     // 내 카드 조회
-    @GetMapping("/mine/{userId}")
-    public List<ShowAllCardResponse> getMyCards(@PathVariable("userId") long userId) {
+    @GetMapping("/view/mine")
+    public List<ShowAllCardResponse> getMyCards(@RequestParam("userId") long userId) {
         return cardService.getMyCards(userId);
     }
 
     // 특정 카드 조회
-    @GetMapping("/{card_id}")
-    public ResponseEntity<CardResponse> getCardsById(@PathVariable("card_id") long card_id) {
+    @GetMapping("/view")
+    public ResponseEntity<CardResponse> getCardsById(@RequestParam("card_id") long card_id) {
         CardResponse cardResponse = cardService.getCard(card_id);
         if (cardResponse != null) {
             return ResponseEntity.ok(cardResponse);
@@ -51,16 +51,16 @@ public class CardController {
     }
 
     // 카드 수정
-    @PatchMapping("/{card_id}")
-    public void updateCard(@PathVariable("card_id") long card_id, @RequestBody CardUpdateRequest request) {
+    @PatchMapping("/edit")
+    public void updateCard(@RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
         request.setCard_id(card_id);
         cardService.updateCard(request);
     }
 
 
     // 카드 삭제
-    @DeleteMapping("/{card_id}")
-    public void deleteCard(@PathVariable("card_id") long card_id) {
+    @DeleteMapping("/delete")
+    public void deleteCard(@RequestParam("card_id") long card_id) {
         cardService.deleteCard(card_id);
     }
 
