@@ -56,10 +56,13 @@ public class Card {
     private String card_student_role;
     private String card_student_club;
 
+    @Lob
+    private String memo;
+
     protected Card() {
     }
 
-    public Card(User user, Long card_id, String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade) {
+    public Card(User user, Long card_id, String card_template, String card_background, String card_name, String card_introduction, String card_tel, String card_birth, String card_school, int card_grade, String memo) {
         if( card_template == null || card_background == null || card_name == null || card_introduction == null || card_tel == null || card_birth == null || card_school == null) {
             throw new IllegalArgumentException();
         }
@@ -74,6 +77,8 @@ public class Card {
 
         this.card_school = card_school;
         this.card_grade = card_grade;
+
+        this.memo = memo;
     }
 
 
@@ -202,5 +207,13 @@ public class Card {
 
     public String getCard_student_club() {
         return card_student_club;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }

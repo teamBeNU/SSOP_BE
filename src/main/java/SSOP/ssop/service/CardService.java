@@ -103,4 +103,17 @@ public class CardService {
             userRepository.save(user);
         }
     }
+
+    // 상대 카드 메모 작성
+    public void writeMemo(long card_id, long userId, String memo) {
+        Card card = cardRepository.findById(card_id)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        if(card.getUser().getUserId() == userId) {
+            throw new IllegalArgumentException("본인 카드입니다.");
+        }
+
+        card.setMemo(memo);
+        cardRepository.save(card);
+    }
 }

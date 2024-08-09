@@ -14,6 +14,8 @@ public class CardResponse {
     private TemplateEssential templateEssential;
     private TemplateOptional templateOptional;
 
+    private String memo;
+
     public CardResponse(Card card) {
         this.userId = card.getUser().getUserId();
         this.card_id = card.getCard_id();
@@ -25,6 +27,8 @@ public class CardResponse {
 
         this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
         this.templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
+
+        this.memo = card.getMemo();
     }
 
     public long getUserId() {
@@ -89,6 +93,14 @@ public class CardResponse {
 
     public void setCard_background(String card_background) {
         this.card_background = card_background;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
     }
 }
 

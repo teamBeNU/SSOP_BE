@@ -2,6 +2,7 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
+import SSOP.ssop.dto.card.request.MemoRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.ShowAllCardResponse;
 import SSOP.ssop.service.CardService;
@@ -70,4 +71,9 @@ public class CardController {
         cardService.deleteCard(card_id, userId);
     }
 
+    // 상대 카드 메모 작성
+    @PostMapping("/memo")
+    public void writeMemo(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId, @RequestBody MemoRequest memo) {
+        cardService.writeMemo(card_id, userId, memo.getMemo());
+    }
 }
