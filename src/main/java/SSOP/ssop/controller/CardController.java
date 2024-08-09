@@ -76,4 +76,10 @@ public class CardController {
     public void writeMemo(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId, @RequestBody MemoRequest memo) {
         cardService.writeMemo(card_id, userId, memo.getMemo());
     }
+
+    // 상대 카드 메모 수정
+    @PatchMapping("/memo")
+    public void updateMemo(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId, @RequestBody MemoRequest memo) {
+        cardService.updateMemo(card_id, userId, memo.getMemo());
+    }
 }

@@ -116,4 +116,13 @@ public class CardService {
         card.setMemo(memo);
         cardRepository.save(card);
     }
+
+    // 상대 카드 메모 수정
+    public void updateMemo(long card_id, long userId, String memo) {
+        Card card = cardRepository.findById(card_id)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        card.setMemo(memo);
+        cardRepository.save(card);
+    }
 }
