@@ -5,7 +5,7 @@ import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.ShowAllCardResponse;
-import SSOP.ssop.repository.CardRepository;
+import SSOP.ssop.domain.card.CardRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,9 +66,20 @@ public class CardService {
     }
 
     // 카드 삭제
-    public void deleteCard(long card_id) {
+    public void deleteCard(long card_id, long userId) {
         Card card = cardRepository.findById(card_id)
                 .orElseThrow(IllegalArgumentException::new);
-        cardRepository.delete(card);
+
+        if(card.getUser().getUserId() == userId) {
+            cardRepository.delete(card);
+        }
+        else if (card.getUser().getUserId() != userId){
+            User user = userRepository.findById(userId)
+                    .orElseThrow(IllegalArgumentException::new);
+
+            user.deleteSavedList(card_id);
+
+            userRepository.save(user);
+        }
     }
 }

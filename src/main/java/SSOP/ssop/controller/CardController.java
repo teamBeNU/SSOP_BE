@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/card")
 public class CardController {
 
-    private final CardService cardService;
+    private CardService cardService;
 
     public CardController(CardService cardService) {
         this.cardService = cardService;
@@ -60,8 +60,8 @@ public class CardController {
 
     // 카드 삭제
     @DeleteMapping("/delete")
-    public void deleteCard(@RequestParam("card_id") long card_id) {
-        cardService.deleteCard(card_id);
+    public void deleteCard(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId) {
+        cardService.deleteCard(card_id, userId);
     }
 
 }

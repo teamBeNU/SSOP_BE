@@ -1,13 +1,12 @@
 package SSOP.ssop.domain;
 
-import SSOP.ssop.domain.card.Card;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +23,9 @@ public class User {
     private String password;
     private String email;
     private String social_type;
+
+    @ElementCollection
+    private List<String> saved_card_list;
 
     protected User() {};
 
@@ -51,6 +53,8 @@ public class User {
         this.password = password;
     }
 
+    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
+
     public long getUserId() {
         return userId;
     }
@@ -77,5 +81,9 @@ public class User {
 
     public String getSocial_type() {
         return social_type;
+    }
+
+    public List<String> getSave_list() {
+        return saved_card_list;
     }
 }
