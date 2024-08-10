@@ -1,11 +1,16 @@
 package SSOP.ssop.domain.card;
 
+import SSOP.ssop.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
 @Entity
 @Table(name = "card")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TemplateType")
+@Inheritance(strategy = InheritanceType.JOINED)       // @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "DTYPE")     // @DiscriminatorColumn(name = "TemplateType")
 public class Card {
 
     @Id
@@ -31,14 +36,19 @@ public class Card {
     // 공통 선택
     @Embedded
     private SNS card_SNS;
+
     private String card_email;
+
     private String card_MBTI;
+
     @Embedded
     private Music card_music;
+
     private String card_movie;
 
     protected Card() {}
 
+    @Builder
     public Card(String card_name, String card_introduction, String template, SNS card_SNS, String card_email, String card_MBTI, Music card_music, String card_movie) {
         if (card_name == null || card_name.isBlank() ||
                 card_introduction == null || card_introduction.isBlank() ||

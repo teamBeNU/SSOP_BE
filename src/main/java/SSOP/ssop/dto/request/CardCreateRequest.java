@@ -20,6 +20,7 @@ public class CardCreateRequest {
     private String card_movie;
 
     private CardStudentCreateRequest cardStudentCreateRequest;
+    private CardWorkerCreateRequest cardWorkerCreateRequest;
 
     public String getCard_name() {
         return card_name;
@@ -58,5 +59,9 @@ public class CardCreateRequest {
 
     public CardStudentCreateRequest getCardStudentCreateRequest() {
         return cardStudentCreateRequest;
+    }
+
+    public CardWorkerCreateRequest getCardWorkerCreateRequest() {
+        return cardWorkerCreateRequest;
     }
 }
