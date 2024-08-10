@@ -18,12 +18,14 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private CardStudentRepository cardStudentRepository;
+    private CardWorkerRepository cardWorkerRepository;
 
 
     @Autowired
-    public CardService(CardRepository cardRepository, CardStudentRepository cardStudentRepository) {
+    public CardService(CardRepository cardRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository) {
         this.cardRepository = cardRepository;
         this.cardStudentRepository = cardStudentRepository;
+        this.cardWorkerRepository = cardWorkerRepository;
     }
 
     @Transactional
@@ -32,6 +34,9 @@ public class CardService {
         switch (request.getTemplate()) {
             case "STUDENT":
                 saveStudentCard(request.getCardStudentCreateRequest(), request);
+                break;
+            case "WORKER":
+                saveWorkerCard(request.getCardWorkerCreateRequest(), request);
                 break;
             default:
                 throw new IllegalArgumentException("템플릿 없음");
@@ -61,4 +66,22 @@ public class CardService {
         cardStudentRepository.save(card);
     }
 
+    private void saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request) {
+        CardWorker card = new CardWorker(
+                request.getCard_name(),
+                request.getCard_introduction(),
+                request.getTemplate(),
+                request.getCard_SNS(),
+                request.getCard_email(),
+                request.getCard_MBTI(),
+                request.getCard_music(),
+                request.getCard_movie(),
+                workerRequest.getCard_tel(),
+                workerRequest.getCard_birth(),
+                workerRequest.getCard_bSecrete(),
+                workerRequest.getCard_job()
+        );
+
+        cardWorkerRepository.save(card);
+    }
 }
