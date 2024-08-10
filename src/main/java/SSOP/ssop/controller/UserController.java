@@ -1,6 +1,7 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.LoginDto;
 import SSOP.ssop.dto.UserDto;
 import SSOP.ssop.service.UserService;
 import jakarta.transaction.Transactional;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -22,8 +24,14 @@ public class UserController {
 
     // 유저 생성
     @PostMapping("/join")
-    public void saveUser(@RequestBody User user) {
-        userService.saveUser(user);
+    public Map<String, Object> saveUser(@RequestBody User user) {
+        return userService.saveUser(user);
+    }
+
+    // 자체 로그인
+    @PostMapping("/login")
+    public Map<String, Object> login(@RequestBody LoginDto loginDto) {
+        return userService.login(loginDto);
     }
 
     // 모든 유저 정보 출력
@@ -34,13 +42,8 @@ public class UserController {
 
     // 특정 유저 정보 출력
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("userId") long userId) {
-        UserDto userDto = userService.getUser(userId);
-        if (userDto != null) {
-            return ResponseEntity.ok(userDto);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public Map<String, Object> getUser(@PathVariable("userId") long userId) {
+        return userService.getUser(userId);
     }
 
     // 유저 password 수정
