@@ -1,6 +1,5 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.domain.card.CardWorker;
 import SSOP.ssop.dto.request.CardCreateRequest;

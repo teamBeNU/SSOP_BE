@@ -1,9 +1,7 @@
 package SSOP.ssop.dto.request;
 
-//import SSOP.ssop.domain.card.CardTemplate;
 import SSOP.ssop.domain.card.Music;
 import SSOP.ssop.domain.card.SNS;
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class CardCreateRequest {
 
