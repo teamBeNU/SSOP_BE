@@ -17,28 +17,28 @@ public class User {
     private long userId;
 
     private String user_name;
+    private String email;
+    private String password;
     private LocalDate user_birth;
     private String user_phone;
-    private String password;
-    private String email;
     private String social_type;
 
     // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
     public User(){};
 
-    public User(String user_name, String user_birth, String user_phone, String password, String email) {
-        if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
+    public User(String user_name, String email, String password, String user_birth, String user_phone) {
+        if( user_name == null || email == null || password == null || user_birth == null || user_phone == null ){
             throw new IllegalArgumentException();
         }
         this.user_name = user_name;
+        this.email = email;
+        this.password = password;
 
         // String 타입의 user_birth를 LocalDate로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.user_birth = LocalDate.parse(user_birth, formatter);
 
         this.user_phone = user_phone;
-        this.password = password;
-        this.email = email;
         this.social_type = "default";
     }
 
