@@ -10,10 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,12 +69,14 @@ public class UserService {
     }
 
     // 특정 유저 정보 출력
-    public Map<String, Object> getUser(long userId) {
+    public ResponseEntity<?> getUser(long userId) {
         Optional<User> user = userRepository.findByUserId(userId);
         if (user.isPresent()) {
-            return Collections.singletonMap("user", new UserDto(user.get()));
+            // UserDto 객체를 직접 반환
+            return ResponseEntity.ok(new UserDto(user.get()));
         } else {
-            return Collections.singletonMap("message", "존재하지 않는 사용자입니다.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
         }
     }
 
@@ -109,7 +108,7 @@ public class UserService {
         return ResponseEntity.ok().body(Map.of("message", "전화번호가 성공적으로 변경되었습니다."));
     }
 
-    // 유저 이메일 수정
+    // 유저 이름 & 생년월일 수정
     public ResponseEntity<?> updateNameBirth(UserDto userDto) {
         if (!userRepository.existsById(userDto.getUserId())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -125,10 +124,17 @@ public class UserService {
     }
 
     // userId로 유저 삭제
-    public void deleteUser(long userId) {
-        User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+    public ResponseEntity<Map<String, String>> deleteUser(long userId) {
+        Optional<User> userOptional = userRepository.findByUserId(userId);
 
-        userRepository.delete(user);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            userRepository.delete(user);
+            return ResponseEntity.ok(Map.of("message", "탈퇴되었습니다.."));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
+        }
     }
+
 }
