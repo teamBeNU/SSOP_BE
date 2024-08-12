@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,8 +24,10 @@ public class User {
     private String email;
     private String social_type;
 
-    // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
-    public User(){};
+    @ElementCollection
+    private List<String> saved_card_list;
+
+    protected User() {};
 
     public User(String user_name, String user_birth, String user_phone, String password, String email) {
         if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
@@ -42,9 +45,15 @@ public class User {
         this.social_type = "default";
     }
 
+    public User(long userId) {
+        this.userId = userId;
+    }
+
     public void updatePassword(String password){
         this.password = password;
     }
+
+    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
 
     public long getUserId() {
         return userId;
@@ -85,4 +94,8 @@ public class User {
 //            inverseJoinColumns = {@JoinColumn(name="")})
 //    private Set<TeamSpMember> authority;
 //    )
+
+    public List<String> getSaved_card_list() {
+        return saved_card_list;
+    }
 }
