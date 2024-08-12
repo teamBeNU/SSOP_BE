@@ -10,6 +10,7 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,6 +122,10 @@ public class CardService {
     public void updateMemo(long card_id, long userId, String memo) {
         Card card = cardRepository.findById(card_id)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        if (memo == null) {
+            throw new IllegalArgumentException("메모는 null일 수 없습니다.");
+        }
 
         card.setMemo(memo);
         cardRepository.save(card);
