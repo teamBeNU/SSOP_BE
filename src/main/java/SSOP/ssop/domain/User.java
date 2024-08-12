@@ -83,6 +83,18 @@ public class User {
         return social_type;
     }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+//    @ManyToMany
+//    @JoinTable(
+//            name = "TeamSpMember",
+//            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}
+//            inverseJoinColumns = {@JoinColumn(name="")})
+//    private Set<TeamSpMember> authority;
+//    )
+
     public List<String> getSaved_card_list() {
         return saved_card_list;
     }
