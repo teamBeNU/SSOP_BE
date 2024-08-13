@@ -24,7 +24,11 @@ dependencies {
 	implementation 'org.projectlombok:lombok:1.18.24'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'com.auth0:java-jwt:4.2.1' // JWT
+
+	//webclient
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
