@@ -1,12 +1,13 @@
 package SSOP.ssop.domain.TeamSp;
 
 import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class TeamSp {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
@@ -27,20 +28,30 @@ public class TeamSp {
     @Column(name = "inviteCode")
     private int inviteCode;
 
+    @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TeamSpMember> teamSpMembers = new HashSet<>();
+
     @Embedded
     private StudentOptional studentOptional;
 
     @Embedded
     private WorkerOptional workerOptional;
 
-    @OneToOne(mappedBy = "teamSp", cascade = CascadeType.ALL)
-    private TeamSpMember teamSpMember;
-
     // 기본 생성자
     protected TeamSp() {}
 
+    // 전체 필드를 초기화 생성자
+    public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
+                  StudentOptional studentOptional, WorkerOptional workerOptional) {
+        this.team_name = team_name;
+        this.team_comment = team_comment;
+        this.isTemplate = isTemplate;
+        this.template = template;
+        setStudentOptional(studentOptional);
+        setWorkerOptional(workerOptional);
+    }
+
     // Template 값에 따라 변수 반환
-    // Template이 "student"일 때만 StudentOptional을 반환
     public StudentOptional getStudentOptional() {
         if ("student".equals(template)) {
             return (studentOptional != null && studentOptional.checkNullValue()) ? null : studentOptional;
@@ -58,22 +69,11 @@ public class TeamSp {
 
     // 각 파일에 모두 null값이면 변수값 null로 반환
     public void setStudentOptional(StudentOptional studentOptional) {
-        this.studentOptional = studentOptional.checkNullValue() ? null : studentOptional;
+        this.studentOptional = studentOptional != null && studentOptional.checkNullValue() ? null : studentOptional;
     }
 
     public void setWorkerOptional(WorkerOptional workerOptional) {
-        this.workerOptional = workerOptional.checkNullValue() ? null : workerOptional;
-    }
-
-    // 전체 필드를 초기화 생성자
-    public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
-                  StudentOptional studentOptional, WorkerOptional workerOptional) {
-        this.team_name = team_name;
-        this.team_comment = team_comment;
-        this.isTemplate = isTemplate;
-        this.template = template;
-        setStudentOptional(studentOptional);
-        setWorkerOptional(workerOptional);
+        this.workerOptional = workerOptional != null && workerOptional.checkNullValue() ? null : workerOptional;
     }
 
     public void updateTeamName(String team_name) {
@@ -128,11 +128,11 @@ public class TeamSp {
         return inviteCode;
     }
 
-    public TeamSpMember getTeamSpMember() {
-        return teamSpMember;
+    public Set<TeamSpMember> getTeamSpMembers() {
+        return teamSpMembers;
     }
 
-    public void setTeamSpMember(TeamSpMember teamSpMember) {
-        this.teamSpMember = teamSpMember;
+    public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
+        this.teamSpMembers = teamSpMembers;
     }
 }

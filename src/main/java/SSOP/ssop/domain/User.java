@@ -1,11 +1,16 @@
 package SSOP.ssop.domain;
 
+import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -13,7 +18,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("user_id")
     private long userId;
 
     private String user_name;
@@ -22,6 +26,9 @@ public class User {
     private LocalDate user_birth;
     private String user_phone;
     private String social_type;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TeamSpMember> teamSpMembers = new HashSet<>();
 
     // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
     public User(){};
@@ -46,6 +53,11 @@ public class User {
         this.password = password;
     }
 
+    public void enterTeamSp(TeamSp teamSp) {
+        this.teamSpMembers.add(new TeamSpMember(teamSp, this));
+    }
+
+    // Getter & Setter
     public long getUserId() {
         return userId;
     }
@@ -90,11 +102,12 @@ public class User {
         this.user_birth = user_birth;
     }
 
-    //    @ManyToMany
-//    @JoinTable(
-//            name = "TeamSpMember",
-//            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}
-//            inverseJoinColumns = {@JoinColumn(name="")})
-//    private Set<TeamSpMember> authority;
-//    )
+    public Set<TeamSpMember> getTeamSpMembers() {
+        return teamSpMembers;
+    }
+
+    public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
+        this.teamSpMembers = teamSpMembers;
+    }
+
 }
