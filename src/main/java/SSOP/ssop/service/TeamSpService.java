@@ -1,21 +1,26 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.dto.TeamSpMemberDto;
 import SSOP.ssop.repository.TeamSpRepository;
+import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-import java.util.Random;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamSpService {
 
     @Autowired
     private TeamSpRepository teamSpRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
@@ -47,11 +52,6 @@ public class TeamSpService {
         return teamSpRepository.findById(team_id).orElse(null);
     }
 
-    // 특정 id 팀스페이스 참여 정보 조회
-    public Optional<TeamSpMember> getTeamMemberById(long team_id) {
-        return teamSpMemberRepository.findById(team_id);
-    }
-
     // 팀스페이스 이름 수정
     public TeamSp updateTeamSp(long id, TeamSp teamSp) {
         TeamSp existingTeamSp = teamSpRepository.findById(id)
@@ -65,5 +65,78 @@ public class TeamSpService {
         if (teamSpRepository.existsById(team_id)) {
             teamSpRepository.deleteById(team_id);
         }
+    }
+
+    // 팀스페이스 입장
+    public void EnterTeamSp(int inviteCode, long userId) {
+        // 1. 팀스페이스 정보 가져오기
+        TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
+
+        // 2. 유저 정보 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        // 3. 이미 입장한 사용자인지 종복 확인
+        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeam_id(), userId);
+        if (existingMembership.isPresent()) {
+            throw new IllegalArgumentException("이미 입장한 팀스페이스입니다.");
+        }
+
+        // 4. 유저 정보에서 팀스페이스 추가
+        user.enterTeamSp(teamSp);
+
+        // 5. 팀스페이스 멤버 저장
+        teamSpMemberRepository.saveAll(user.getTeamSpMembers());
+    }
+
+    // 팀스페이스 참여 정보 조회
+    public List<TeamSpMemberDto> getTeamMembers() {
+        // 모든 팀스페이스의 멤버 정보를 조회
+        List<TeamSpMember> members = teamSpMemberRepository.findAll();
+        // 팀 ID와 사용자 ID 목록으로 그룹화
+        Map<Long, List<Long>> teamMembersMap = members.stream()
+                .collect(Collectors.groupingBy(
+                        member -> member.getTeamSp().getTeam_id(),
+                        Collectors.mapping(
+                                member -> member.getUser().getUserId(),
+                                Collectors.toList()
+                        )
+                ));
+        // 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
+        return teamMembersMap.entrySet().stream()
+                .map(entry -> new TeamSpMemberDto(
+                        String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
+                        entry.getValue()                 // 사용자 ID 목록
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // 특정 id 팀스페이스 참여 정보 조회
+    public Optional<TeamSpMemberDto> getTeamMemberById(long teamId) {
+        // 팀스페이스의 멤버 정보를 조회
+        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(teamId);
+        // 멤버 정보가 없으면 빈 Optional 반환
+        if (members.isEmpty()) {
+            return Optional.empty();
+        }
+        // 팀스페이스 ID와 사용자 ID 목록으로 변환
+        List<Long> userIds = members.stream()
+                .map(member -> member.getUser().getUserId())
+                .collect(Collectors.toList());
+        // DTO 객체 생성
+        TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
+                String.valueOf(teamId),
+                userIds.isEmpty() ? Collections.emptyList() : userIds // 빈 배열로 반환
+        );
+        return Optional.of(teamSpMemberDto);
+    }
+
+    // 팀스페이트 나가기
+    public void leaveTeamSp(long team_id, long userId) {
+        TeamSpMember membership = teamSpMemberRepository.findByTeamSpIdAndUserId(team_id, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Not a member of this team space"));
+
+        teamSpMemberRepository.delete(membership);
     }
 }

@@ -1,5 +1,6 @@
 package SSOP.ssop.domain.TeamSp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -27,9 +28,6 @@ public class TeamSp {
 
     @Column(name = "inviteCode")
     private int inviteCode;
-
-    @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TeamSpMember> teamSpMembers = new HashSet<>();
 
     @Embedded
     private StudentOptional studentOptional;
@@ -126,13 +124,5 @@ public class TeamSp {
 
     public int getInviteCode() {
         return inviteCode;
-    }
-
-    public Set<TeamSpMember> getTeamSpMembers() {
-        return teamSpMembers;
-    }
-
-    public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
-        this.teamSpMembers = teamSpMembers;
     }
 }

@@ -13,6 +13,12 @@ import java.util.Set;
 
 @Repository
 public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long> {
+    
+    // 팀스페이스 입장
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamSpId AND t.user.userId = :userId")
     Optional<TeamSpMember> findByTeamSpIdAndUserId(@Param("teamSpId") long teamSpId, @Param("userId") long userId);
+    
+    // 팀스페이스 참여 정보 조회
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamId")
+    List<TeamSpMember> findByTeamSpId(@Param("teamId") long teamId);
 }
