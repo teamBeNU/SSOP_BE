@@ -26,7 +26,8 @@ public class TeamSpService {
     private TeamSpMemberRepository teamSpMemberRepository;
 
     // 팀스페이스 생성
-    public void saveTeamSp(TeamSp teamSp) {
+    public void saveTeamSp(TeamSp teamSp, long hostId) {
+        teamSp.setHostId(hostId); // 호스트 ID 저장
         teamSp.setInviteCode(createInviteCode()); // 초대코드 자동 생성
         teamSpRepository.save(teamSp);
     }
@@ -77,16 +78,21 @@ public class TeamSpService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-        // 3. 이미 입장한 사용자인지 종복 확인
+        // 3. 호스트가 아닌지 확인
+        if (teamSp.getHostId() == userId) {
+            throw new IllegalArgumentException("호스트는 팀스페이스에 입장할 수 없습니다.");
+        }
+
+        // 4. 이미 입장한 사용자인지 종복 확인
         Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeam_id(), userId);
         if (existingMembership.isPresent()) {
             throw new IllegalArgumentException("이미 입장한 팀스페이스입니다.");
         }
 
-        // 4. 유저 정보에서 팀스페이스 추가
+        // 5. 유저 정보에서 팀스페이스 추가
         user.enterTeamSp(teamSp);
 
-        // 5. 팀스페이스 멤버 저장
+        // 6. 팀스페이스 멤버 저장
         teamSpMemberRepository.saveAll(user.getTeamSpMembers());
     }
 

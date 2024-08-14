@@ -31,8 +31,14 @@ public class TeamSpController {
     // 팀스페이스 생성
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp) {
+
+        // 현재 인증된 사용자 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        long userId = ((UserDetail) userDetails).getUser().getUserId();
+
         try {
-            teamSpService.saveTeamSp(teamSp);
+            teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("message", "팀스페이스 생성 완료"));
         } catch (Exception e) {
@@ -66,6 +72,19 @@ public class TeamSpController {
             return ResponseEntity.noContent().build(); // 204 No Content
         } else {
             return ResponseEntity.ok(teams); // 200 OK
+        }
+    }
+
+    // 특정 팀스페이스 조회
+    @GetMapping
+    public ResponseEntity<?> getTeamById(@RequestParam("team_id") long teamId) {
+        TeamSp teamSp = teamSpService.getTeamById(teamId);
+
+        if (teamSp != null) {
+            return ResponseEntity.ok(teamSp);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "팀스페이스를 찾을 수 없습니다."));
         }
     }
 

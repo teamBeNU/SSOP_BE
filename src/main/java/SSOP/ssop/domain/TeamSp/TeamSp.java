@@ -1,10 +1,10 @@
 package SSOP.ssop.domain.TeamSp;
 
+import SSOP.ssop.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class TeamSp {
@@ -13,6 +13,8 @@ public class TeamSp {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
     private long team_id;
+
+    private long hostId; // 호스트 ID 저장
 
     @Column(name = "team_name")
     private String team_name;
@@ -34,6 +36,10 @@ public class TeamSp {
 
     @Embedded
     private WorkerOptional workerOptional;
+
+    @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<TeamSpMember> members;
 
     // 기본 생성자
     protected TeamSp() {}
@@ -78,8 +84,9 @@ public class TeamSp {
         this.team_name = team_name;
     }
 
-    public void setInviteCode(int inviteCode) {
-        this.inviteCode = inviteCode;
+    // 팀스페이스 유저 퇴장
+    public void removeMember(User user) {
+        members.removeIf(member -> member.getUser().equals(user));
     }
 
     public long getTeam_id() {
@@ -88,6 +95,14 @@ public class TeamSp {
 
     public void setTeam_id(long team_id) {
         this.team_id = team_id;
+    }
+
+    public long getHostId() {
+        return hostId;
+    }
+
+    public void setHostId(long hostId) {
+        this.hostId = hostId;
     }
 
     public String getTeam_name() {
@@ -124,5 +139,17 @@ public class TeamSp {
 
     public int getInviteCode() {
         return inviteCode;
+    }
+
+    public void setInviteCode(int inviteCode) {
+        this.inviteCode = inviteCode;
+    }
+
+    public List<TeamSpMember> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<TeamSpMember> members) {
+        this.members = members;
     }
 }
