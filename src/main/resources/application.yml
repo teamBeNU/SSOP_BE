@@ -20,5 +20,5 @@ spring:
 jwt:
   header: Authorization
   secret: c3d1LWRpZ2l0YWxtZWRpYS0yMDI0LXNzb3AtYmFja2VuZC1zcHJpbmctYm9vdC1qd3Qtc2VjcmV0LWtleS10b2tlbi1zc29w
-  # swu-digital-media-2024-ssop ~~~~ 인코딩한 비밀 키랑 연동 > HS512 알고리즘 사용 > 64byte
+  # swu-digital-media-2024-ssop ~~~ 인코딩한 비밀 키랑 연동 > HS512 알고리즘 사용 > 64byte
   token-validity-in-seconds: 86400    # 초, 24시간

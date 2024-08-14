@@ -1,5 +1,7 @@
 package SSOP.ssop.domain;
 
+import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,6 +9,9 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,22 +23,28 @@ public class User {
     private long userId;
 
     private String user_name;
+    private String email;
+    private String password;
     private LocalDate user_birth;
     private String user_phone;
-    private String password;
-    private String email;
     private String social_type;
 
     @ElementCollection
     private List<String> saved_card_list;
 
-    protected User() {};
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TeamSpMember> teamSpMembers = new HashSet<>();
 
-    public User(String user_name, String user_birth, String user_phone, String password, String email) {
-        if( user_name == null || user_birth == null || user_phone == null || password == null || email == null ){
+    // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
+    public User(){};
+
+    public User(String user_name, String email, String password, String user_birth, String user_phone) {
+        if( user_name == null || email == null || password == null || user_birth == null || user_phone == null ){
             throw new IllegalArgumentException();
         }
         this.user_name = user_name;
+        this.email = email;
+        this.password = password;
 
         // String 타입의 user_birth를 LocalDate로 변환
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -55,6 +66,11 @@ public class User {
 
     public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
 
+    public void enterTeamSp(TeamSp teamSp) {
+        this.teamSpMembers.add(new TeamSpMember(teamSp, this));
+    }
+
+    // Getter & Setter
     public long getUserId() {
         return userId;
     }
@@ -87,15 +103,24 @@ public class User {
         this.password = password;
     }
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "TeamSpMember",
-//            joinColumns = {@JoinColumn(name="userId", referencedColumnName = "userId")}
-//            inverseJoinColumns = {@JoinColumn(name="")})
-//    private Set<TeamSpMember> authority;
-//    )
-
-    public List<String> getSaved_card_list() {
-        return saved_card_list;
+    public void setUser_phone(String user_phone) {
+        this.user_phone = user_phone;
     }
+
+    public void setUser_name(String user_name) {
+        this.user_name = user_name;
+    }
+
+    public void setUser_birth(LocalDate user_birth) {
+        this.user_birth = user_birth;
+    }
+
+    public Set<TeamSpMember> getTeamSpMembers() {
+        return teamSpMembers;
+    }
+
+    public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
+        this.teamSpMembers = teamSpMembers;
+    }
+
 }
