@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("user_id")
     private long userId;
 
     private String user_name;
@@ -26,6 +28,9 @@ public class User {
     private LocalDate user_birth;
     private String user_phone;
     private String social_type;
+
+    @ElementCollection
+    private List<String> saved_card_list;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TeamSpMember> teamSpMembers = new HashSet<>();
@@ -46,12 +51,20 @@ public class User {
         this.user_birth = LocalDate.parse(user_birth, formatter);
 
         this.user_phone = user_phone;
+        this.password = password;
+        this.email = email;
         this.social_type = "default";
+    }
+
+    public User(long userId) {
+        this.userId = userId;
     }
 
     public void updatePassword(String password){
         this.password = password;
     }
+
+    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
 
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this));
