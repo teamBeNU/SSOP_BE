@@ -54,11 +54,16 @@ public class TeamSpService {
     }
 
     // 팀스페이스 이름 수정
-    public TeamSp updateTeamSp(long id, TeamSp teamSp) {
+    public TeamSp updateTeamSp(long id, TeamSp teamSp, long userId) {
         TeamSp existingTeamSp = teamSpRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
-        existingTeamSp.updateTeamName(teamSp.getTeam_name());
-        return teamSpRepository.save(existingTeamSp);
+
+        if (existingTeamSp.getHostId() == userId) {
+            existingTeamSp.updateTeamName(teamSp.getTeam_name());
+            return teamSpRepository.save(existingTeamSp);
+        } else {
+            throw new RuntimeException("호스트만 팀스페이스 이름을 수정할 수 있습니다.");
+        }
     }
 
     // 팀스페이스 삭제(호스트), 퇴장(참여자)

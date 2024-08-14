@@ -116,12 +116,26 @@ public class TeamSpController {
     // 팀스페이스 이름 수정 (team_id를 쿼리 파라미터로)
     @PatchMapping
     public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp) {
-        TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp);
-        if (updatedTeamSp != null) {
+
+        // 현재 인증된 사용자 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        long userId = ((UserDetail) userDetails).getUser().getUserId();
+
+        try {
+            TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
-        } else {
+        } catch (IllegalArgumentException e) {
+            // 팀스페이스를 찾을 수 없는 경우
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (RuntimeException e) {
+            // 권한이 없는 경우 또는 기타 런타임 예외
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "팀스페이스 업데이트 실패"));
+                    .body(Map.of("message", "팀스페이스 업데이트 실패: " + e.getMessage()));
         }
     }
 
