@@ -2,6 +2,7 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.dto.EnterTeamSpDto;
 import SSOP.ssop.dto.TeamSpMemberDto;
 import SSOP.ssop.service.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class TeamSpController {
 
     // 팀 스페이스 입장
     @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody TeamSpMemberDto teamSpMemberDto) {
+    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto) {
 
         // 현재 인증된 사용자 정보를 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -50,7 +51,7 @@ public class TeamSpController {
         long userId = ((UserDetail) userDetails).getUser().getUserId();
 
         try {
-            teamSpService.EnterTeamSp(teamSpMemberDto.getInviteCode(), userId);
+            teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));

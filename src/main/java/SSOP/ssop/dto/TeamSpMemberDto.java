@@ -1,5 +1,7 @@
 package SSOP.ssop.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -7,7 +9,6 @@ public class TeamSpMemberDto {
     private String teamId;
     private List<Long> userIds;
 
-    private int inviteCode;
 
     // 기본 생성자
     public TeamSpMemberDto() {
@@ -35,13 +36,5 @@ public class TeamSpMemberDto {
 
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
-    }
-
-    public int getInviteCode() {
-        return inviteCode;
-    }
-
-    public void setInviteCode(int inviteCode) {
-        this.inviteCode = inviteCode;
     }
 }
