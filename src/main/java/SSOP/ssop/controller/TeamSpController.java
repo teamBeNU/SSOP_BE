@@ -113,6 +113,22 @@ public class TeamSpController {
         }
     }
 
+    // 유저별 참여 중인 팀스페이스 정보 조회
+    @GetMapping("user")
+    public ResponseEntity<?> getTeamMemberByUserId(@RequestParam("userId") long userId) {
+        try {
+            List<TeamSpMemberDto> teamMemberDtos = teamSpService.getTeamMemberByUserId(userId);
+
+            if (teamMemberDtos.isEmpty()) {
+                return ResponseEntity.noContent().build(); // 참여 중인 팀스페이스가 없는 경우
+            }
+            return ResponseEntity.ok(teamMemberDtos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "팀스페이스 정보를 조회하는 도중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
     // 팀스페이스 이름 수정 (team_id를 쿼리 파라미터로)
     @PatchMapping
     public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp) {

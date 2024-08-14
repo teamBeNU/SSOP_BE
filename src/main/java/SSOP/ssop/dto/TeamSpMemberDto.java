@@ -1,12 +1,13 @@
 package SSOP.ssop.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Collections;
 import java.util.List;
 
 public class TeamSpMemberDto {
     private String teamId;
+    private String teamName;
     private List<Long> userIds;
 
 
@@ -16,8 +17,9 @@ public class TeamSpMemberDto {
     }
 
     // 모든 필드를 인자로 받는 생성자
-    public TeamSpMemberDto(String teamId, List<Long> userIds) {
+    public TeamSpMemberDto(String teamId, String teamName, List<Long> userIds) {
         this.teamId = teamId;
+        this.teamName = teamName;
         this.userIds = userIds;
     }
 
@@ -28,6 +30,14 @@ public class TeamSpMemberDto {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
     public List<Long> getUserIds() {
