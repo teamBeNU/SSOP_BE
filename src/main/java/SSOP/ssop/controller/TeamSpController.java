@@ -128,11 +128,19 @@ public class TeamSpController {
     // 팀스페이스 삭제 (team_id를 쿼리 파라미터로)
     @DeleteMapping
     public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") long teamId) {
-        if (teamSpService.getTeamById(teamId) != null) {
-            teamSpService.deleteTeamSp(teamId);
+
+        // 현재 인증된 사용자 정보를 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        long userId = ((UserDetail) userDetails).getUser().getUserId();
+
+        try {
+            teamSpService.deleteTeamSp(teamId, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "팀스페이스를 찾을 수 없습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "팀스페이스를 삭제하지 못하였습니다."));
         }
     }
 

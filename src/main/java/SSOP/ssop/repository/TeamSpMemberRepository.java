@@ -1,6 +1,8 @@
 package SSOP.ssop.repository;
 
+import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.TeamSpMemberDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +23,11 @@ public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long
     // 팀스페이스 참여 정보 조회
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamId")
     List<TeamSpMember> findByTeamSpId(@Param("teamId") long teamId);
+
+    // 팀스페이스에서 나가기
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp = :teamSp AND t.user = :user")
+    Optional<TeamSpMember> findByTeamSpAndUser(@Param("teamSp") TeamSp teamSp, @Param("user") User user);
+
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp = :teamSp AND t.user.userId = :userId")
+    List<TeamSpMember> findByTeamSpAndUserId(@Param("teamSp") TeamSp teamSp, @Param("userId") long userId);
 }

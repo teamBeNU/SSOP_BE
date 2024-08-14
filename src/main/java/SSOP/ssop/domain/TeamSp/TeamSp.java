@@ -85,8 +85,9 @@ public class TeamSp {
     }
 
     // 팀스페이스 유저 퇴장
-    public void removeMember(User user) {
-        members.removeIf(member -> member.getUser().equals(user));
+    public void removeMember(TeamSpMember member) {
+        this.members.remove(member);
+        member.setTeamSp(null); // 참조를 제거
     }
 
     public long getTeam_id() {
