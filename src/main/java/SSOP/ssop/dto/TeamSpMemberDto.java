@@ -7,6 +7,8 @@ public class TeamSpMemberDto {
     private String teamId;
     private List<Long> userIds;
 
+    private int inviteCode;
+
     // 기본 생성자
     public TeamSpMemberDto() {
         this.userIds = Collections.emptyList(); // 빈 배열로 초기화
@@ -33,5 +35,13 @@ public class TeamSpMemberDto {
 
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
+    }
+
+    public int getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(int inviteCode) {
+        this.inviteCode = inviteCode;
     }
 }
