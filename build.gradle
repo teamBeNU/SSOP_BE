@@ -18,16 +18,13 @@ repositories {
 }
 
 dependencies {
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'	// Spring Boot test dependency
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Spring Data JPA 의존성 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.projectlombok:lombok:1.18.24'
 	runtimeOnly 'com.h2database:h2'
-//	runtimeOnly 'mysql:mysql-connector-java'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
-
-	// Spring Boot test dependency
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.auth0:java-jwt:4.2.1' // JWT
 }
 

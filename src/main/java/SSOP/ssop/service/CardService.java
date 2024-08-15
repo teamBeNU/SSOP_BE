@@ -28,21 +28,21 @@ public class CardService {
     }
 
     @Transactional
-    public void saveCard(CardCreateRequest request) {
+    public void saveCard(CardCreateRequest request, Long user_id) {
 
         switch (request.getTemplate()) {
             case "STUDENT":
-                saveStudentCard(request.getCardStudentCreateRequest(), request);
+                saveStudentCard(request.getCardStudentCreateRequest(), request, user_id);
                 break;
             case "WORKER":
-                saveWorkerCard(request.getCardWorkerCreateRequest(), request);
+                saveWorkerCard(request.getCardWorkerCreateRequest(), request, user_id);
                 break;
             default:
                 throw new IllegalArgumentException("템플릿 없음");
         }
     }
 
-    private void saveStudentCard(CardStudentCreateRequest studentRequest, CardCreateRequest request) {
+    private void saveStudentCard(CardStudentCreateRequest studentRequest, CardCreateRequest request, Long user_id) {
         CardStudent card = new CardStudent(
                 request.getCard_name(),
                 request.getCard_introduction(),
@@ -62,10 +62,11 @@ public class CardService {
                 studentRequest.getCard_student_role()
         );
 
-        cardStudentRepository.save(card);
+        card.setUser_id(user_id); // 사용자 ID 설정
+        cardStudentRepository.save(card); // 카드 저장
     }
 
-    private void saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request) {
+    private void saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request, Long user_id) {
         CardWorker card = new CardWorker(
                 request.getCard_name(),
                 request.getCard_introduction(),
@@ -81,6 +82,7 @@ public class CardService {
                 workerRequest.getCard_job()
         );
 
-        cardWorkerRepository.save(card);
+        card.setUser_id(user_id); // 사용자 ID 설정
+        cardWorkerRepository.save(card); // 카드 저장
     }
 }
