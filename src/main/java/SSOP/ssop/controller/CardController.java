@@ -24,49 +24,36 @@ public class CardController {
         this.cardService = cardService;
     }
 
-//    @PostMapping("/create")
-//    public void saveCard(@RequestBody CardCreateRequest request) {
-////        // Authentication 객체에서 사용자 정보 추출
-////        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-////        String userId = userDetails.getUsername();
-//
-////        cardService.saveCard(request);
-//
-//        // 현재 인증된 사용자 정보를 가져오기
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        Object principal = authentication.getPrincipal();
-//
-//        UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-//
-//        Long authenticatedUserId = userDetail.getUser().getUserId();
-//
-//        cardService.saveCard(request, authenticatedUserId);
-//
-//
-//
-////        // 인증된 사용자 ID와 요청된 사용자 ID가 일치하는지 확인
-////        if (authenticatedUserId.equals(userId)) {
-////            userDto.setUserId(userId);
-////            return userService.updatePhone(userDto);
-////        } else {
-////            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("message", "권한이 없습니다."));
-////        }
-//    }
-
     @PostMapping("/create")
-    public ResponseEntity<String> saveCard(@RequestBody CardCreateRequest request) {
+    public ResponseEntity<?> saveCard(@RequestBody CardCreateRequest request) {
+        try {
+            // 현재 인증된 사용자의 정보를 가져옴
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    // 현재 인증된 사용자의 정보를 가져옴
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserDetail userDetail = (UserDetail) authentication.getPrincipal();
+            // 인증 정보가 없을 경우 처리
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("code", 401, "message", "사용자 인증 필요"));
+            }
 
-    // 인증된 사용자의 userId 가져오기
-    Long authenticatedUserId = userDetail.getUser().getUserId();
+            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
 
-    // 카드 생성 서비스 호출
-    cardService.saveCard(request, authenticatedUserId);
+            // 인증된 사용자의 userId 가져오기
+            Long authenticatedUserId = userDetail.getUser().getUserId();
 
-    return ResponseEntity.ok("Card created successfully");
-}
+            // 카드 생성 서비스 호출
+            boolean isSaved = cardService.saveCard(request, authenticatedUserId);
 
+            // 카드 생성이 성공적으로 이루어졌는지 확인
+            if (isSaved) {
+                return ResponseEntity.ok(Map.of("code", 200, "message", "카드 생성 완료"));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("code", 400, "message", "카드 생성 실패"));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("code", 500, "message", "서버 오류 발생"));
+        }
+    }
 }

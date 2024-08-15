@@ -28,17 +28,22 @@ public class CardService {
     }
 
     @Transactional
-    public void saveCard(CardCreateRequest request, Long user_id) {
-
-        switch (request.getTemplate()) {
-            case "STUDENT":
-                saveStudentCard(request.getCardStudentCreateRequest(), request, user_id);
-                break;
-            case "WORKER":
-                saveWorkerCard(request.getCardWorkerCreateRequest(), request, user_id);
-                break;
-            default:
-                throw new IllegalArgumentException("템플릿 없음");
+    public boolean saveCard(CardCreateRequest request, Long user_id) {
+        try {
+            switch (request.getTemplate()) {
+                case "STUDENT":
+                    saveStudentCard(request.getCardStudentCreateRequest(), request, user_id);
+                    break;
+                case "WORKER":
+                    saveWorkerCard(request.getCardWorkerCreateRequest(), request, user_id);
+                    break;
+                default:
+                    throw new IllegalArgumentException("템플릿 없음");
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
