@@ -32,6 +32,7 @@ public class CardWorker extends Card {
             String card_name,
             String card_introduction,
             String template,
+            String card_cover,
             SNS card_SNS,
             String card_email,
             String card_MBTI,
@@ -42,7 +43,7 @@ public class CardWorker extends Card {
             Boolean card_bSecrete,
             String card_job
     ) {
-        super(card_name, card_introduction, template, card_SNS, card_email, card_MBTI, card_music, card_movie);
+        super(card_name, card_introduction, template, card_cover, card_SNS, card_email, card_MBTI, card_music, card_movie);
 
         if (card_tel == null || card_tel.isBlank() ||
         card_birth == null || card_bSecrete == null ||

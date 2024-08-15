@@ -33,7 +33,8 @@ public class Card {
     @Column(nullable = false)
     private String template;
 
-    //private String card_cover;
+    @Column(nullable = false)
+    private String card_cover;
 
     // 공통 선택
     @Embedded
@@ -51,16 +52,17 @@ public class Card {
     protected Card() {}
 
     @Builder
-    public Card(String card_name, String card_introduction, String template, SNS card_SNS, String card_email, String card_MBTI, Music card_music, String card_movie) {
+    public Card(String card_name, String card_introduction, String template, String card_cover, SNS card_SNS, String card_email, String card_MBTI, Music card_music, String card_movie) {
         if (card_name == null || card_name.isBlank() ||
                 card_introduction == null || card_introduction.isBlank() ||
-                template == null) {
+                template == null || card_cover == null) {
             throw new IllegalArgumentException();
         }
 
         this.card_name = card_name;
         this.card_introduction = card_introduction;
         this.template = template;
+        this.card_cover = card_cover;
         this.card_SNS = card_SNS;
         this.card_email = card_email;
         this.card_MBTI = card_MBTI;
@@ -88,13 +90,9 @@ public class Card {
         return template;
     }
 
-    //    public CardTemplate getTemplate() {
-//        return template;
-//    }
-
-//    public String getCard_cover() {
-//        return card_cover;
-//    }
+    public String getCard_cover() {
+        return card_cover;
+    }
 
     public SNS getCard_SNS() {
         return card_SNS;
@@ -132,12 +130,12 @@ public class Card {
         this.card_introduction = card_introduction;
     }
 
-//    public void setTemplate(CardTemplate template) {
-//        this.template = template;
-//    }
-
     public void setTemplate(String template) {
         this.template = template;
+    }
+
+    public void setCard_cover(String card_cover) {
+        this.card_cover = card_cover;
     }
 
     public void setCard_SNS(SNS card_SNS) {

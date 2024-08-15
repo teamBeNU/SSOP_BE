@@ -10,6 +10,7 @@ public class CardCreateRequest {
     private String template;
 //    @JsonFormat(shape = JsonFormat.Shape.STRING)
 //    private CardTemplate template;
+    private String card_cover;
 
     private SNS card_SNS;
     private String card_email;
@@ -33,6 +34,10 @@ public class CardCreateRequest {
 //    }
     public String getTemplate() {
         return template;
+    }
+
+    public String getCard_cover() {
+        return card_cover;
     }
 
     public SNS getCard_SNS() {
