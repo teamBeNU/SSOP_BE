@@ -31,10 +31,10 @@ public class CardService {
     public boolean saveCard(CardCreateRequest request, Long user_id) {
         try {
             switch (request.getTemplate()) {
-                case "STUDENT":
+                case "student":
                     saveStudentCard(request.getCardStudentCreateRequest(), request, user_id);
                     break;
-                case "WORKER":
+                case "worker":
                     saveWorkerCard(request.getCardWorkerCreateRequest(), request, user_id);
                     break;
                 default:
