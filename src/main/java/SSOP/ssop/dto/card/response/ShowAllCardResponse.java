@@ -12,7 +12,7 @@ public class ShowAllCardResponse {
     private CardOptional cardOptional;
     private TemplateEssential templateEssential;
     private TemplateOptional templateOptional;
-
+/*
     public ShowAllCardResponse(Card card) {
         this.userId = card.getUser().getUserId();
         this.card_id = card.getCard_id();
@@ -24,7 +24,7 @@ public class ShowAllCardResponse {
 
         this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
         this. templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
-    }
+    }*/
 
     public long getUserId() {
         return userId;

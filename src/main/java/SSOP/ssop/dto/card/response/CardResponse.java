@@ -15,7 +15,7 @@ public class CardResponse {
     private TemplateOptional templateOptional;
 
     private String memo;
-
+/*
     public CardResponse(Card card) {
         this.userId = card.getUser().getUserId();
         this.card_id = card.getCard_id();
@@ -29,7 +29,7 @@ public class CardResponse {
         this.templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
 
         this.memo = card.getMemo();
-    }
+    }*/
 
     public long getUserId() {
         return userId;

@@ -1,16 +1,25 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.User;
+import SSOP.ssop.domain.card.Avatar;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.ShowAllCardResponse;
 import SSOP.ssop.domain.card.CardRepository;
 import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.domain.card.CardStudent;
+import SSOP.ssop.domain.card.CardWorker;
+import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
+import SSOP.ssop.dto.card.request.CardWorkerCreateRequest;
+import SSOP.ssop.repository.AvatarRepository;
+import SSOP.ssop.repository.CardStudentRepository;
+import SSOP.ssop.repository.CardWorkerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,23 +28,123 @@ public class CardService {
 
     @Autowired
     private CardRepository cardRepository;
+    private AvatarRepository avatarRepository;
+    private CardStudentRepository cardStudentRepository;
+    private CardWorkerRepository cardWorkerRepository;
 
     @Autowired
     private UserRepository userRepository;
 
-    public CardService(CardRepository cardRepository) {
+//    public CardService(CardRepository cardRepository) {
+//        this.cardRepository = cardRepository;
+//    }
+    @Autowired
+    public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository) {
         this.cardRepository = cardRepository;
+        this.avatarRepository = avatarRepository;
+        this.cardStudentRepository = cardStudentRepository;
+        this.cardWorkerRepository = cardWorkerRepository;
     }
 
     // 카드 생성
-    public void createCard(long userId, Card card) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+//    public void createCard(long userId, Card card) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
+//
+//        card.setUser(user);
+//        cardRepository.save(card);
+//    }
+    @Transactional
+    public boolean saveCard(CardCreateRequest request, Long user_id) {
+        try {
+            Card card;
+            switch (request.getCard_template()) {
+                case "student":
+                    card = saveStudentCard(request.getStudent(), request, user_id);
+                    break;
+                case "worker":
+                    card = saveWorkerCard(request.getWorker(), request, user_id);
+                    break;
+                default:
+                    throw new IllegalArgumentException("템플릿 없음");
+            }
 
-        card.setUser(user);
-        cardRepository.save(card);
+            // Avatar 설정 및 저장
+            if ("avatar".equals(request.getCard_cover())) {
+                Avatar avatar = saveAvatar(request.getAvatar());
+                avatar.setCard(card); // Avatar와 Card 연결
+                avatarRepository.save(avatar);
+                card.setAvatar(avatar); // Card에 Avatar 설정
+                cardRepository.save(card); // 변경된 Card 저장
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
+    private Avatar saveAvatar(Avatar avatarRequest) {
+        Avatar avatar = new Avatar();
+        avatar.setFace(avatarRequest.getFace());
+        avatar.setHair(avatarRequest.getHair());
+        avatar.setHairColor(avatarRequest.getHairColor());
+        avatar.setClothes(avatarRequest.getClothes());
+        avatar.setAcc(avatarRequest.getAcc());
+        avatar.setBg(avatarRequest.getBg());
+        avatar.setBgColor(avatarRequest.getBgColor());
+        return avatar;
+    }
+
+    private Card saveStudentCard(CardStudentCreateRequest studentRequest, CardCreateRequest request, Long user_id) {    // , String profileImageUrl
+        CardStudent card = new CardStudent(
+                request.getCard_name(),
+                request.getCard_introduction(),
+                request.getCard_template(),
+                request.getCard_cover(),
+                null, // Avatar를 나중에 설정
+                request.getCard_SNS(),
+                request.getCard_email(),
+                request.getCard_MBTI(),
+                request.getCard_music(),
+                request.getCard_movie(),
+                studentRequest.getCard_tel(),
+                studentRequest.getCard_birth(),
+                studentRequest.getCard_bSecrete(),
+                studentRequest.getCard_school(),
+                studentRequest.getCard_grade(),
+                studentRequest.getCard_student_major(),
+                studentRequest.getCard_student_club(),
+                studentRequest.getCard_student_role()
+        );
+        card.setUser_id(user_id); // 사용자 ID 설정
+        cardStudentRepository.save(card); // 카드 저장
+        return card;
+    }
+
+    private Card saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request, Long user_id) {   //, String profileImageUrl
+        CardWorker card = new CardWorker(
+                request.getCard_name(),
+                request.getCard_introduction(),
+                request.getCard_template(),
+                request.getCard_cover(),
+                null, // Avatar를 나중에 설정
+                request.getCard_SNS(),
+                request.getCard_email(),
+                request.getCard_MBTI(),
+                request.getCard_music(),
+                request.getCard_movie(),
+                workerRequest.getCard_tel(),
+                workerRequest.getCard_birth(),
+                workerRequest.getCard_bSecrete(),
+                workerRequest.getCard_job()
+        );
+        card.setUser_id(user_id); // 사용자 ID 설정
+        cardWorkerRepository.save(card); // 카드 저장
+        return card;
+    }
+/*
     // 모든 카드 조회
     public List<ShowAllCardResponse> getAllCards() {
         return cardRepository.findAll().stream()
@@ -129,5 +238,5 @@ public class CardService {
 
         card.setMemo(memo);
         cardRepository.save(card);
-    }
+    }*/
 }
