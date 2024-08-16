@@ -1,5 +1,6 @@
 package SSOP.ssop.dto.request;
 
+import SSOP.ssop.domain.card.Avatar;
 import SSOP.ssop.domain.card.Music;
 import SSOP.ssop.domain.card.SNS;
 
@@ -11,6 +12,8 @@ public class CardCreateRequest {
 //    @JsonFormat(shape = JsonFormat.Shape.STRING)
 //    private CardTemplate template;
     private String card_cover;
+    private Avatar avatar;
+    //private String profile_image_url;
 
     private SNS card_SNS;
     private String card_email;
@@ -18,8 +21,8 @@ public class CardCreateRequest {
     private Music card_music;
     private String card_movie;
 
-    private CardStudentCreateRequest cardStudentCreateRequest;
-    private CardWorkerCreateRequest cardWorkerCreateRequest;
+    private CardStudentCreateRequest student;
+    private CardWorkerCreateRequest worker;
 
     public String getCard_name() {
         return card_name;
@@ -29,9 +32,6 @@ public class CardCreateRequest {
         return card_introduction;
     }
 
-//    public CardTemplate getTemplate() {
-//        return template;
-//    }
     public String getTemplate() {
         return template;
     }
@@ -39,6 +39,14 @@ public class CardCreateRequest {
     public String getCard_cover() {
         return card_cover;
     }
+
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+//    public String getProfile_image_url() {
+//        return profile_image_url;
+//    }
 
     public SNS getCard_SNS() {
         return card_SNS;
@@ -60,11 +68,11 @@ public class CardCreateRequest {
         return card_movie;
     }
 
-    public CardStudentCreateRequest getCardStudentCreateRequest() {
-        return cardStudentCreateRequest;
+    public CardStudentCreateRequest getStudent() {
+        return student;
     }
 
-    public CardWorkerCreateRequest getCardWorkerCreateRequest() {
-        return cardWorkerCreateRequest;
+    public CardWorkerCreateRequest getWorker() {
+        return worker;
     }
 }

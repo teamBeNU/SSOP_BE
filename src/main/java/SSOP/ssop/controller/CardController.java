@@ -8,10 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -27,7 +25,10 @@ public class CardController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> saveCard(@RequestBody CardCreateRequest request) {
+    public ResponseEntity<?> saveCard(
+            @RequestBody CardCreateRequest request
+
+    ) {     // @RequestPart(name = "image", required = false) MultipartFile file
         try {
             // 현재 인증된 사용자의 정보를 가져옴
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -44,6 +45,7 @@ public class CardController {
             Long authenticatedUserId = userDetail.getUser().getUserId();
 
             // 카드 생성 서비스 호출
+//            boolean isSaved = cardService.saveCard(request, authenticatedUserId, file);
             boolean isSaved = cardService.saveCard(request, authenticatedUserId);
 
             // 카드 생성이 성공적으로 이루어졌는지 확인

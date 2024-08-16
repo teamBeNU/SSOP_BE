@@ -35,6 +35,12 @@ public class Card {
     @Column(nullable = false)
     private String card_cover;
 
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Avatar avatar;  // card_cover가 avatar일 때만 사용
+
+//    @Column(nullable = false)
+//    private String profile_image_url;   // 이미지 경로
+
     // 공통 선택
     @Embedded
     private SNS card_SNS;
@@ -51,7 +57,19 @@ public class Card {
     protected Card() {}
 
     @Builder
-    public Card(String card_name, String card_introduction, String template, String card_cover, SNS card_SNS, String card_email, String card_MBTI, Music card_music, String card_movie) {
+    public Card(
+            String card_name,
+            String card_introduction,
+            String template,
+            String card_cover,
+            Avatar avatar,
+
+            SNS card_SNS,
+            String card_email,
+            String card_MBTI,
+            Music card_music,
+            String card_movie
+    ) { //String profile_image_url,
         if (card_name == null || card_name.isBlank() ||
                 card_introduction == null || card_introduction.isBlank() ||
                 template == null || card_cover == null) {
@@ -62,6 +80,8 @@ public class Card {
         this.card_introduction = card_introduction;
         this.template = template;
         this.card_cover = card_cover;
+        this.avatar = avatar;
+//        this.profile_image_url = profile_image_url;
         this.card_SNS = card_SNS;
         this.card_email = card_email;
         this.card_MBTI = card_MBTI;
@@ -92,6 +112,14 @@ public class Card {
     public String getCard_cover() {
         return card_cover;
     }
+
+    public Avatar getAvatar() {
+        return avatar;
+    }
+
+//    public String getProfile_image_url() {
+//        return profile_image_url;
+//    }
 
     public SNS getCard_SNS() {
         return card_SNS;
@@ -137,6 +165,17 @@ public class Card {
         this.card_cover = card_cover;
     }
 
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
+        if (avatar != null) {
+            avatar.setCard(this);
+        }
+    }
+
+//    public void setProfile_image_url(String profile_image_url) {
+//        this.profile_image_url = profile_image_url;
+//    }
+
     public void setCard_SNS(SNS card_SNS) {
         this.card_SNS = card_SNS;
     }
@@ -156,4 +195,18 @@ public class Card {
     public void setCard_movie(String card_movie) {
         this.card_movie = card_movie;
     }
+
+//    public void createAvatarIfRequired() {
+//        if ("avatar".equals(card_cover)) {
+//            if (this.avatar == null) {
+//                this.avatar = new Avatar();
+//                this.avatar.setCard(this);
+//            }
+//        } else {
+//            if (this.avatar != null) {
+//                this.avatar.setCard(null); // Avatar의 card 속성 해제
+//                this.avatar = null;
+//            }
+//        }
+//    }
 }

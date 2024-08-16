@@ -40,6 +40,8 @@ public class CardStudent extends Card {
             String card_introduction,
             String template,
             String card_cover,
+            Avatar avatar,
+
             SNS card_SNS,
             String card_email,
             String card_MBTI,
@@ -53,8 +55,8 @@ public class CardStudent extends Card {
             String card_student_major,
             String card_student_club,
             String card_student_role
-    ) {
-        super(card_name, card_introduction, template, card_cover, card_SNS, card_email, card_MBTI, card_music, card_movie);
+    ) { //String profile_image_url,
+        super(card_name, card_introduction, template, card_cover, avatar, card_SNS, card_email, card_MBTI, card_music, card_movie);
 
         if (card_tel == null || card_tel.isBlank() ||
             card_birth == null || card_bSecrete == null ||
