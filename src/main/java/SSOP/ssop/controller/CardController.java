@@ -67,6 +67,7 @@ public class CardController {
     }
 
     // 내 카드 목록 조회
+    @Login
     @GetMapping("/view/mine")
     public ResponseEntity<List<CardResponse>> getMyCards(@RequestParam("userId") long userId) {
         List<CardResponse> cards = cardService.getMyCards(userId);
