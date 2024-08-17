@@ -58,4 +58,20 @@ public class CardWorker extends Card {
         this.card_bSecrete = card_bSecrete;
         this.card_job = card_job;
     }
+
+    public String getCard_tel() {
+        return card_tel;
+    }
+
+    public LocalDate getCard_birth() {
+        return card_birth;
+    }
+
+    public Boolean getCard_bSecrete() {
+        return card_bSecrete;
+    }
+
+    public String getCard_job() {
+        return card_job;
+    }
 }

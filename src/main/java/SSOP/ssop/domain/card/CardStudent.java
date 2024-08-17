@@ -74,4 +74,38 @@ public class CardStudent extends Card {
         this.card_student_club = card_student_club;
         this.card_student_role = card_student_role;
     }
+
+    public String getCard_tel() {
+        return card_tel;
+    }
+
+    public LocalDate getCard_birth() {
+        return card_birth;
+    }
+
+    public Boolean getCard_bSecrete() {
+        return card_bSecrete;
+    }
+
+    public String getCard_school() {
+        return card_school;
+    }
+
+    public String getCard_grade() {
+        return card_grade;
+    }
+
+    public String getCard_student_major() {
+        return card_student_major;
+    }
+
+    public String getCard_student_club() {
+        return card_student_club;
+    }
+
+    public String getCard_student_role() {
+        return card_student_role;
+    }
+
+
 }
