@@ -3,7 +3,8 @@ package SSOP.ssop.service;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
@@ -58,7 +59,7 @@ public class TeamSpMemberService {
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {
-        // 모든 팀스페이스의 멤버 정보를 조회
+        // 1. 모든 팀스페이스의 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findAll();
 
         // 팀 ID와 사용자 ID 목록으로 그룹화
@@ -71,30 +72,34 @@ public class TeamSpMemberService {
                         )
                 ));
 
-        // 팀스페이스 ID 목록으로 팀 이름을 가져오는 맵 생성
-        Map<Long, String> teamNamesMap = teamSpRepository.findAll().stream()
+        // 2. 팀스페이스 ID 목록으로 팀 이름과 팀 설명을 가져오는 맵
+        Map<Long, TeamSp> teamSpMap = teamSpRepository.findAll().stream()
                 .collect(Collectors.toMap(
                         TeamSp::getTeam_id,
-                        TeamSp::getTeam_name
+                        teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
-        // 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
+        // 3. 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
         return teamMembersMap.entrySet().stream()
-                .map(entry -> new TeamSpMemberDto(
-                        String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
-                        teamNamesMap.getOrDefault(entry.getKey(), "Unknown Team"), // 팀 이름
-                        entry.getValue()                 // 사용자 ID 목록
-                ))
+                .map(entry -> {
+                    TeamSp teamSp = teamSpMap.get(entry.getKey());
+                    return new TeamSpMemberDto(
+                            String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
+                            teamSp.getTeam_name(),           // 팀 이름
+                            teamSp.getTeam_comment(),        // 팀 설명
+                            entry.getValue()                 // 사용자 ID 목록
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
     // 특정 id 팀스페이스 참여 정보 조회
-    public Optional<TeamSpMemberDto> getTeamMemberById(long teamId) {
+    public Optional<TeamSpMemberDto> getTeamMemberById(long team_id) {
         // 팀스페이스의 멤버 정보를 조회
-        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(teamId);
+        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
 
         // 팀스페이스 정보를 조회
-        TeamSp teamSp = teamSpRepository.findById(teamId)
+        TeamSp teamSp = teamSpRepository.findById(team_id)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
 
         // 멤버 정보가 없으면 빈 Optional 반환
@@ -109,15 +114,16 @@ public class TeamSpMemberService {
 
         // DTO 객체 생성
         TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
-                String.valueOf(teamId),
+                String.valueOf(team_id),
                 teamSp.getTeam_name(), // 팀 이름
+                teamSp.getTeam_comment(),
                 userIds.isEmpty() ? Collections.emptyList() : userIds // 사용자 ID 목록
         );
         return Optional.of(teamSpMemberDto);
     }
 
     // 유저별 참여 중인 팀스페이스 정보 조회
-    public List<TeamSpMemberDto> getTeamMemberByUserId(long userId) {
+    public List<TeamSpByUserDto> getTeamSpByUserId(long userId) {
         // 유저가 참여 중인 팀스페이스 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findByUserId(userId);
 
@@ -134,18 +140,23 @@ public class TeamSpMemberService {
                                 Collectors.toList()
                         )
                 ));
-        // 팀 ID와 팀 이름 조회
-        Map<Long, String> teamNamesMap = teamSpRepository.findAll().stream()
+        // 팀 ID와 팀 이름 및 팀 설명을 조회
+        Map<Long, TeamSp> teamSpMap = teamSpRepository.findAll().stream()
                 .collect(Collectors.toMap(
                         TeamSp::getTeam_id,
-                        TeamSp::getTeam_name
+                        teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
+
+        // 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
         return teamMembersMap.entrySet().stream()
-                .map(entry -> new TeamSpMemberDto(
-                        String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
-                        teamNamesMap.getOrDefault(entry.getKey(), "Unknown Team"), // 팀 이름
-                        entry.getValue()                 // 사용자 ID 목록
-                ))
+                .map(entry -> {
+                    TeamSp teamSp = teamSpMap.get(entry.getKey());
+                    return new TeamSpByUserDto(
+                            String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
+                            teamSp.getTeam_name(),           // 팀 이름
+                            teamSp.getTeam_comment()       // 팀 설명
+                    );
+                })
                 .collect(Collectors.toList());
     }
 }

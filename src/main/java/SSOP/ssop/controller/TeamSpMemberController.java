@@ -1,8 +1,9 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.EnterTeamSpDto;
-import SSOP.ssop.dto.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.service.TeamSpMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,14 +72,14 @@ public class TeamSpMemberController {
 
     // 유저별 참여 중인 팀스페이스 정보 조회
     @GetMapping("user")
-    public ResponseEntity<?> getTeamMemberByUserId(@RequestParam("userId") long userId) {
+    public ResponseEntity<?> getTeamSpByUserId(@RequestParam("userId") long userId) {
         try {
-            List<TeamSpMemberDto> teamMemberDtos = teamSpMemberService.getTeamMemberByUserId(userId);
+            List<TeamSpByUserDto> teamSpByUserDto = teamSpMemberService.getTeamSpByUserId(userId);
 
-            if (teamMemberDtos.isEmpty()) {
+            if (teamSpByUserDto.isEmpty()) {
                 return ResponseEntity.noContent().build(); // 참여 중인 팀스페이스가 없는 경우
             }
-            return ResponseEntity.ok(teamMemberDtos);
+            return ResponseEntity.ok(teamSpByUserDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "팀스페이스 정보를 조회하는 도중 오류가 발생했습니다: " + e.getMessage()));
