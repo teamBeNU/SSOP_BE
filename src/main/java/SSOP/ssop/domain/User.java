@@ -115,6 +115,14 @@ public class User {
         this.user_birth = user_birth;
     }
 
+    public List<String> getSaved_card_list() {
+        return saved_card_list;
+    }
+
+    public void setSaved_card_list(List<String> saved_card_list) {
+        this.saved_card_list = saved_card_list;
+    }
+
     public Set<TeamSpMember> getTeamSpMembers() {
         return teamSpMembers;
     }

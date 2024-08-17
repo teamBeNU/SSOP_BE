@@ -1,4 +1,4 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.User;

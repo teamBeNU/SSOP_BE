@@ -1,7 +1,7 @@
 package SSOP.ssop.config;
 
 import SSOP.ssop.domain.User;
-import SSOP.ssop.service.UserDetailService;
+import SSOP.ssop.service.User.UserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

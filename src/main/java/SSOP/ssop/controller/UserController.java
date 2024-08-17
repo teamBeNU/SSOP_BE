@@ -2,9 +2,9 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.LoginDto;
-import SSOP.ssop.dto.UserDto;
-import SSOP.ssop.service.UserService;
+import SSOP.ssop.dto.User.LoginDto;
+import SSOP.ssop.dto.User.UserDto;
+import SSOP.ssop.service.User.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

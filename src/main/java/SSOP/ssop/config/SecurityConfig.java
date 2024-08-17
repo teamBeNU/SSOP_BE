@@ -1,7 +1,7 @@
 package SSOP.ssop.config;
 
 import SSOP.ssop.repository.UserRepository;
-import SSOP.ssop.service.UserDetailService;
+import SSOP.ssop.service.User.UserDetailService;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

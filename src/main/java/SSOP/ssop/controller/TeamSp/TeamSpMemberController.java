@@ -1,10 +1,10 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
-import SSOP.ssop.service.TeamSpMemberService;
+import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

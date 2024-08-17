@@ -1,9 +1,9 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.User;
 
 import SSOP.ssop.config.JwtProvider;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.LoginDto;
-import SSOP.ssop.dto.UserDto;
+import SSOP.ssop.dto.User.LoginDto;
+import SSOP.ssop.dto.User.UserDto;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
