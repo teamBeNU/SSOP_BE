@@ -25,7 +25,7 @@ public class CardResponse {
     private CardWorker worker;
 
     public CardResponse(Card card) {
-        this.user_id = card.getUser_id();
+        this.user_id = card.getUserId();
         this.card_id = card.getCard_id();
         this.card_template = card.getCard_template();
         this.card_cover = card.getCard_cover();

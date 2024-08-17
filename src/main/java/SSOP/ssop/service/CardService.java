@@ -98,7 +98,7 @@ public class CardService {
                 studentRequest.getCard_student_club(),
                 studentRequest.getCard_student_role()
         );
-        card.setUser_id(user_id); // 사용자 ID 설정
+        card.setUserId(user_id); // 사용자 ID 설정
         cardStudentRepository.save(card); // 카드 저장
         return card;
     }
@@ -120,7 +120,7 @@ public class CardService {
                 workerRequest.getCard_bSecrete(),
                 workerRequest.getCard_job()
         );
-        card.setUser_id(user_id); // 사용자 ID 설정
+        card.setUserId(user_id); // 사용자 ID 설정
         cardWorkerRepository.save(card); // 카드 저장
         return card;
     }
@@ -133,11 +133,11 @@ public class CardService {
     }
 
     // 내 카드 목록 조회
-//    public List<ShowAllCardResponse> getMyCards(long userId) {
-//        return cardRepository.findByUser_UserId(userId).stream()
-//                .map(ShowAllCardResponse::new)
-//                .collect(Collectors.toList());
-//    }
+    public List<CardResponse> getMyCards(long userId) {
+        return cardRepository.findByUserId(userId).stream()
+                .map(CardResponse::new)
+                .collect(Collectors.toList());
+    }
 
     // 상대 카드 목록 조회
 //    public List<ShowAllCardResponse> getSavedCards(long card_id, long userId) {

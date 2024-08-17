@@ -67,10 +67,11 @@ public class CardController {
     }
 
     // 내 카드 목록 조회
-//    @GetMapping("/view/mine")
-//    public List<ShowAllCardResponse> getMyCards(@RequestParam("userId") long userId) {
-//        return cardService.getMyCards(userId);
-//    }
+    @GetMapping("/view/mine")
+    public ResponseEntity<List<CardResponse>> getMyCards(@RequestParam("userId") long userId) {
+        List<CardResponse> cards = cardService.getMyCards(userId);
+        return ResponseEntity.ok(cards);
+    }
 
     // 상대 카드 목록 조회
 //    @GetMapping("/view/saved")

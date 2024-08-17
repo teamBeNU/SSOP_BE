@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.format.DateTimeFormatter;
-
 @Entity
 @Getter
 @Table(name = "card")
@@ -15,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 public class Card {
 
 //    @ManyToOne
-//    @JoinColumn(name = "user_id")
+//    @JoinColumn(name = "userId")
 //    private User user;
 
     @Id
@@ -23,7 +21,7 @@ public class Card {
     private Long card_id;
 
     @Column(nullable = false)
-    private Long user_id;
+    private Long userId;
 
     // 공통 필수
     @Column(nullable = false, length = 20)
@@ -208,8 +206,8 @@ public class Card {
         return card_id;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
     public String getCard_name() {
@@ -256,8 +254,8 @@ public class Card {
         this.card_id = card_id;
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public void setCard_name(String card_name) {
