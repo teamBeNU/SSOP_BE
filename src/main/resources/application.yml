@@ -11,7 +11,8 @@ spring:
     hibernate:
       #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
       #ddl-auto: update #테이블 변화가 있을 때
-      ddl-auto: validate #평소엔 이상태로 두어야 잘못된 컬럼 안생김
+      #ddl-auto: validate #평소엔 이상태로 두어야 잘못된 컬럼 안생김
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정
