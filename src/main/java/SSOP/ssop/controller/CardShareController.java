@@ -20,12 +20,14 @@ public class CardShareController {
         this.cardShareService = cardShareService;
     }
 
+    // 카드 요청
     @PostMapping
     public ResponseEntity<CardShareRequest> shareCard(@RequestBody ShareRequestDto requestDto) {
         CardShareRequest shareRequest = cardShareService.createShareRequest(requestDto.getCardId(), requestDto.getRecipientId());
         return ResponseEntity.ok(shareRequest);
     }
 
+    // 카드 공유 상태
     @GetMapping("/status/{recipientId}")
     public ResponseEntity<List<CardShareRequest>> getShareStatus(@PathVariable Long recipientId) {
         List<CardShareRequest> shareRequests = cardShareService.getShareRequestsByRecipientId(recipientId);

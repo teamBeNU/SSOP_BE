@@ -21,6 +21,7 @@ public class RecipientController {
         this.recipientService = recipientService;
     }
 
+    // 수신자 리스트
     @GetMapping
     public ResponseEntity<List<Recipient>> getRecipients() {
         List<Recipient> recipients = recipientService.getAllRecipients();

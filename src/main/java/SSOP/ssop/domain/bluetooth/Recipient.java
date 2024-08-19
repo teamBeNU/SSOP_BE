@@ -11,12 +11,12 @@ public class Recipient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String user_name;
     private String status;
 
     public Recipient(Long id, String name, String status) {
         this.id = id;
-        this.name = name;
+        this.user_name = name;
         this.status = status;
     }
 
@@ -29,11 +29,11 @@ public class Recipient {
     }
 
     public String getName() {
-        return name;
+        return user_name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.user_name = name;
     }
 
     public String getStatus() {
