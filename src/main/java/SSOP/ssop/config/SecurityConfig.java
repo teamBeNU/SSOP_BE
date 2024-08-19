@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable()) // 기본 로그인 및 HTTP 기본 인증 비활성화
                 .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtTokenProvider())) // JWT 인증 필터 추가
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider(), userDetailService)) // JwtAuthorizationFilter 추가
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtTokenProvider())) // JwtAuthorizationFilter 추가
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll()); // 모든 요청 허용
 
         return http.build();
