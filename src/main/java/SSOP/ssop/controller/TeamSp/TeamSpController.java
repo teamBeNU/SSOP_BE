@@ -1,14 +1,11 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.config.UserDetail;
+import SSOP.ssop.controller.Login;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.service.TeamSp.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,14 +23,9 @@ public class TeamSpController {
     }
 
     // 팀스페이스 생성
+    @Login
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp, @RequestParam Long userId) {
         try {
             teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -69,14 +61,9 @@ public class TeamSpController {
     }
 
     // 팀스페이스 이름 수정 (호스트만)
+    @Login
     @PatchMapping
-    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp, @RequestParam Long userId) {
         try {
             TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
@@ -95,14 +82,9 @@ public class TeamSpController {
     }
 
     // 팀스페이스 삭제 (호스트-삭제 / 참여자-퇴장)
+    @Login
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") long teamId) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") long teamId, @RequestParam Long userId) {
         try {
             teamSpService.deleteTeamSp(teamId, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));
