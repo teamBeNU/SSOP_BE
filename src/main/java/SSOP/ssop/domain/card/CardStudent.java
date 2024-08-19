@@ -1,14 +1,16 @@
 package SSOP.ssop.domain.card;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("student")
 public class CardStudent extends Card {
+
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
 
     // 필수
     @Column(nullable = false)

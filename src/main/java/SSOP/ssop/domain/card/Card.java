@@ -1,6 +1,5 @@
 package SSOP.ssop.domain.card;
 
-import SSOP.ssop.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,6 +53,13 @@ public class Card {
     private Music card_music;
 
     private String card_movie;
+
+    // 그 외
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardStudent cardStudent;
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardWorker cardWorker;
 
     protected Card() {}
 
