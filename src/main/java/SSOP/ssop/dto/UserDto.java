@@ -7,21 +7,24 @@ import java.time.LocalDate;
 
 @AllArgsConstructor
 public class UserDto {
-    private String user_name;
     private Long userId;
+    private String user_name;
+    private String email;
+    private String password;
     private LocalDate user_birth;
     private String user_phone;
-    private String password;
-    private String email;
     private String social_type;
+
+    public UserDto() {
+    }
 
     public UserDto(User user) {
         this.userId = user.getUserId();
         this.user_name = user.getUser_name();
+        this.email = user.getEmail();
+        this.password = user.getPassword();
         this.user_birth = user.getUser_birth();
         this.user_phone = user.getUser_phone();
-        this.password = user.getPassword();
-        this.email = user.getEmail();
         this.social_type = user.getSocial_type();
     }
 

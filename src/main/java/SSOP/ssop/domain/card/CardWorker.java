@@ -34,7 +34,7 @@ public class CardWorker extends Card {
             String template,
             String card_cover,
             Avatar avatar,
-
+            String profile_image_url,
             SNS card_SNS,
             String card_email,
             String card_MBTI,
@@ -44,8 +44,8 @@ public class CardWorker extends Card {
             LocalDate card_birth,
             Boolean card_bSecrete,
             String card_job
-    ) { // String profile_image_url,
-        super(card_name, card_introduction, template, card_cover, avatar, card_SNS, card_email, card_MBTI, card_music, card_movie);
+    ) {
+        super(card_name, card_introduction, template, card_cover, avatar, profile_image_url, card_SNS, card_email, card_MBTI, card_music, card_movie);
 
         if (card_tel == null || card_tel.isBlank() ||
         card_birth == null || card_bSecrete == null ||
@@ -57,5 +57,21 @@ public class CardWorker extends Card {
         this.card_birth = card_birth;
         this.card_bSecrete = card_bSecrete;
         this.card_job = card_job;
+    }
+
+    public String getCard_tel() {
+        return card_tel;
+    }
+
+    public LocalDate getCard_birth() {
+        return card_birth;
+    }
+
+    public Boolean getCard_bSecrete() {
+        return card_bSecrete;
+    }
+
+    public String getCard_job() {
+        return card_job;
     }
 }
