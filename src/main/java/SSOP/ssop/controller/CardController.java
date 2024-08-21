@@ -3,6 +3,7 @@ package SSOP.ssop.controller;
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,9 +68,8 @@ public class CardController {
     }
 
     // 내 카드 목록 조회
-    @Login
     @GetMapping("/view/mine")
-    public ResponseEntity<List<CardResponse>> getMyCards(@RequestParam("userId") long userId) {
+    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
         List<CardResponse> cards = cardService.getMyCards(userId);
         return ResponseEntity.ok(cards);
     }
