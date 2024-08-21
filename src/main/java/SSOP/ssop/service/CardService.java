@@ -168,11 +168,11 @@ public class CardService {
     }
 
     // 특정 카드 상세 조회
-//    public CardResponse getCard(long card_id) {
-//        Card card = cardRepository.findById(card_id)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//        return new CardResponse(card);
-//    }
+    public CardResponse getCard(long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+        return new CardResponse(card);
+    }
 
     // 카드 수정
 //    public void updateCard(CardUpdateRequest request) {

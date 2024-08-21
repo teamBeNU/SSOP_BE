@@ -93,15 +93,15 @@ public class CardController {
     }
 
     // 특정 카드 상세 조회
-//    @GetMapping("/view")
-//    public ResponseEntity<CardResponse> getCardsById(@RequestParam("card_id") long card_id) {
-//        CardResponse cardResponse = cardService.getCard(card_id);
-//        if (cardResponse != null) {
-//            return ResponseEntity.ok(cardResponse);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//    }
+    @GetMapping("/view")
+    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
+        CardResponse cardResponse = cardService.getCard(cardId);
+        if (cardResponse != null) {
+            return ResponseEntity.ok(cardResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
     // 카드 수정 (내카드)
 //    @PatchMapping("/edit")
