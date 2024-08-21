@@ -1,14 +1,16 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.User;
-import SSOP.ssop.domain.card.*;
+import SSOP.ssop.domain.card.Avatar;
+import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.domain.card.CardStudent;
+import SSOP.ssop.domain.card.CardWorker;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
 import SSOP.ssop.dto.card.request.CardWorkerCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -184,22 +186,12 @@ public class CardService {
 //    }
 
     // 카드 삭제
-//    public void deleteCard(long card_id, long userId) {
-//        Card card = cardRepository.findById(card_id)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        if(card.getUser().getUserId() == userId) {
-//            cardRepository.delete(card);
-//        }
-//        else if (card.getUser().getUserId() != userId){
-//            User user = userRepository.findById(userId)
-//                    .orElseThrow(IllegalArgumentException::new);
-//
-//            user.deleteSavedList(card_id);
-//
-//            userRepository.save(user);
-//        }
-//    }
+    public void deleteCard(long cardId, long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        cardRepository.delete(card);
+    }
 
     // 상대 카드 메모 작성
 //    public void writeMemo(long card_id, long userId, String memo) {

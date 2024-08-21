@@ -64,8 +64,6 @@ public class User {
         this.password = password;
     }
 
-    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
-
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this));
     }

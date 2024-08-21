@@ -1,9 +1,11 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
+import SSOP.ssop.repository.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
 import SSOP.ssop.service.UserService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -22,12 +25,14 @@ import java.util.Map;
 public class CardController {
 
     private final UserService userService;
+    private final CardRepository cardRepository;
     private CardService cardService;
 
     @Autowired
-    public CardController(CardService cardService, UserService userService) {
+    public CardController(CardService cardService, UserService userService, CardRepository cardRepository) {
         this.cardService = cardService;
         this.userService = userService;
+        this.cardRepository = cardRepository;
     }
 
     // 카드 생성
@@ -112,10 +117,19 @@ public class CardController {
 
 
     // 카드 삭제 (내카드 & 상대카드)
-//    @DeleteMapping("/delete")
-//    public void deleteCard(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId) {
-//        cardService.deleteCard(card_id, userId);
-//    }
+    @DeleteMapping("/delete")
+    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
+
+        if (card.getUserId().equals(userId)) {
+            cardService.deleteCard(cardId, userId);
+            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
+        } else {
+            userService.deleteSavedCard(userId, cardId);
+            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
+        }
+    }
 
     // 상대 카드 메모 작성
 //    @PostMapping("/memo")

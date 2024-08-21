@@ -166,4 +166,18 @@ public class UserService {
 
     }
 
+    // 저장된 카드 삭제
+    public void deleteSavedCard(long userId, long cardId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+
+        String cardIdAsString = String.valueOf(cardId);
+        List<String> savedCardList = user.getSaved_card_list();
+
+        if (savedCardList.remove(cardIdAsString)) {
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("저장한 카드가 아닙니다");
+        }
+    }
 }
