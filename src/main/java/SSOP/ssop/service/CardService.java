@@ -1,5 +1,6 @@
 package SSOP.ssop.service;
 
+import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
@@ -7,9 +8,11 @@ import SSOP.ssop.dto.card.request.CardWorkerCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -140,25 +143,29 @@ public class CardService {
     }
 
     // 상대 카드 목록 조회
-//    public List<ShowAllCardResponse> getSavedCards(long card_id, long userId) {
-//        Card card = cardRepository.findById(card_id)
-//                .orElseThrow(() -> new IllegalArgumentException("없는 카드 입니다. card_id : " + card_id));
-//
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid userId: " + userId));
-//
-//        if(card.getUser().getUserId() == userId) {
-//            throw new IllegalArgumentException("본인 카드 입니다.");
-//        }
-//
-//        if(!user.getSaved_card_list().contains(card_id)) {
-//            throw new IllegalArgumentException("해당 카드는 보유 중이 아닙니다.");
-//        }
-//
-//        return cardRepository.findById(card_id).stream()
-//                .map(ShowAllCardResponse::new)
-//                .collect(Collectors.toList());
-//    }
+    public List<CardResponse> getSavedCards(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저아이디입니다 : " + userId));
+
+        List<String> savedCardList = user.getSaved_card_list();
+
+        if (savedCardList == null || savedCardList.isEmpty()) {
+            return Collections.emptyList(); // 저장한 카드가 없는 경우
+        }
+
+        List<Long> savedCardListAsLongs = savedCardList.stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+
+        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
+
+        List<CardResponse> cardResponses = cards.stream()
+                .map(CardResponse::new)
+                .collect(Collectors.toList());
+
+        return cardResponses;
+
+    }
 
     // 특정 카드 상세 조회
 //    public CardResponse getCard(long card_id) {

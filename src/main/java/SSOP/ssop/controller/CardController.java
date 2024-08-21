@@ -79,11 +79,11 @@ public class CardController {
     }
 
     // 상대 카드 목록 조회
-//    @GetMapping("/view/saved")
-//    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
-//        List<CardResponse> cards = cardService.getSavedCards(userId);
-//        return ResponseEntity.ok(cards);
-//    }
+    @GetMapping("/view/saved")
+    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
+        List<CardResponse> cards = cardService.getSavedCards(userId);
+        return ResponseEntity.ok(cards);
+    }
 
     // 상대 카드 저장
     @PostMapping("/save")
