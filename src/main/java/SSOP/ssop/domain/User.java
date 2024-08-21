@@ -123,4 +123,7 @@ public class User {
         this.teamSpMembers = teamSpMembers;
     }
 
+    public List<String> getSaved_card_list() {
+        return saved_card_list;
+    }
 }

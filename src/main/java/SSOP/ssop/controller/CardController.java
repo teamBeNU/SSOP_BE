@@ -3,8 +3,10 @@ package SSOP.ssop.controller;
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
+import SSOP.ssop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +21,13 @@ import java.util.Map;
 @RequestMapping("/api/card")
 public class CardController {
 
+    private final UserService userService;
     private CardService cardService;
 
     @Autowired
-    public CardController(CardService cardService) {
+    public CardController(CardService cardService, UserService userService) {
         this.cardService = cardService;
+        this.userService = userService;
     }
 
     // 카드 생성
@@ -76,9 +80,17 @@ public class CardController {
 
     // 상대 카드 목록 조회
 //    @GetMapping("/view/saved")
-//    public List<ShowAllCardResponse> getSavedCards(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId) {
-//        return cardService.getSavedCards(card_id, userId);
+//    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
+//        List<CardResponse> cards = cardService.getSavedCards(userId);
+//        return ResponseEntity.ok(cards);
 //    }
+
+    // 상대 카드 저장
+    @PostMapping("/save")
+    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
+        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
+        return ResponseEntity.ok(response);
+    }
 
     // 특정 카드 상세 조회
 //    @GetMapping("/view")
