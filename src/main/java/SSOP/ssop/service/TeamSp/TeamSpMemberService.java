@@ -1,10 +1,11 @@
 package SSOP.ssop.service.TeamSp;
 
+import SSOP.ssop.controller.Login;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
@@ -59,7 +60,7 @@ public class TeamSpMemberService {
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {
-        // 1. 모든 팀스페이스의 멤버 정보를 조회
+        // 모든 팀스페이스의 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findAll();
 
         // 팀 ID와 사용자 ID 목록으로 그룹화

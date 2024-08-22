@@ -10,7 +10,7 @@ public class SavedCardResponse {
     private CardOptional cardOptional;
     private TemplateEssential templateEssential;
     private TemplateOptional templateOptional;
-
+/*
     public SavedCardResponse(Card card) {
         this.card_id = card.getUser().getUserId();
         this.card_cover = card.getcard_cover();
@@ -18,7 +18,7 @@ public class SavedCardResponse {
         this.cardOptional = new CardOptional(card.getCard_SNS(), card.getCard_email(), card.getCard_MBTI(), card.getCard_music());
         this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
         this.templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
-    }
+    }*/
 
     public long getCard_id() {
         return card_id;

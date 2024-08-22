@@ -27,6 +27,10 @@ public class TeamSpMember {
         this.user = user;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public TeamSp getTeamSp() {
         return teamSp;
     }
