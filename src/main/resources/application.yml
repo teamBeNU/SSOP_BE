@@ -1,6 +1,24 @@
+server:
+  port: 8080
+
 spring:
   datasource:
     url: "jdbc:mysql://localhost/ssop"
     username: "root"
-    password: ""
+    password: "Ssop242401@#"
     driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa :
+    hibernate:
+      #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
+      ddl-auto: update #테이블 변화가 있을 때
+#      ddl-auto: validate #평소엔 이상태로 두어야 잘못된 컬럼 안생김
+    properties:
+      hibernate:
+        format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정
+        show_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL 보여줄 지 결정
+        dialect: org.hibernate.dialect.MySQL8Dialect #한국어로 방언, 사투리란 뜻으로 알아서 db끼리 다른 sql 조금씩 수정
+jwt:
+  header: Authorization
+  secret: c3d1LWRpZ2l0YWxtZWRpYS0yMDI0LXNzb3AtYmFja2VuZC1zcHJpbmctYm9vdC1qd3Qtc2VjcmV0LWtleS10b2tlbi1zc29w
+  # swu-digital-media-2024-ssop ~~~ 인코딩한 비밀 키랑 연동 > HS512 알고리즘 사용 > 64byte
+  token-validity-in-seconds: 86400    # 초, 24시간
