@@ -8,7 +8,6 @@ import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -130,5 +129,4 @@ public class User {
     public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
         this.teamSpMembers = teamSpMembers;
     }
-
 }
