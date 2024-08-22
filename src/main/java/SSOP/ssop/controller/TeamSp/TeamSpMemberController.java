@@ -1,9 +1,8 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.controller.Login;
 import SSOP.ssop.dto.card.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,7 @@ public class TeamSpMemberController {
 
     // 팀 스페이스 입장
     @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
         try {
             teamSpMemberService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
@@ -60,7 +53,7 @@ public class TeamSpMemberController {
 
     // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
     @GetMapping("/member")
-    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") long teamId) {
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") Long teamId) {
         Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
 
         if (teamSpMemberDto.isPresent()) {
@@ -73,7 +66,7 @@ public class TeamSpMemberController {
 
     // 유저별 참여 중인 팀스페이스 정보 조회
     @GetMapping("user")
-    public ResponseEntity<?> getTeamSpByUserId(@RequestParam("userId") long userId) {
+    public ResponseEntity<?> getTeamSpByUserId(@RequestParam("userId") Long userId) {
         try {
             List<TeamSpByUserDto> teamSpByUserDto = teamSpMemberService.getTeamSpByUserId(userId);
 
