@@ -62,9 +62,9 @@ public class CardService {
             throw new IllegalArgumentException("본인 카드 입니다.");
         }
 
-        if(!user.getSaved_card_list().contains(card_id)) {
-            throw new IllegalArgumentException("해당 카드는 보유 중이 아닙니다.");
-        }
+//        if(!user.getSaved_card_list().contains(card_id)) {
+//            throw new IllegalArgumentException("해당 카드는 보유 중이 아닙니다.");
+//        }
 
         return cardRepository.findById(card_id).stream()
                 .map(ShowAllCardResponse::new)
