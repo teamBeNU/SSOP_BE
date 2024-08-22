@@ -1,8 +1,8 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.EnterTeamSpDto;
-import SSOP.ssop.dto.TeamSpMemberDto;
+import SSOP.ssop.dto.card.TeamSp.EnterTeamSpDto;
+import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.service.TeamSpMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

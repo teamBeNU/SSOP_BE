@@ -3,7 +3,6 @@ package SSOP.ssop.repository;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.TeamSpMemberDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long> {
@@ -34,4 +32,9 @@ public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long
 
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp = :teamSp AND t.user.userId = :userId")
     List<TeamSpMember> findByTeamSpAndUserId(@Param("teamSp") TeamSp teamSp, @Param("userId") long userId);
+
+    // 팀스페이스 id 찾기
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamId AND t.user.userId = :userId")
+    Optional<Long> findIdByTeamSpIdAndUserId(@Param("teamId") long teamId, @Param("userId") long userId);
+
 }

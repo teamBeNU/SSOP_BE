@@ -1,4 +1,4 @@
-package SSOP.ssop.dto;
+package SSOP.ssop.dto.card.TeamSp;
 
 public class EnterTeamSpDto {
     private int inviteCode;

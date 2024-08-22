@@ -1,6 +1,4 @@
-package SSOP.ssop.dto;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+package SSOP.ssop.dto.card.TeamSp;
 
 import java.util.Collections;
 import java.util.List;

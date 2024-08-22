@@ -3,7 +3,7 @@ package SSOP.ssop.service;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.TeamSpMemberDto;
+import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
