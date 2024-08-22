@@ -7,6 +7,7 @@ import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.domain.card.CardWorker;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.CardWorkerCreateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
@@ -193,29 +194,26 @@ public class CardService {
         cardRepository.delete(card);
     }
 
-    // 상대 카드 메모 작성
-//    public void writeMemo(long card_id, long userId, String memo) {
-//        Card card = cardRepository.findById(card_id)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        if(card.getUser().getUserId() == userId) {
-//            throw new IllegalArgumentException("본인 카드입니다.");
-//        }
-//
-//        card.setMemo(memo);
-//        cardRepository.save(card);
-//    }
+    // 상대 카드 메모
+    public void writeMemo(long card_id, long userId, String memo) {
+        Card card = cardRepository.findById(card_id)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
-    // 상대 카드 메모 수정
-//    public void updateMemo(long card_id, long userId, String memo) {
-//        Card card = cardRepository.findById(card_id)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        if (memo == null) {
-//            throw new IllegalArgumentException("메모는 null일 수 없습니다.");
-//        }
-//
-//        card.setMemo(memo);
-//        cardRepository.save(card);
-//    }
-}
+        if(card.getUserId() == userId) {
+            throw new IllegalArgumentException("본인 카드입니다.");
+        }
+
+        if(memo == null) {
+            throw new IllegalArgumentException("메모는 null일 수 없습니다.");
+        } else {
+            if(card.getMemo() == "") {
+                card.setMemo(memo);
+                cardRepository.save(card);
+                throw new IllegalArgumentException("메모가 작성되었습니다.");
+            } else {
+                card.setMemo(memo);
+                cardRepository.save(card);
+                throw new IllegalArgumentException("메모가 수정되었습니다.");
+            }
+        }
+    }

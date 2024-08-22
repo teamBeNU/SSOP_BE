@@ -3,6 +3,8 @@ package SSOP.ssop.controller;
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
+import SSOP.ssop.dto.card.request.MemoRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.CardRepository;
@@ -110,7 +112,7 @@ public class CardController {
 
     // 카드 수정 (내카드)
 //    @PatchMapping("/edit")
-//    public void updateCard(@RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
+//    public void updateCard(@Login Long userID, @RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
 //        request.setCard_id(card_id);
 //        cardService.updateCard(request);
 //    }
@@ -131,15 +133,10 @@ public class CardController {
         }
     }
 
-    // 상대 카드 메모 작성
-//    @PostMapping("/memo")
-//    public void writeMemo(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId, @RequestBody MemoRequest memo) {
-//        cardService.writeMemo(card_id, userId, memo.getMemo());
-//    }
+    // 상대 카드 메모
+    @PostMapping("/memo")
+    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
+        cardService.writeMemo(cardId, userId, memo.getMemo());
+    }
 
-    // 상대 카드 메모 수정
-//    @PatchMapping("/memo")
-//    public void updateMemo(@RequestParam("card_id") long card_id, @RequestParam("userId") long userId, @RequestBody MemoRequest memo) {
-//        cardService.updateMemo(card_id, userId, memo.getMemo());
-//    }
 }
