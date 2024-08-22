@@ -24,9 +24,9 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create/{teamId}")
     public ResponseEntity<Map<String, Object>> saveMember(
-            @RequestParam("teamId") Long teamId,
+            @PathVariable("teamId") Long teamId,
             @RequestPart("member") MemberDto memberDto,
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
