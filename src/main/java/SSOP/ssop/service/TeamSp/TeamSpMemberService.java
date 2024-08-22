@@ -1,11 +1,10 @@
 package SSOP.ssop.service.TeamSp;
 
-import SSOP.ssop.controller.Login;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
-import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;

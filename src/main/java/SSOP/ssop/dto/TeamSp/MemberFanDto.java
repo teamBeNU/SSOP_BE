@@ -1,4 +1,4 @@
-package SSOP.ssop.dto.card.TeamSp;
+package SSOP.ssop.dto.TeamSp;
 
 import lombok.Getter;
 import lombok.Setter;

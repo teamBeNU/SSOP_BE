@@ -2,7 +2,7 @@ package SSOP.ssop.service;
 
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.dto.card.TeamSp.*;
+import SSOP.ssop.dto.TeamSp.*;
 import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,6 @@ public class MemberService {
 
         MemberOptionalDto optionalDto = memberDto.getMemberOptional();
         if (optionalDto != null) {
-            member.setCard_age(optionalDto.getCard_age());
             member.setCard_birth(optionalDto.getCard_birth());
             member.setCard_MBTI(optionalDto.getCard_MBTI());
             member.setCard_tel(optionalDto.getCard_tel());
@@ -113,6 +112,7 @@ public class MemberService {
             member.setCard_student_major(studentDto.getCard_student_major());
             member.setCard_student_club(studentDto.getCard_student_club());
             member.setCard_student_role(studentDto.getCard_student_role());
+            member.setCard_student_status(studentDto.getCard_student_status());
         }
 
         MemberWorkerDto workerDto = memberDto.getMemberWorker();
