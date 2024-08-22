@@ -2,7 +2,6 @@ package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.domain.User;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.repository.TeamSpMemberRepository;
@@ -24,38 +23,7 @@ public class TeamSpMemberService {
     private TeamSpRepository teamSpRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
-
-    // 팀스페이스 입장
-    public void EnterTeamSp(int inviteCode, long userId) {
-        // 1. 팀스페이스 정보 가져오기
-        TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
-
-        // 2. 유저 정보 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
-        // 3. 호스트가 아닌지 확인
-        if (teamSp.getHostId() == userId) {
-            throw new IllegalArgumentException("호스트는 팀스페이스에 입장할 수 없습니다.");
-        }
-
-        // 4. 이미 입장한 사용자인지 종복 확인
-        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeam_id(), userId);
-        if (existingMembership.isPresent()) {
-            throw new IllegalArgumentException("이미 입장한 팀스페이스입니다.");
-        }
-
-        // 5. 유저 정보에서 팀스페이스 추가
-        user.enterTeamSp(teamSp);
-
-        // 6. 팀스페이스 멤버 저장
-        teamSpMemberRepository.saveAll(user.getTeamSpMembers());
-    }
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {
@@ -94,7 +62,7 @@ public class TeamSpMemberService {
     }
 
     // 특정 id 팀스페이스 참여 정보 조회
-    public Optional<TeamSpMemberDto> getTeamMemberById(long team_id) {
+    public Optional<TeamSpMemberDto> getTeamMemberById(Long team_id) {
         // 팀스페이스의 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
 
@@ -123,7 +91,7 @@ public class TeamSpMemberService {
     }
 
     // 유저별 참여 중인 팀스페이스 정보 조회
-    public List<TeamSpByUserDto> getTeamSpByUserId(long userId) {
+    public List<TeamSpByUserDto> getTeamSpByUserId(Long userId) {
         // 유저가 참여 중인 팀스페이스 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findByUserId(userId);
 

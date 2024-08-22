@@ -1,6 +1,7 @@
 package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
+import SSOP.ssop.dto.card.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,17 @@ public class TeamSpController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "팀스페이스 생성 실패"));
+        }
+    }
+
+    // 팀 스페이스 입장
+    @PostMapping("/enter")
+    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
+        try {
+            teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
+            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
     }
 

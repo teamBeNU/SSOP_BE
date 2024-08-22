@@ -28,17 +28,6 @@ public class TeamSpMemberController {
         this.teamSpMemberService = teamSpMemberService;
     }
 
-    // 팀 스페이스 입장
-    @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
-        try {
-            teamSpMemberService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
-            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
-        }
-    }
-
     // 모든 팀스페이스 참여 정보 조회
     @GetMapping("member/total")
     public ResponseEntity<?> getTeamMembers() {
