@@ -2,16 +2,10 @@ package SSOP.ssop.service;
 
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.domain.card.Avatar;
-import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.dto.card.TeamSp.*;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
 import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;

@@ -2,7 +2,6 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.card.TeamSp.MemberDto;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

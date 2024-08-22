@@ -17,25 +17,6 @@ public class Member {
     @Column(name = "card_id")
     private Long cardId;
 
-//    @Column(name = "card_name")
-//    private String card_name;
-//
-//    @Column(name = "card_birth")
-//    private String card_birth;
-//
-//    @Column(name = "role")
-//    private String role;
-//
-//    @Column(name = "major")
-//    private String major;
-//
-//    @Column(name = "position")
-//    private String position;
-
-//    @ManyToOne
-//    @JoinColumn(name = "team_id") // team_id는 TeamSpMember의 team_id를 참조
-//    private TeamSpMember teamSpMember;
-
     @ManyToOne
     @JoinColumn(name = "teamsp_member_id") // TeamSpMember의 id를 참조 (team_id와 user_id를 가진)
     private TeamSpMember teamSpMember;
