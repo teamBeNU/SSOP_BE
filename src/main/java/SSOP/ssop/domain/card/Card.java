@@ -1,6 +1,8 @@
 package SSOP.ssop.domain.card;
 
 import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardStudentUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +53,9 @@ public class Card {
     private Music card_music;
 
     private String card_movie;
+
+    @Lob
+    private String memo;
 
     protected Card() {}
 
@@ -117,9 +122,6 @@ public class Card {
 //    private String card_student_role;
 //    private String card_student_club;
 
-    @Lob
-    private String memo;
-
 //    protected Card() {
 //    }
 //
@@ -141,66 +143,51 @@ public class Card {
 //
 //        this.memo = memo;
 //    }
+//
+//    public void updateCard(String card_template, String card_cover, Avatar avatar ,String card_name, String card_introduction, SNS card_SNS, String card_email, String card_MBTI, Music card_music) {
+//        if(card_template != null){
+//            this.card_template = card_template;
+//        }
+//        if(card_cover != null){
+//            this.card_cover = card_cover;
+//        }
+//        if(avatar != null){
+//            this.avatar = avatar;
+//        }
+//        if(card_name != null){
+//            this.card_name = card_name;
+//        }
+//        if(card_introduction != null){
+//            this.card_introduction = card_introduction;
+//        }
+//        if(card_SNS != null){
+//            this.card_SNS = card_SNS;
+//        }
+//        if(card_email != null){
+//            this.card_email = card_email;
+//        }
+//        if(card_MBTI != null){
+//            this.card_MBTI = card_MBTI;
+//        }
+//        if(card_music != null){
+//            this.card_music = card_music;
+//        }
+//        if(card_movie != null){
+//            this.card_movie = card_movie;
+//        }
+//    }
 
-/*
-    public void updateCard(String card_template, String card_cover, String card_name, String card_introduction, String card_SNS, String card_email, String card_MBTI, String card_music, String card_tel, String card_birth, String card_school, Integer card_grade, Integer card_studentId, String card_student_major, String card_student_role, String card_student_club) {
-        if(card_template != null){
-            this.card_template = card_template;
-        }
-        if(card_cover != null){
-            this.card_cover = card_cover;
-        }
-        if(card_name != null){
-            this.card_name = card_name;
-        }
-        if(card_introduction != null){
-            this.card_introduction = card_introduction;
-        }
-        if(card_SNS != null){
-            this.card_SNS = card_SNS;
-        }
-        if(card_email != null){
-            this.card_email = card_email;
-        }
-        if(card_MBTI != null){
-            this.card_MBTI = card_MBTI;
-        }
-        if(card_music != null){
-            this.card_music = card_music;
-        }
-        if(card_tel != null){
-            this.card_tel = card_tel;
-        }
-        if(card_birth != null){
-            this.card_birth = card_birth;
-        }
-        if(card_school != null){
-            this.card_school = card_school;
-        }
-        if(card_grade != null){
-            this.card_grade = card_grade;
-        }
-        if(card_studentId != null){
-            this.card_studentId = card_studentId;
-        }
-        if(card_student_major != null){
-            this.card_student_major = card_student_major;
-        }
-        if(card_student_role != null){
-            this.card_student_role = card_student_role;
-        }
-        if(card_student_club != null){
-            this.card_student_club = card_student_club;
-        }
+    public void updateStudentCard(CardStudentUpdateRequest studentRequest, CardCreateRequest request) {
+
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }*/
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
 
     public Long getCard_id() {
         return card_id;
@@ -281,7 +268,33 @@ public class Card {
         }
     }
 
+    public void setCard_SNS(SNS card_SNS) {
+        this.card_SNS = card_SNS;
+    }
 
+    public void setCard_email(String card_email) {
+        this.card_email = card_email;
+    }
+
+    public void setCard_MBTI(String card_MBTI) {
+        this.card_MBTI = card_MBTI;
+    }
+
+    public void setCard_music(Music card_music) {
+        this.card_music = card_music;
+    }
+
+    public void setCard_movie(String card_movie) {
+        this.card_movie = card_movie;
+    }
+
+    public String getMemo() {
+        return memo;
+    }
+
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
 
     /*
 //    public String getCard_SNS() {

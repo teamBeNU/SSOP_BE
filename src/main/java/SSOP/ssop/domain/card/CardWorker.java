@@ -74,4 +74,20 @@ public class CardWorker extends Card {
     public String getCard_job() {
         return card_job;
     }
+
+    public void setCard_tel(String card_tel) {
+        this.card_tel = card_tel;
+    }
+
+    public void setCard_birth(LocalDate card_birth) {
+        this.card_birth = card_birth;
+    }
+
+    public void setCard_bSecrete(Boolean card_bSecrete) {
+        this.card_bSecrete = card_bSecrete;
+    }
+
+    public void setCard_job(String card_job) {
+        this.card_job = card_job;
+    }
 }

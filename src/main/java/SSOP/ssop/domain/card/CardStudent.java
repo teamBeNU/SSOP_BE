@@ -107,5 +107,35 @@ public class CardStudent extends Card {
         return card_student_role;
     }
 
+    public void setCard_tel(String card_tel) {
+        this.card_tel = card_tel;
+    }
 
+    public void setCard_birth(LocalDate card_birth) {
+        this.card_birth = card_birth;
+    }
+
+    public void setCard_bSecrete(Boolean card_bSecrete) {
+        this.card_bSecrete = card_bSecrete;
+    }
+
+    public void setCard_school(String card_school) {
+        this.card_school = card_school;
+    }
+
+    public void setCard_grade(String card_grade) {
+        this.card_grade = card_grade;
+    }
+
+    public void setCard_student_major(String card_student_major) {
+        this.card_student_major = card_student_major;
+    }
+
+    public void setCard_student_club(String card_student_club) {
+        this.card_student_club = card_student_club;
+    }
+
+    public void setCard_student_role(String card_student_role) {
+        this.card_student_role = card_student_role;
+    }
 }

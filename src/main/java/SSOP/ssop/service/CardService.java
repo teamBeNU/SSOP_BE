@@ -5,10 +5,7 @@ import SSOP.ssop.domain.card.Avatar;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.domain.card.CardWorker;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
-import SSOP.ssop.dto.card.request.CardUpdateRequest;
-import SSOP.ssop.dto.card.request.CardWorkerCreateRequest;
+import SSOP.ssop.dto.card.request.*;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,13 +175,96 @@ public class CardService {
     }
 
     // 카드 수정
-//    public void updateCard(CardUpdateRequest request) {
-//        Card card = cardRepository.findById(request.getCard_id())
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        card.updateCard(request.getCard_template(), request.getcard_cover(), request.getCard_name(), request.getCard_introduction(), request.getCard_SNS(), request.getCard_email(), request.getCard_MBTI(), request.getCard_music(), request.getCard_tel(), request.getCard_birth(), request.getCard_school(), request.getCard_grade(), request.getCard_studentId(), request.getCard_student_major(), request.getCard_student_role(), request.getCard_student_club());
-//        cardRepository.save(card);
-//    }
+    public void updateCard(CardUpdateRequest request) {
+        Card card = cardRepository.findById(request.getCard_id())
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        // 공통 필드 업데이트
+        if (request.getCard_name() != null) {
+            card.setCard_name(request.getCard_name());
+        }
+        if (request.getCard_introduction() != null) {
+            card.setCard_introduction(request.getCard_introduction());
+        }
+        if (request.getCard_template() != null) {
+            card.setCard_template(request.getCard_template());
+        }
+        if (request.getCard_cover() != null) {
+            card.setCard_cover(request.getCard_cover());
+        }
+        if (request.getCard_SNS() != null) {
+            card.setCard_SNS(request.getCard_SNS());
+        }
+        if (request.getCard_email() != null) {
+            card.setCard_email(request.getCard_email());
+        }
+        if (request.getCard_MBTI() != null) {
+            card.setCard_MBTI(request.getCard_MBTI());
+        }
+        if (request.getCard_music() != null) {
+            card.setCard_music(request.getCard_music());
+        }
+        if (request.getCard_movie() != null) {
+            card.setCard_movie(request.getCard_movie());
+        }
+
+        //템플릿 별 업데이트
+        switch (card.getCard_template()) {
+            case "student":
+                if (request.getStudent() == null) {
+                    break;
+                }
+                updateStudentCard((CardStudent) card, request.getStudent());
+                break;
+            case "worker":
+                if (request.getWorker() == null) {
+                    break;
+                }
+                updateWorkerCard((CardWorker) card, request.getWorker());
+                break;
+            default:
+                throw new IllegalArgumentException("지정된 템플릿이 없습니다.");
+        }
+        cardRepository.save(card);
+        throw new IllegalArgumentException("카드가 수정되었습니다.");
+    }
+
+    private void updateStudentCard(CardStudent card, CardStudentUpdateRequest studentRequest) {
+        if (studentRequest.getCard_tel() != null) {
+            card.setCard_tel(studentRequest.getCard_tel());
+        }
+        if (studentRequest.getCard_birth() != null) {
+            card.setCard_birth(studentRequest.getCard_birth());
+        }
+        if (studentRequest.getCard_school() != null) {
+            card.setCard_school(studentRequest.getCard_school());
+        }
+        if (studentRequest.getCard_grade() != null) {
+            card.setCard_grade(studentRequest.getCard_grade());
+        }
+        if (studentRequest.getCard_student_major() != null) {
+            card.setCard_student_major(studentRequest.getCard_student_major());
+        }
+        if (studentRequest.getCard_student_club() != null) {
+            card.setCard_student_club(studentRequest.getCard_student_club());
+        }
+        if (studentRequest.getCard_student_role() != null) {
+            card.setCard_student_role(studentRequest.getCard_student_role());
+        }
+    }
+
+    private void updateWorkerCard(CardWorker card, CardWorkerUpdateRequest workerRequest) {
+        if (workerRequest.getCard_tel() != null) {
+            card.setCard_tel(workerRequest.getCard_tel());
+        }
+        if (workerRequest.getCard_birth() != null) {
+            card.setCard_birth(workerRequest.getCard_birth());
+        }
+        if (workerRequest.getCard_job() != null) {
+            card.setCard_job(workerRequest.getCard_job());
+        }
+    }
+
 
     // 카드 삭제
     public void deleteCard(long cardId, long userId) {
@@ -194,7 +274,7 @@ public class CardService {
         cardRepository.delete(card);
     }
 
-    // 상대 카드 메모
+    // 상대 카드 메모 작성
     public void writeMemo(long card_id, long userId, String memo) {
         Card card = cardRepository.findById(card_id)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
@@ -217,3 +297,4 @@ public class CardService {
             }
         }
     }
+}

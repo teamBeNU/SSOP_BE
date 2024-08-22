@@ -111,11 +111,11 @@ public class CardController {
     }
 
     // 카드 수정 (내카드)
-//    @PatchMapping("/edit")
-//    public void updateCard(@Login Long userID, @RequestParam("card_id") long card_id, @RequestBody CardUpdateRequest request) {
-//        request.setCard_id(card_id);
-//        cardService.updateCard(request);
-//    }
+    @PatchMapping("/edit")
+    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+        request.setCard_id(cardId);
+        cardService.updateCard(request);
+    }
 
 
     // 카드 삭제 (내카드 & 상대카드)
