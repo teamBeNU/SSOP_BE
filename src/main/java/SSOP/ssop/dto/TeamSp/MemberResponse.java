@@ -4,8 +4,6 @@ import SSOP.ssop.domain.TeamSp.Member;
 
 public class MemberResponse {
 
-    private Long card_id;
-    private Long team_sp_member_id;    // team_sp_member의 id
     private long user_id;
 
     private MemberEssentialDto memberEssential;
@@ -15,8 +13,6 @@ public class MemberResponse {
     private MemberFanDto memberFan;
 
     public MemberResponse(Member member) {
-        this.card_id = member.getCardId();
-        this.team_sp_member_id = member.getTeamSpMember().getId();
         this.user_id = member.getTeamSpMember().getUser().getUserId();
 
         this.memberEssential = new MemberEssentialDto(
@@ -66,14 +62,6 @@ public class MemberResponse {
                 member.getCard_fan_second(),
                 member.getCard_fan_reason()
         );
-    }
-
-    public Long getCard_id() {
-        return card_id;
-    }
-
-    public Long getTeam_sp_member_id() {
-        return team_sp_member_id;
     }
 
     public long getUser_id() {
