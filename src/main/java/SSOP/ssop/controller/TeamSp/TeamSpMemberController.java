@@ -57,18 +57,18 @@ public class TeamSpMemberController {
         }
     }
 
-//    // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
-//    @GetMapping("/member")
-//    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") long teamId) {
-//        Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
-//
-//        if (teamSpMemberDto.isPresent()) {
-//            return ResponseEntity.ok(teamSpMemberDto.get());
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
-//        }
-//    }
+    // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
+    @GetMapping("/member")
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") long teamId) {
+        Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
+
+        if (teamSpMemberDto.isPresent()) {
+            return ResponseEntity.ok(teamSpMemberDto.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
+        }
+    }
 
     // 유저별 참여 중인 팀스페이스 정보 조회
     @GetMapping("user")
