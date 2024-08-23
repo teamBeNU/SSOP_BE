@@ -23,7 +23,7 @@ public class NotificationService {
     // @param user_name 알림을 가져올 사용자의 이름
     // @return 사용자에게 해당하는 알림 목록
     public List<Notification> getNotificationsForUser(String user_name) {
-        User user = userRepository.findByUsername(user_name).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUser_name(user_name).orElseThrow(() -> new RuntimeException("User not found"));
         return notificationRepository.findByUser(user);
     }
 

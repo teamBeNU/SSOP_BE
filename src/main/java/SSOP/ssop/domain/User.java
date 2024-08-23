@@ -23,7 +23,7 @@ public class User {
     private long userId;
 
     @JsonProperty("user_name")
-    private String username;
+    private String user_name;
     private String email;
     private String password;
     private LocalDate user_birth;
@@ -43,7 +43,7 @@ public class User {
         if( user_name == null || email == null || password == null || user_birth == null || user_phone == null ){
             throw new IllegalArgumentException();
         }
-        this.username = user_name;
+        this.user_name = user_name;
         this.email = email;
         this.password = password;
 
@@ -77,7 +77,7 @@ public class User {
     }
 
     public String getUser_name() {
-        return username;
+        return user_name;
     }
 
     public LocalDate getUser_birth() {
@@ -109,7 +109,7 @@ public class User {
     }
 
     public void setUser_name(String user_name) {
-        this.username = user_name;
+        this.user_name = user_name;
     }
 
     public void setUser_birth(LocalDate user_birth) {
