@@ -1,4 +1,4 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.notification;
 
 import SSOP.ssop.domain.notification.Notification;
 import SSOP.ssop.dto.NotificationDto;
@@ -18,6 +18,7 @@ public class NotificationController {
     @Autowired
     private NotificationService notificationService;
 
+    // 사용자 알림 목록 반환
     @GetMapping
     public ResponseEntity<List<NotificationDto>> getNotifications(Authentication authentication) {
         String username = authentication.getName();
@@ -32,6 +33,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
+    // 알림 수락
     @PostMapping("/{id}/accept")
     public ResponseEntity<NotificationDto> acceptNotification(@PathVariable Long id, Authentication authentication) {
         String username = authentication.getName();
@@ -45,6 +47,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
+    // 알림 거절
     @DeleteMapping("/{id}/refuse")
     public ResponseEntity<Void> refuseNotification(@PathVariable Long id, Authentication authentication) {
         String username = authentication.getName();
