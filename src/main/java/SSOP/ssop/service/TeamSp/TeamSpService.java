@@ -24,13 +24,13 @@ public class TeamSpService {
     private TeamSpMemberRepository teamSpMemberRepository;
 
     // 팀스페이스 생성
-    public void saveTeamSp(TeamSp teamSp, Long hostId) {
-        teamSp.setHostId(hostId); // 호스트 ID 저장
+    public void saveTeamSp(TeamSp teamSp, Long host_id) {
+        teamSp.setHost_id(host_id); // 호스트 ID 저장
         teamSp.setInviteCode(createInviteCode()); // 초대코드 자동 생성
         teamSpRepository.save(teamSp);
 
         // 2. 팀스페이스 생성 후 호스트를 자동으로 팀스페이스에 입장시킴
-        EnterTeamSp(teamSp.getInviteCode(), hostId);
+        EnterTeamSp(teamSp.getInviteCode(), host_id);
     }
 
     // 랜덤 코드 생성
@@ -82,7 +82,7 @@ public class TeamSpService {
         TeamSp existingTeamSp = teamSpRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
 
-        if (existingTeamSp.getHostId() == userId) {
+        if (existingTeamSp.getHost_id() == userId) {
             existingTeamSp.updateTeamName(teamSp.getTeam_name());
             return teamSpRepository.save(existingTeamSp);
         } else {
@@ -97,7 +97,7 @@ public class TeamSpService {
             throw new IllegalArgumentException("팀스페이스를 찾을 수 없습니다.");
         }
 
-        if (teamSp.getHostId() == userId) {
+        if (teamSp.getHost_id() == userId) {
             teamSpRepository.delete(teamSp);
         } else {
             // 참여자 처리

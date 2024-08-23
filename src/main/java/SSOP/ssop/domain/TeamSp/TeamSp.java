@@ -14,7 +14,7 @@ public class TeamSp {
     @Column(name = "team_id")
     private long team_id;
 
-    private long hostId; // 호스트 ID 저장
+    private long host_id; // 호스트 ID 저장
 
     @Column(name = "team_name")
     private String team_name;
@@ -98,12 +98,12 @@ public class TeamSp {
         this.team_id = team_id;
     }
 
-    public long getHostId() {
-        return hostId;
+    public long getHost_id() {
+        return host_id;
     }
 
-    public void setHostId(long hostId) {
-        this.hostId = hostId;
+    public void setHost_id(long host_id) {
+        this.host_id = host_id;
     }
 
     public String getTeam_name() {
