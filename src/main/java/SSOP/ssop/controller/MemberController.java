@@ -1,9 +1,9 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.card.TeamSp.MemberDto;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.service.MemberService;
+import SSOP.ssop.dto.TeamSp.MemberRequest;
+import SSOP.ssop.dto.TeamSp.MemberResponse;
+import SSOP.ssop.service.TeamSp.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -25,10 +26,11 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @PostMapping("/create")
+    // 팀스페이스 멤버 카드 생성
+    @PostMapping("/create/{teamId}")
     public ResponseEntity<Map<String, Object>> saveMember(
-            @RequestParam("teamId") Long teamId,
-            @RequestPart("member") MemberDto memberDto,
+            @PathVariable("teamId") Long teamId,
+            @RequestPart("member") MemberRequest memberDto,
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
         // 현재 인증된 사용자의 정보를 가져옴
@@ -45,5 +47,19 @@ public class MemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
+    }
+
+    // 특정 팀스페이스의 모든 멤버 카드 조회
+    @GetMapping("/total/view")
+    public ResponseEntity<List<MemberResponse>> getAllMembers(@RequestParam("teamId") Long teamId) {
+        List<MemberResponse> members = memberService.getAllMembers(teamId);
+        return ResponseEntity.ok(members);
+    }
+
+    // 특정 팀스페이스의 특정 멤버 카드 조회
+    @GetMapping("/view")
+    public ResponseEntity<List<MemberResponse>> getMember(@RequestParam("teamId") Long teamId, @RequestParam("userId") Long userId) {
+        List<MemberResponse> member = memberService.getMember(teamId, userId);
+        return ResponseEntity.ok(member);
     }
 }

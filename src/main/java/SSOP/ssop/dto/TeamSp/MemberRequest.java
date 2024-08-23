@@ -1,8 +1,6 @@
-package SSOP.ssop.dto.card.TeamSp;
+package SSOP.ssop.dto.TeamSp;
 
-public class MemberDto {
-//    private Long cardId;
-//    private Long teamSpMemberId;
+public class MemberRequest {
 
     private MemberEssentialDto memberEssential;
     private MemberOptionalDto memberOptional;
@@ -10,13 +8,13 @@ public class MemberDto {
     private MemberWorkerDto memberWorker;
     private MemberFanDto memberFan;
 
-//    public Long getCardId() {
-//        return cardId;
-//    }
-//
-//    public Long getTeamSpMemberId() {
-//        return teamSpMemberId;
-//    }
+    public MemberRequest(MemberEssentialDto memberEssential, MemberOptionalDto memberOptional, MemberStudentDto memberStudent, MemberWorkerDto memberWorker, MemberFanDto memberFan) {
+        this.memberEssential = memberEssential;
+        this.memberOptional = memberOptional;
+        this.memberStudent = memberStudent;
+        this.memberWorker = memberWorker;
+        this.memberFan = memberFan;
+    }
 
     public MemberEssentialDto getMemberEssential() {
         return memberEssential;

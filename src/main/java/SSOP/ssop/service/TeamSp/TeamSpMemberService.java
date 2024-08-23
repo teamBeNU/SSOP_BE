@@ -2,18 +2,18 @@ package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
-import SSOP.ssop.dto.card.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +23,41 @@ public class TeamSpMemberService {
     private TeamSpRepository teamSpRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    // 팀스페이스 입장
+    public void EnterTeamSp(int inviteCode, long userId) {
+        // 1. 팀스페이스 정보 가져오기
+        TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
+
+        // 2. 유저 정보 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        // 3. 호스트가 아닌지 확인
+        if (teamSp.getHostId() == userId) {
+            throw new IllegalArgumentException("호스트는 팀스페이스에 입장할 수 없습니다.");
+        }
+
+        // 4. 이미 입장한 사용자인지 종복 확인
+        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeam_id(), userId);
+        if (existingMembership.isPresent()) {
+            throw new IllegalArgumentException("이미 입장한 팀스페이스입니다.");
+        }
+
+        // 5. 유저 정보에서 팀스페이스 추가
+        user.enterTeamSp(teamSp);
+
+        // 6. 팀스페이스 멤버 저장
+        teamSpMemberRepository.saveAll(user.getTeamSpMembers());
+    }
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {
@@ -55,9 +89,11 @@ public class TeamSpMemberService {
                             String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
                             teamSp.getTeam_comment(),        // 팀 설명
-                            entry.getValue()                 // 사용자 ID 목록
+                            entry.getValue(),                // 사용자 ID 목록
+                            membersDetail                    // 멤버 카드 정보
                     );
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -80,12 +116,17 @@ public class TeamSpMemberService {
                 .map(member -> member.getUser().getUserId())
                 .collect(Collectors.toList());
 
+        // team id를 통해 MemberResponse 객체를 가져옴
+        List<MemberResponse> membersDetail = memberRepository.findByTeamId(team_id).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+
         // DTO 객체 생성
         TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
                 String.valueOf(team_id),
                 teamSp.getTeam_name(), // 팀 이름
                 teamSp.getTeam_comment(),
-                userIds.isEmpty() ? Collections.emptyList() : userIds // 사용자 ID 목록
+                userIds.isEmpty() ? Collections.emptyList() : userIds, // 사용자 ID 목록
+                membersDetail       // 멤버 카드 정보
         );
         return Optional.of(teamSpMemberDto);
     }
@@ -115,6 +156,10 @@ public class TeamSpMemberService {
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
+        // user id를 통해 MemberResponse 객체를 가져옴
+        List<MemberResponse> membersDetail = memberRepository.findByUserId(userId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+
         // 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
         return teamMembersMap.entrySet().stream()
                 .map(entry -> {
@@ -122,9 +167,9 @@ public class TeamSpMemberService {
                     return new TeamSpByUserDto(
                             String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
-                            teamSp.getTeam_comment()       // 팀 설명
+                            teamSp.getTeam_comment(),       // 팀 설명
+                            membersDetail                   // 멤버 카드 정보
                     );
                 })
                 .collect(Collectors.toList());
     }
-}

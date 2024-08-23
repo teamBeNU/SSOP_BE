@@ -1,15 +1,8 @@
-package SSOP.ssop.dto.card.TeamSp;
-
-import lombok.Getter;
-import lombok.Setter;
+package SSOP.ssop.dto.TeamSp;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
 public class MemberOptionalDto {
-
-    private String card_age;     // 나이
 
     private LocalDate card_birth;  // 생년월일
 
@@ -37,8 +30,22 @@ public class MemberOptionalDto {
     private String card_free_A4;
     private String card_free_A5;
 
-    public String getCard_age() {
-        return card_age;
+    public MemberOptionalDto(LocalDate card_birth, String card_MBTI, String card_tel, String card_email, String card_insta, String card_x, String card_hobby, String card_music, String card_movie, String card_address, String card_free_A1, String card_free_A2, String card_free_A3, String card_free_A4, String card_free_A5) {
+        this.card_birth = card_birth;
+        this.card_MBTI = card_MBTI;
+        this.card_tel = card_tel;
+        this.card_email = card_email;
+        this.card_insta = card_insta;
+        this.card_x = card_x;
+        this.card_hobby = card_hobby;
+        this.card_music = card_music;
+        this.card_movie = card_movie;
+        this.card_address = card_address;
+        this.card_free_A1 = card_free_A1;
+        this.card_free_A2 = card_free_A2;
+        this.card_free_A3 = card_free_A3;
+        this.card_free_A4 = card_free_A4;
+        this.card_free_A5 = card_free_A5;
     }
 
     public LocalDate getCard_birth() {

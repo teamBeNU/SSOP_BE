@@ -1,23 +1,19 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.domain.card.Avatar;
-import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.domain.card.CardStudent;
-import SSOP.ssop.dto.card.TeamSp.*;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardStudentCreateRequest;
+import SSOP.ssop.dto.TeamSp.*;
 import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -31,11 +27,11 @@ public class MemberService {
         this.teamSpMemberRepository = teamSpMemberRepository;
     }
 
-    // 카드 생성
+    // 팀스페이스 멤버 카드 생성
     @Transactional
-    public void saveMember(Long teamId, Long userId, MemberDto memberDto, MultipartFile file) throws Exception {
+    public void saveMember(Long teamId, Long userId, MemberRequest memberRequest, MultipartFile file) throws Exception {
         TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀 스페이스입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않습니다."));
 
         boolean memberExist = memberRepository.existsByTeamSpMemberId(teamSpMember.getId());
         if (memberExist) {
@@ -53,7 +49,7 @@ public class MemberService {
         member.setProfile_image_url(profileImageUrl);
         // member.setProfile_image_url(profileImageUrl != null ? profileImageUrl : "default-profile-image-url"); // 기본 이미지 URL 설정
 
-        setMemberDto(member, memberDto);
+        setMemberRequest(member, memberRequest);
 
         memberRepository.save(member);
     }
@@ -79,21 +75,20 @@ public class MemberService {
         return "/uploads/teamSp/" + teamId + "/" + fileName;
     }
 
-    private void setMemberDto(Member member, MemberDto memberDto) {
-        if (memberDto == null) {
+    private void setMemberRequest(Member member, MemberRequest memberRequest) {
+        if (memberRequest == null) {
             return;
         }
 
-        MemberEssentialDto essentialDto = memberDto.getMemberEssential();
+        MemberEssentialDto essentialDto = memberRequest.getMemberEssential();
         if (essentialDto != null) {
             member.setCard_name(essentialDto.getCard_name());
             member.setCard_introduction(essentialDto.getCard_introduction());
             member.setCard_cover(essentialDto.getCard_cover());
         }
 
-        MemberOptionalDto optionalDto = memberDto.getMemberOptional();
+        MemberOptionalDto optionalDto = memberRequest.getMemberOptional();
         if (optionalDto != null) {
-            member.setCard_age(optionalDto.getCard_age());
             member.setCard_birth(optionalDto.getCard_birth());
             member.setCard_MBTI(optionalDto.getCard_MBTI());
             member.setCard_tel(optionalDto.getCard_tel());
@@ -111,7 +106,7 @@ public class MemberService {
             member.setCard_free_5(optionalDto.getCard_free_A5());
         }
 
-        MemberStudentDto studentDto = memberDto.getMemberStudent();
+        MemberStudentDto studentDto = memberRequest.getMemberStudent();
         if (studentDto != null) {
             member.setCard_student_school(studentDto.getCard_student_school());
             member.setCard_student_grade(studentDto.getCard_student_grade());
@@ -119,9 +114,10 @@ public class MemberService {
             member.setCard_student_major(studentDto.getCard_student_major());
             member.setCard_student_club(studentDto.getCard_student_club());
             member.setCard_student_role(studentDto.getCard_student_role());
+            member.setCard_student_status(studentDto.getCard_student_status());
         }
 
-        MemberWorkerDto workerDto = memberDto.getMemberWorker();
+        MemberWorkerDto workerDto = memberRequest.getMemberWorker();
         if (workerDto != null) {
             member.setCard_worker_company(workerDto.getCard_worker_company());
             member.setCard_worker_job(workerDto.getCard_worker_job());
@@ -129,12 +125,26 @@ public class MemberService {
             member.setCard_worker_department(workerDto.getCard_worker_department());
         }
 
-        MemberFanDto fanDto = memberDto.getMemberFan();
+        MemberFanDto fanDto = memberRequest.getMemberFan();
         if (fanDto != null) {
             member.setCard_fan_genre(fanDto.getCard_fan_genre());
             member.setCard_fan_first(fanDto.getCard_fan_first());
             member.setCard_fan_second(fanDto.getCard_fan_second());
             member.setCard_fan_reason(fanDto.getCard_fan_reason());
         }
+    }
+
+    // 특정 팀스페이스의 모든 멤버 카드 조회
+    @Transactional
+    public List<MemberResponse> getAllMembers(long teamId) {
+        return memberRepository.findByTeamId(teamId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+    }
+
+    // 특정 팀스페이스의 특정 멤버 카드 조회
+    @Transactional
+    public List<MemberResponse> getMember(long teamId, long userId) {
+        return memberRepository.findByTeamIdAndUserId(teamId, userId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
     }
 }
