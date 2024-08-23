@@ -1,20 +1,21 @@
 package SSOP.ssop.service.TeamSp;
 
+import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +29,9 @@ public class TeamSpMemberService {
 
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     // 팀스페이스 입장
     public void EnterTeamSp(int inviteCode, long userId) {
@@ -83,44 +87,54 @@ public class TeamSpMemberService {
         return teamMembersMap.entrySet().stream()
                 .map(entry -> {
                     TeamSp teamSp = teamSpMap.get(entry.getKey());
+                    if (teamSp == null) {
+                        System.err.println("TeamSp not found for ID: " + entry.getKey());
+                        return null;
+                    }
+                    // 사용자 ID 목록을 통해 MemberResponse 객체를 가져옴
+                    List<MemberResponse> membersDetail = memberRepository.findByTeamId(teamSp.getTeam_id()).stream()
+                            .map(MemberResponse::new).collect(Collectors.toList());
+
                     return new TeamSpMemberDto(
                             String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
                             teamSp.getTeam_comment(),        // 팀 설명
-                            entry.getValue()                 // 사용자 ID 목록
+                            entry.getValue(),                // 사용자 ID 목록
+                            membersDetail                    // 멤버 카드 정보
                     );
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
-    // 특정 id 팀스페이스 참여 정보 조회
-    public Optional<TeamSpMemberDto> getTeamMemberById(long team_id) {
-        // 팀스페이스의 멤버 정보를 조회
-        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
-
-        // 팀스페이스 정보를 조회
-        TeamSp teamSp = teamSpRepository.findById(team_id)
-                .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
-
-        // 멤버 정보가 없으면 빈 Optional 반환
-        if (members.isEmpty()) {
-            return Optional.empty();
-        }
-
-        // 팀스페이스 ID와 사용자 ID 목록으로 변환
-        List<Long> userIds = members.stream()
-                .map(member -> member.getUser().getUserId())
-                .collect(Collectors.toList());
-
-        // DTO 객체 생성
-        TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
-                String.valueOf(team_id),
-                teamSp.getTeam_name(), // 팀 이름
-                teamSp.getTeam_comment(),
-                userIds.isEmpty() ? Collections.emptyList() : userIds // 사용자 ID 목록
-        );
-        return Optional.of(teamSpMemberDto);
-    }
+//    // 특정 id 팀스페이스 참여 정보 조회
+//    public Optional<TeamSpMemberDto> getTeamMemberById(long team_id) {
+//        // 팀스페이스의 멤버 정보를 조회
+//        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
+//
+//        // 팀스페이스 정보를 조회
+//        TeamSp teamSp = teamSpRepository.findById(team_id)
+//                .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
+//
+//        // 멤버 정보가 없으면 빈 Optional 반환
+//        if (members.isEmpty()) {
+//            return Optional.empty();
+//        }
+//
+//        // 팀스페이스 ID와 사용자 ID 목록으로 변환
+//        List<Long> userIds = members.stream()
+//                .map(member -> member.getUser().getUserId())
+//                .collect(Collectors.toList());
+//
+//        // DTO 객체 생성
+//        TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
+//                String.valueOf(team_id),
+//                teamSp.getTeam_name(), // 팀 이름
+//                teamSp.getTeam_comment(),
+//                userIds.isEmpty() ? Collections.emptyList() : userIds // 사용자 ID 목록
+//        );
+//        return Optional.of(teamSpMemberDto);
+//    }
 
     // 유저별 참여 중인 팀스페이스 정보 조회
     public List<TeamSpByUserDto> getTeamSpByUserId(long userId) {
@@ -159,4 +173,5 @@ public class TeamSpMemberService {
                 })
                 .collect(Collectors.toList());
     }
+
 }
