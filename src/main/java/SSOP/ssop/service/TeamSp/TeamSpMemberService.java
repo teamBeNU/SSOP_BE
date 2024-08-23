@@ -161,6 +161,10 @@ public class TeamSpMemberService {
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
+        // team id를 통해 MemberResponse 객체를 가져옴
+        List<MemberResponse> membersDetail = memberRepository.findByUserId(userId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+
         // 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
         return teamMembersMap.entrySet().stream()
                 .map(entry -> {
@@ -168,7 +172,8 @@ public class TeamSpMemberService {
                     return new TeamSpByUserDto(
                             String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
-                            teamSp.getTeam_comment()       // 팀 설명
+                            teamSp.getTeam_comment(),       // 팀 설명
+                            membersDetail                   // 멤버 카드 정보
                     );
                 })
                 .collect(Collectors.toList());
