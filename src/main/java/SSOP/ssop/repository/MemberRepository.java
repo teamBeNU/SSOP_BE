@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -14,4 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // teamSpMemberId로 멤버가 존재하는지 확인하는 메서드
     boolean existsByTeamSpMemberId(Long teamspMemberId);
+
+//    // 해당 팀스페이스의 멤버 조회
+//    List<Member> findByTeamId(Long teamspMemberId);
 }

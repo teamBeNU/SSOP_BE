@@ -1,7 +1,7 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.TeamSp.MemberDto;
+import SSOP.ssop.dto.TeamSp.MemberRequest;
 import SSOP.ssop.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class MemberController {
     @PostMapping("/create/{teamId}")
     public ResponseEntity<Map<String, Object>> saveMember(
             @PathVariable("teamId") Long teamId,
-            @RequestPart("member") MemberDto memberDto,
+            @RequestPart("member") MemberRequest memberDto,
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
         // 현재 인증된 사용자의 정보를 가져옴
