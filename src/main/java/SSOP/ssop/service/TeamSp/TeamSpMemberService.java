@@ -161,7 +161,7 @@ public class TeamSpMemberService {
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
-        // team id를 통해 MemberResponse 객체를 가져옴
+        // user id를 통해 MemberResponse 객체를 가져옴
         List<MemberResponse> membersDetail = memberRepository.findByUserId(userId).stream()
                 .map(MemberResponse::new).collect(Collectors.toList());
 
