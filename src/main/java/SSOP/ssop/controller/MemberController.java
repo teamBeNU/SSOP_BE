@@ -53,11 +53,16 @@ public class MemberController {
     }
 
     // 특정 팀스페이스의 모든 멤버 카드 조회
-    @GetMapping("/total/team")
+    @GetMapping("/total/view")
     public ResponseEntity<List<MemberResponse>> getAllMembers(@RequestParam("teamId") Long teamId) {
         List<MemberResponse> members = memberService.getAllMembers(teamId);
         return ResponseEntity.ok(members);
     }
 
     // 특정 팀스페이스의 특정 멤버 카드 조회
+    @GetMapping("/view")
+    public ResponseEntity<List<MemberResponse>> getMember(@RequestParam("teamId") Long teamId, @RequestParam("userId") Long userId) {
+        List<MemberResponse> member = memberService.getMember(teamId, userId);
+        return ResponseEntity.ok(member);
+    }
 }

@@ -143,4 +143,9 @@ public class MemberService {
     }
 
     // 특정 팀스페이스의 특정 멤버 카드 조회
+    @Transactional
+    public List<MemberResponse> getMember(long teamId, long userId) {
+        return memberRepository.findByTeamIdAndUserId(teamId, userId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+    }
 }
