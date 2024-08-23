@@ -32,7 +32,7 @@ public class MemberService {
     @Transactional
     public void saveMember(Long teamId, Long userId, MemberRequest memberRequest, MultipartFile file) throws Exception {
         TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀 스페이스입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않습니다."));
 
         boolean memberExist = memberRepository.existsByTeamSpMemberId(teamSpMember.getId());
         if (memberExist) {
@@ -135,13 +135,12 @@ public class MemberService {
         }
     }
 
-//    // 해당 팀스페이스의 전체 팀스페이스 멤버 카드 조회
-//    @Transactional
-//    public List<MemberResponse> getAllMembers(long teamId) {
-//        return memberRepository.findByTeamId(teamId).stream()
-//                .map(MemberResponse::new)
-//                .collect(Collectors.toList());
-//    }
+    // 특정 팀스페이스의 모든 멤버 카드 조회
+    @Transactional
+    public List<MemberResponse> getAllMembers(long teamId) {
+        return memberRepository.findByTeamId(teamId).stream()
+                .map(MemberResponse::new).collect(Collectors.toList());
+    }
 
-    // 특정 팀스페이스 멤버 카드 조회
+    // 특정 팀스페이스의 특정 멤버 카드 조회
 }

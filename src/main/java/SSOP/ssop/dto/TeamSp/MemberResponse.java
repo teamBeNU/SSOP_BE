@@ -65,4 +65,32 @@ public class MemberResponse {
                 member.getCard_fan_reason()
         );
     }
+
+    public Long getCardId() {
+        return cardId;
+    }
+
+    public Long getTeamSpMemberId() {
+        return teamSpMemberId;
+    }
+
+    public MemberEssentialDto getMemberEssential() {
+        return memberEssential;
+    }
+
+    public MemberOptionalDto getMemberOptional() {
+        return memberOptional;
+    }
+
+    public MemberStudentDto getMemberStudent() {
+        return memberStudent;
+    }
+
+    public MemberWorkerDto getMemberWorker() {
+        return memberWorker;
+    }
+
+    public MemberFanDto getMemberFan() {
+        return memberFan;
+    }
 }

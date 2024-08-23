@@ -2,16 +2,21 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.TeamSp.MemberRequest;
+import SSOP.ssop.dto.TeamSp.MemberResponse;
+import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/teamsp/member")
@@ -24,6 +29,7 @@ public class MemberController {
         this.memberService = memberService;
     }
 
+    // 팀스페이스 멤버 카드 생성
     @PostMapping("/create/{teamId}")
     public ResponseEntity<Map<String, Object>> saveMember(
             @PathVariable("teamId") Long teamId,
@@ -45,4 +51,13 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
     }
+
+    // 특정 팀스페이스의 모든 멤버 카드 조회
+    @GetMapping("/total/team")
+    public ResponseEntity<List<MemberResponse>> getAllMembers(@RequestParam("teamId") Long teamId) {
+        List<MemberResponse> members = memberService.getAllMembers(teamId);
+        return ResponseEntity.ok(members);
+    }
+
+    // 특정 팀스페이스의 특정 멤버 카드 조회
 }
