@@ -1,7 +1,7 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.dto.card.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.config.UserDetail;
+import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
@@ -26,23 +26,6 @@ public class TeamSpMemberController {
     @Autowired
     public TeamSpMemberController(TeamSpMemberService teamSpMemberService) {
         this.teamSpMemberService = teamSpMemberService;
-    }
-
-    // 팀 스페이스 입장
-    @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
-        try {
-            teamSpMemberService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
-            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
-        }
     }
 
     // 모든 팀스페이스 참여 정보 조회

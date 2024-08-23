@@ -42,7 +42,7 @@ public class TeamSpMemberService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         // 3. 호스트가 아닌지 확인
-        if (teamSp.getHostId() == userId) {
+        if (teamSp.getHost_id() == userId) {
             throw new IllegalArgumentException("호스트는 팀스페이스에 입장할 수 없습니다.");
         }
 
@@ -85,6 +85,11 @@ public class TeamSpMemberService {
         return teamMembersMap.entrySet().stream()
                 .map(entry -> {
                     TeamSp teamSp = teamSpMap.get(entry.getKey());
+
+                    // team id를 통해 MemberResponse 객체를 가져옴
+                    List<MemberResponse> membersDetail = memberRepository.findByTeamId(teamSp.getTeam_id()).stream()
+                            .map(MemberResponse::new).collect(Collectors.toList());
+
                     return new TeamSpMemberDto(
                             String.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
@@ -173,3 +178,4 @@ public class TeamSpMemberService {
                 })
                 .collect(Collectors.toList());
     }
+}
