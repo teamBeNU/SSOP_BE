@@ -1,10 +1,5 @@
 package SSOP.ssop.dto.TeamSp;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class MemberWorkerDto {
     private String card_worker_company;     // 회사
     private String card_worker_job;         // 직무

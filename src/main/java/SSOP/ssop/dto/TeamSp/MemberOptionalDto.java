@@ -1,12 +1,7 @@
 package SSOP.ssop.dto.TeamSp;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDate;
 
-@Getter
-@Setter
 public class MemberOptionalDto {
 
     private LocalDate card_birth;  // 생년월일

@@ -1,10 +1,5 @@
 package SSOP.ssop.dto.TeamSp;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class MemberStudentDto {
     private String card_student_school;     // 학교
     private String card_student_grade;     // 학년

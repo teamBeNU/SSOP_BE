@@ -1,9 +1,8 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.dto.TeamSp.*;
-import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.MemberRepository;
 import SSOP.ssop.repository.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;

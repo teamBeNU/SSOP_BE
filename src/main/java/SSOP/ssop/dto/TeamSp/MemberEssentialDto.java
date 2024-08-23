@@ -1,10 +1,5 @@
 package SSOP.ssop.dto.TeamSp;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class MemberEssentialDto {
     private String card_name;   // 이름
     private String card_introduction;   // 한줄소개
