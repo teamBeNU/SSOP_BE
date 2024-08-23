@@ -1,4 +1,4 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.bluetooth;
 
 import SSOP.ssop.domain.bluetooth.Recipient;
 import SSOP.ssop.service.RecipientService;
