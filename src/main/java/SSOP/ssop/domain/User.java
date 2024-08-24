@@ -66,7 +66,7 @@ public class User {
     public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
 
     public void enterTeamSp(TeamSp teamSp) {
-        this.teamSpMembers.add(new TeamSpMember(teamSp, this));
+        this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));
     }
 
     // Getter & Setter

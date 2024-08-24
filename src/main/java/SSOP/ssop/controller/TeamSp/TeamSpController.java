@@ -42,12 +42,7 @@ public class TeamSpController {
 
     // 팀 스페이스 입장
     @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
+    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
 
         try {
             teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);

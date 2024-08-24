@@ -58,11 +58,11 @@ public class Card {
     private String card_movie;
 
     // 그 외
-    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private CardStudent cardStudent;
-
-    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
-    private CardWorker cardWorker;
+//    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private CardStudent cardStudent;
+//
+//    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private CardWorker cardWorker;
 
     @Lob
     private String memo;

@@ -1,6 +1,5 @@
 package SSOP.ssop.domain.TeamSp;
 
-import SSOP.ssop.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 

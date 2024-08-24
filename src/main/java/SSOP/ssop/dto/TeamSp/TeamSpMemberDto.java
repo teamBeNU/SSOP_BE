@@ -8,6 +8,7 @@ public class TeamSpMemberDto {
     private String team_name;
     private String team_comment;
     private List<Long> user_id;
+    private List<Long> card_id;
     private List<MemberResponse> members;
 
     // 기본 생성자
@@ -16,11 +17,12 @@ public class TeamSpMemberDto {
     }
 
     // 모든 필드를 인자로 받는 생성자
-    public TeamSpMemberDto(String team_id, String team_name, String team_comment, List<Long> user_id, List<MemberResponse> members) {
+    public TeamSpMemberDto(String team_id, String team_name, String team_comment, List<Long> user_id, List<Long> card_id, List<MemberResponse> members) {
         this.team_id = team_id;
         this.team_name = team_name;
         this.team_comment = team_comment;
         this.user_id = user_id;
+        this.card_id = card_id;
         this.members = members;
     }
 
@@ -59,6 +61,14 @@ public class TeamSpMemberDto {
 
     public void setUser_id(List<Long> user_id) {
         this.user_id = user_id;
+    }
+
+    public List<Long> getCard_id() {
+        return card_id;
+    }
+
+    public void setCard_id(List<Long> card_id) {
+        this.card_id = card_id;
     }
 
     public void setMembers(List<MemberResponse> members) {

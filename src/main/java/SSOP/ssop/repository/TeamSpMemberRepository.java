@@ -17,7 +17,11 @@ public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long
     // 팀스페이스 입장
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamSpId AND t.user.userId = :userId")
     Optional<TeamSpMember> findByTeamSpIdAndUserId(@Param("teamSpId") long teamSpId, @Param("userId") long userId);
-    
+
+    // 이미 제출한 카드인지 확인
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :teamSpId AND t.user.userId = :userId AND t.card.card_id = :cardId")
+    Optional<TeamSpMember> findByTeamSpIdAndUserIdAndCardId(@Param("teamSpId") long teamSpId, @Param("userId") long userId, @Param("cardId") long cardId);
+
     // 팀스페이스별 참여 정보 조회
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.team_id = :team_id")
     List<TeamSpMember> findByTeamSpId(@Param("team_id") long teamId);

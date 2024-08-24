@@ -1,16 +1,12 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +22,21 @@ public class TeamSpMemberController {
     @Autowired
     public TeamSpMemberController(TeamSpMemberService teamSpMemberService) {
         this.teamSpMemberService = teamSpMemberService;
+    }
+
+    // 기존 카드 제출
+    @PostMapping("/submit-card")
+    public ResponseEntity<String> submitCard(@RequestParam Long teamId, @RequestBody Map<String, Long> requestBody, @Login Long userId) {
+        try {
+            Long cardId = requestBody.get("card_id");
+            teamSpMemberService.SubmitCard(teamId, cardId, userId);
+            String responseMessage = "카드 ID " + cardId + "이(가) 제출되었습니다.";
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 모든 팀스페이스 참여 정보 조회
