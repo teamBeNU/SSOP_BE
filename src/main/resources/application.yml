@@ -5,13 +5,18 @@ spring:
   datasource:
     url: "jdbc:mysql://localhost/ssop"
     username: "root"
-    password: "root"
+    password: "Ssop242401@#"
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa :
     hibernate:
       #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
-      #ddl-auto: update #테이블 변화가 있을 때
-      ddl-auto: validate #평소엔 이상태로 두어야 잘못된 컬럼 안생김
+      ddl-auto: validate
+      #ddl-auto 속성 종류
+        #create : 시작 시 기존 테이블 삭제 후 생성
+        #creae-drop : 종료 시 테이블 삭제
+        #update : 변경사항만 반영
+        #validate : 생성/수정하지 않고 정상 매핑되는지만 검사
+        #none : 아무 일도 안일어남
     properties:
       hibernate:
         format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정

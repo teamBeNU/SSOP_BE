@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'	// Spring Boot test dependency
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Spring Data JPA 의존성 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
