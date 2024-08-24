@@ -19,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("user_id")
-    private long userId;
+    private Long userId;
 
     private String user_name;
     private String email;

@@ -11,9 +11,9 @@ public class TeamSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
-    private long team_id;
+    private Long team_id;
 
-    private long host_id; // 호스트 ID 저장
+    private Long host_id; // 호스트 ID 저장
 
     @Column(name = "team_name")
     private String team_name;
@@ -89,19 +89,19 @@ public class TeamSp {
         member.setTeamSp(null); // 참조를 제거
     }
 
-    public long getTeam_id() {
+    public Long getTeam_id() {
         return team_id;
     }
 
-    public void setTeam_id(long team_id) {
+    public void setTeam_id(Long team_id) {
         this.team_id = team_id;
     }
 
-    public long getHost_id() {
+    public Long getHost_id() {
         return host_id;
     }
 
-    public void setHost_id(long host_id) {
+    public void setHost_id(Long host_id) {
         this.host_id = host_id;
     }
 

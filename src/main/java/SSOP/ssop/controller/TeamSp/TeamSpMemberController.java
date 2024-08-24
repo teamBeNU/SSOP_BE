@@ -1,6 +1,7 @@
 package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.card.request.SubmitCardRequest;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
@@ -26,16 +27,18 @@ public class TeamSpMemberController {
 
     // 기존 카드 제출
     @PostMapping("/submit-card")
-    public ResponseEntity<String> submitCard(@RequestParam Long teamId, @RequestBody Map<String, Long> requestBody, @Login Long userId) {
+    public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
         try {
-            Long cardId = requestBody.get("card_id");
+            Long cardId = submitCardRequest.getCard_id();
             teamSpMemberService.SubmitCard(teamId, cardId, userId);
-            String responseMessage = "카드 ID " + cardId + "이(가) 제출되었습니다.";
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
         }
     }
 

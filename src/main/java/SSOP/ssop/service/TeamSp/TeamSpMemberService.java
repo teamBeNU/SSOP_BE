@@ -2,7 +2,6 @@ package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
@@ -23,9 +22,6 @@ public class TeamSpMemberService {
     private TeamSpRepository teamSpRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
 
     @Autowired
@@ -43,21 +39,32 @@ public class TeamSpMemberService {
         TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀스페이스 멤버입니다."));
 
-        // 2. 유저 카드 목록에서 제출된 카드가 있는지 확인
+        // 2. 유저 카드 목록에서 제출할 카드가 있는지 확인
         List<CardResponse> myCards = cardService.getMyCards(userId);
         boolean isCardOwnedByUser = myCards.stream()
                 .anyMatch(card -> card.getCard_id().equals(cardId));
-
         if (!isCardOwnedByUser) {
             throw new IllegalArgumentException("사용자의 카드 목록에 카드가 존재하지 않습니다.");
         }
 
         // 3. 이미 제출된 카드가 있는지 확인
-        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserIdAndCardId(teamId, userId, cardId);
-        if (existingMembership.isPresent()) {
-            throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
-        }
+        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId);
 
+        if (existingMembership.isPresent()) {
+            TeamSpMember existingMember = existingMembership.get();
+
+            // 기존 카드가 null -> 요청한 cardId로 업데이트
+            if (existingMember.getCard() == null) {
+                Card card = cardRepository.findById(cardId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
+                existingMember.setCard(card);
+                teamSpMemberRepository.save(existingMember);
+                return; // 업데이트 완료 후 메소드 종료
+            } else {
+                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
+                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
+            }
+        }
         // 4. 카드 제출을 위해 새로운 TeamSpMember 엔티티를 생성
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
@@ -66,6 +73,7 @@ public class TeamSpMemberService {
         TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), card);
         teamSpMemberRepository.save(newTeamSpMember);
     }
+
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {
@@ -94,14 +102,16 @@ public class TeamSpMemberService {
                 .map(entry -> {
                     TeamSp teamSp = teamSpMap.get(entry.getKey());
 
-                    // 사용자 카드 ID 목록 조회
-                    List<CardResponse> myCards = cardService.getMyCards(entry.getValue().get(0)); // Assuming at least one user per team
-                    List<Long> cardIds = myCards.stream()
-                            .map(CardResponse::getCard_id)
+                    // 팀에 포함된 모든 사용자에 대해 카드 ID 목록을 가져옵니다
+                    List<Long> cardIds = members.stream()
+                            .filter(member -> member.getTeamSp().getTeam_id().equals(entry.getKey()))
+                            .map(member -> member.getCard() != null ? member.getCard().getCard_id() : null)
+                            .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
+                            .distinct()  // 중복된 카드 ID를 제거
                             .collect(Collectors.toList());
 
                     // team id를 통해 MemberResponse 객체를 가져옴
-                    List<MemberResponse> membersDetail = memberRepository.findByTeamId(teamSp.getTeam_id()).stream()
+                    List<MemberResponse> membersDetail = memberRepository.findByTeamId(entry.getKey()).stream()
                             .map(MemberResponse::new).collect(Collectors.toList());
 
                     return new TeamSpMemberDto(
@@ -109,15 +119,17 @@ public class TeamSpMemberService {
                             teamSp.getTeam_name(),           // 팀 이름
                             teamSp.getTeam_comment(),        // 팀 설명
                             entry.getValue(),                // 사용자 ID 목록
-                            cardIds,
+                            cardIds,                         // 카드 ID 목록 (null 제외)
                             membersDetail                    // 멤버 카드 정보
                     );
                 })
-                .filter(Objects::nonNull)
+                .filter(dto -> !dto.getCard_id().isEmpty()) // 카드 ID 목록이 비어있지 않은 경우만 반환
                 .collect(Collectors.toList());
     }
 
+
     // 특정 id 팀스페이스 참여 정보 조회
+// 특정 id 팀스페이스 참여 정보 조회
     public Optional<TeamSpMemberDto> getTeamMemberById(Long team_id) {
         // 팀스페이스의 멤버 정보를 조회
         List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
@@ -137,14 +149,11 @@ public class TeamSpMemberService {
                 .collect(Collectors.toList());
 
         // 사용자의 카드 목록 조회 및 카드 ID 추출
-        List<Long> cardIds = new ArrayList<>();
-        for (Long userId : userIds) {
-            List<CardResponse> myCards = cardService.getMyCards(userId);
-            List<Long> userCardIds = myCards.stream()
-                    .map(CardResponse::getCard_id)
-                    .collect(Collectors.toList());
-            cardIds.addAll(userCardIds); // 모든 사용자의 카드 ID를 수집
-        }
+        List<Long> cardIds = members.stream()
+                .map(member -> member.getCard() != null ? member.getCard().getCard_id() : null)
+                .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
+                .distinct()  // 중복된 카드 ID를 제거
+                .collect(Collectors.toList());
 
         // team id를 통해 MemberResponse 객체를 가져옴
         List<MemberResponse> membersDetail = memberRepository.findByTeamId(team_id).stream()
@@ -154,8 +163,9 @@ public class TeamSpMemberService {
         TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
                 String.valueOf(team_id),
                 teamSp.getTeam_name(), // 팀 이름
-                teamSp.getTeam_comment(),userIds.isEmpty() ? Collections.emptyList() : userIds, // 사용자 ID 목록
-                cardIds, // 카드 ID 목록
+                teamSp.getTeam_comment(), // 팀 설명
+                userIds.isEmpty() ? Collections.emptyList() : userIds, // 사용자 ID 목록
+                cardIds, // 카드 ID 목록 (null 제외)
                 membersDetail       // 멤버 카드 정보
         );
         return Optional.of(teamSpMemberDto);
@@ -204,22 +214,4 @@ public class TeamSpMemberService {
                 })
                 .collect(Collectors.toList());
     }
-
-//    // 팀스페이스 멤버를 카드 없이 추가
-//    public void addMemberWithNoCard(TeamSp teamSp, User user) {
-//        TeamSpMember member = new TeamSpMember(teamSp, user, null);
-//        teamSpMemberRepository.save(member);
-//    }
-//
-//    // 팀스페이스 멤버에게 카드 할당
-//    public void assignCardToMember(Long memberId, Long cardId) {
-//        TeamSpMember member = teamSpMemberRepository.findById(memberId)
-//                .orElseThrow(() -> new IllegalArgumentException("멤버를 찾을 수 없습니다."));
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-//
-//        member.setCard(card);
-//        teamSpMemberRepository.save(member);
-//    }
-
 }
