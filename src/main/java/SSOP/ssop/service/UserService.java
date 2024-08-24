@@ -55,6 +55,12 @@ public class UserService {
         User user = userRepository.findByEmail(loginDto.getEmail()).orElse(null);
 
         if (user != null) {
+            // 카카오 로그인인 경우
+            if(user.getSocial_type().equals("kakao")){
+                String jwtToken = jwtProvider.generateJwtToken(user.getUserId(), user.getEmail(), user.getUser_name());
+                return Collections.singletonMap("token", jwtToken);
+            }
+
             // 비밀번호 비교
             boolean passwordMatches = passwordEncoder.matches(loginDto.getPassword(), user.getPassword());
 
