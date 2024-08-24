@@ -34,9 +34,12 @@ public class TeamSpMember {
         this.card = card;
     }
 
-    // 카드 정보 업데이트
-    public void updateCard(Card newCard) {
-        this.card = newCard;  // 새로운 카드 정보로 업데이트
+    public Long getUserId() {
+        return user != null ? user.getUserId() : null;
+    }
+
+    public Long getCardId() {
+        return card != null ? card.getCard_id() : null;
     }
 
     public Long getId() {
