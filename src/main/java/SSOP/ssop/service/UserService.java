@@ -1,6 +1,7 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.config.JwtProvider;
+import SSOP.ssop.domain.KakaoUser;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.LoginDto;
