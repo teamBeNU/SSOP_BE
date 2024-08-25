@@ -27,7 +27,7 @@ public class MemberService {
         this.teamSpMemberRepository = teamSpMemberRepository;
     }
 
-    // 팀스페이스 멤버 카드 생성
+    // 팀스페이스 멤버 카드 생성 (지정 템플릿)
     @Transactional
     public void saveMember(Long teamId, Long userId, MemberRequest memberRequest, MultipartFile file) throws Exception {
         TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
@@ -52,6 +52,9 @@ public class MemberService {
         setMemberRequest(member, memberRequest);
 
         memberRepository.save(member);
+
+        // teamSpMember의 card_id를 null에서 0으로 변경
+        teamSpMember.setCardId(0L);
     }
 
     private String saveImage(MultipartFile file, Long teamId) throws Exception {

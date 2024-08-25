@@ -19,28 +19,37 @@ public class TeamSpMember {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "card_id")
-    private Card card;
+//    @ManyToOne
+//    @JoinColumn(name = "card_id")
+//    private Card card;
+
+    @Column(name = "card_id")
+    private Long cardId;
 
 
     // 기본 생성자
     public TeamSpMember() {}
 
     // 전체 필드를 초기화하는 생성자
-    public TeamSpMember(TeamSp teamSp, User user, Card card) {
+//    public TeamSpMember(TeamSp teamSp, User user, Card card) {
+//        this.teamSp = teamSp;
+//        this.user = user;
+//        this.card = card;
+//    }
+
+    public TeamSpMember(TeamSp teamSp, User user, Long cardId) {
         this.teamSp = teamSp;
         this.user = user;
-        this.card = card;
+        this.cardId = cardId;
     }
 
     public Long getUserId() {
         return user != null ? user.getUserId() : null;
     }
 
-    public Long getCardId() {
-        return card != null ? card.getCard_id() : null;
-    }
+//    public Long getCardId() {
+//        return card != null ? card.getCard_id() : null;
+//    }
 
     public Long getId() {
         return id;
@@ -62,11 +71,20 @@ public class TeamSpMember {
         this.user = user;
     }
 
-    public Card getCard() {
-        return card;
+//    public Card getCard() {
+//        return card;
+//    }
+//
+//    public void setCard(Card card) {
+//        this.card = card;
+//    }
+
+
+    public Long getCardId() {
+        return cardId;
     }
 
-    public void setCard(Card card) {
-        this.card = card;
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
     }
 }
