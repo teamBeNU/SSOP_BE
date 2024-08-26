@@ -40,26 +40,13 @@ public class CardController {
 
     @PostMapping("/create")
     public ResponseEntity<?> saveCard(
+            @Login Long userId,
             @RequestPart("card") CardCreateRequest request,
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
         try {
-            // 현재 인증된 사용자의 정보를 가져옴
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            // 인증 정보가 없을 경우 처리
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("code", 401, "message", "사용자 인증 필요"));
-            }
-
-            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-
-            // 인증된 사용자의 userId 가져오기
-            Long authenticatedUserId = userDetail.getUser().getUserId();
-
             // 카드 생성 서비스 호출
-            boolean isSaved = cardService.saveCard(request, authenticatedUserId, file);
+            boolean isSaved = cardService.saveCard(request, userId, file);
 
             // 카드 생성이 성공적으로 이루어졌는지 확인
             if (isSaved) {
