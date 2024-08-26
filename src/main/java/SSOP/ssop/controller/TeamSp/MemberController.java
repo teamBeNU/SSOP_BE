@@ -1,4 +1,4 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.dto.TeamSp.MemberRequest;
