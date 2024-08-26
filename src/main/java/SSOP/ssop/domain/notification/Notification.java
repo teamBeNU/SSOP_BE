@@ -19,7 +19,7 @@ public class Notification {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    public Notification(Long id, String title, String card_name, boolean accepted) {
+    public Notification() {
         this.id = id;
         this.title = title;
         this.card_name = card_name;

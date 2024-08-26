@@ -2,10 +2,11 @@ package SSOP.ssop.service;
 
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.notification.Notification;
-import SSOP.ssop.dto.NotificationDto;
 import SSOP.ssop.repository.NotificationRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,26 @@ public class NotificationService {
     public List<Notification> getNotificationsForUser(String user_name) {
         User user = userRepository.findByUser_name(user_name).orElseThrow(() -> new RuntimeException("User not found"));
         return notificationRepository.findByUser(user);
+    }
+
+    // 알림 생성
+    public Notification createNotification(Authentication authentication, String title, String cardName) {
+        // 인증된 사용자의 이름을 가져옴
+        String username = authentication.getName();
+
+        // username을 기반으로 사용자 객체를 찾음
+        User user = userRepository.findByUser_name(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        // 새로운 알림 생성
+        Notification notification = new Notification();
+        notification.setUser(user);
+        notification.setTitle(title);
+        notification.setCard_name(cardName);
+        notification.setAccepted(false);
+
+        // 알림 저장
+        return notificationRepository.save(notification);
     }
 
      // @param id - 수락할 알림의 ID

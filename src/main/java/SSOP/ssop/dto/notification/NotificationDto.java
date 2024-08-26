@@ -1,4 +1,4 @@
-package SSOP.ssop.dto;
+package SSOP.ssop.dto.notification;
 
 public class NotificationDto {
     private Long id;

@@ -1,9 +1,11 @@
 package SSOP.ssop.controller.notification;
 
 import SSOP.ssop.domain.notification.Notification;
-import SSOP.ssop.dto.NotificationDto;
+import SSOP.ssop.dto.notification.NotificationDto;
+import SSOP.ssop.dto.notification.NotificationRequestDto;
 import SSOP.ssop.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +34,24 @@ public class NotificationController {
                 )).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
+
+    // 알림 생성
+    @PostMapping
+    public ResponseEntity<NotificationDto> createNotification(@RequestBody NotificationRequestDto request, Authentication authentication) {
+        // 알림 생성 서비스 호출
+        Notification notification = notificationService.createNotification(authentication, request.getTitle(), request.getCard_name());
+
+        // 응답 DTO 생성
+        NotificationDto response = new NotificationDto(
+                notification.getId(),
+                notification.getTitle(),
+                notification.getCard_name(),
+                notification.isAccepted()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
 
     // 알림 수락
     @PostMapping("/{id}/accept")
