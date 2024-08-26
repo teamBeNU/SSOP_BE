@@ -47,16 +47,23 @@ public class CardService {
                 profileImageUrl = saveImage(file);
             }
 
-            Card card;
+            //Card card;
+            Card card = createCard(request, user_id, profileImageUrl);
+
             switch (request.getCardEssential().getCard_template()) {
                 case "student":
-                    card = saveStudentCard(request, user_id, profileImageUrl);
+                    saveStudentCard(card, request);
                     break;
                 case "worker":
-                    card = saveWorkerCard(request, user_id, profileImageUrl);
+                    saveWorkerCard(card, request);
                     break;
                 case "fan":
-                    card = saveFanCard(request, user_id, profileImageUrl);
+                    saveFanCard(card, request);
+                    break;
+                case "free":
+                    saveStudentCard(card, request);
+                    saveWorkerCard(card, request);
+                    saveFanCard(card, request);
                     break;
                 default:
                     throw new IllegalArgumentException("템플릿 없음");
@@ -90,6 +97,21 @@ public class CardService {
         return avatar;
     }
 
+    private void saveAvatar(Card card, CardCreateRequest request) {
+        Avatar avatar = new Avatar();
+        avatar.setFace(request.getAvatar().getFace());
+        avatar.setHair(request.getAvatar().getHair());
+        avatar.setHairColor(request.getAvatar().getHairColor());
+        avatar.setClothes(request.getAvatar().getClothes());
+        avatar.setAcc(request.getAvatar().getAcc());
+        avatar.setBg(request.getAvatar().getBg());
+        avatar.setBgColor(request.getAvatar().getBgColor());
+        avatar.setCard(card);
+        avatarRepository.save(avatar);
+        card.setAvatar(avatar);
+        cardRepository.save(card);
+    }
+
     private String saveImage(MultipartFile file) throws Exception {
 
         String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
@@ -113,8 +135,8 @@ public class CardService {
         return "/uploads/profiles/" + fileName;
     }
 
-    private Card saveStudentCard(CardCreateRequest request, Long user_id, String profileImageUrl) {    // ,
-        CardStudent card = new CardStudent(
+    private Card createCard(CardCreateRequest request, Long user_id, String profileImageUrl) {
+        Card card = new Card(
                 request.getCardEssential().getCard_name(),
                 request.getCardEssential().getCard_introduction(),
                 request.getCardEssential().getCard_template(),
@@ -131,7 +153,20 @@ public class CardService {
                 request.getCardOptional().getCard_music(),
                 request.getCardOptional().getCard_movie(),
                 request.getCardOptional().getCard_hobby(),
-                request.getCardOptional().getCard_address(),
+                request.getCardOptional().getCard_address()
+        );
+        card.setUserId(user_id);
+//        card.setProfile_image_url(profileImageUrl);
+//        card.setCard_name(request.getCardEssential().getCard_name());
+//        card.setCard_introduction(request.getCardEssential().getCard_introduction());
+//        card.setCard_template(request.getCardEssential().getCard_template());
+//        card.setCard_cover(request.getCardEssential().getCard_cover());
+        cardRepository.save(card);
+        return card;
+    }
+
+    private void saveStudentCard(Card card, CardCreateRequest request) {
+        CardStudent cardStudent = new CardStudent(
                 request.getStudent().getCard_student_school(),
                 request.getStudent().getCard_student_grade(),
                 request.getStudent().getCard_student_major(),
@@ -140,67 +175,36 @@ public class CardService {
                 request.getStudent().getCard_student_role(),
                 request.getStudent().getCard_student_status()
         );
-        card.setUserId(user_id); // 사용자 ID 설정
-        cardStudentRepository.save(card); // 카드 저장
-        return card;
+        cardStudent.setCard(card);  // Card 객체를 CardStudent에 설정
+        //cardStudent.setUserId(card.getUserId()); // 사용자 ID 설정
+        cardStudentRepository.save(cardStudent); // 카드 저장
+        //return card;
     }
 
-    private Card saveWorkerCard(CardCreateRequest request, Long user_id, String profileImageUrl) {   //, String profileImageUrl
-        CardWorker card = new CardWorker(
-                request.getCardEssential().getCard_name(),
-                request.getCardEssential().getCard_introduction(),
-                request.getCardEssential().getCard_template(),
-                request.getCardEssential().getCard_cover(),
-                null, // Avatar를 나중에 설정
-                profileImageUrl,    // 저장된 이미지 URL
-                request.getCardOptional().getCard_birth(),
-                request.getCardOptional().getCard_bSecrete(),
-                request.getCardOptional().getCard_tel(),
-                request.getCardOptional().getCard_sns_insta(),
-                request.getCardOptional().getCard_sns_x(),
-                request.getCardOptional().getCard_email(),
-                request.getCardOptional().getCard_MBTI(),
-                request.getCardOptional().getCard_music(),
-                request.getCardOptional().getCard_movie(),
-                request.getCardOptional().getCard_hobby(),
-                request.getCardOptional().getCard_address(),
+    private void saveWorkerCard(Card card, CardCreateRequest request) {
+        CardWorker cardWorker = new CardWorker(
                 request.getWorker().getCard_worker_company(),
                 request.getWorker().getCard_worker_job(),
                 request.getWorker().getCard_worker_position(),
                 request.getWorker().getCard_worker_department()
         );
-        card.setUserId(user_id); // 사용자 ID 설정
-        cardWorkerRepository.save(card); // 카드 저장
-        return card;
+        cardWorker.setCard(card);  // Card 객체를 CardStudent에 설정
+        //cardWorker.setUserId(card.getUserId()); // 사용자 ID 설정
+        cardWorkerRepository.save(cardWorker); // 카드 저장
+        //return card;
     }
 
-    private Card saveFanCard(CardCreateRequest request, Long user_id, String profileImageUrl) {
-        CardFan card = new CardFan(
-                request.getCardEssential().getCard_name(),
-                request.getCardEssential().getCard_introduction(),
-                request.getCardEssential().getCard_template(),
-                request.getCardEssential().getCard_cover(),
-                null, // Avatar를 나중에 설정
-                profileImageUrl,    // 저장된 이미지 URL
-                request.getCardOptional().getCard_birth(),
-                request.getCardOptional().getCard_bSecrete(),
-                request.getCardOptional().getCard_tel(),
-                request.getCardOptional().getCard_sns_insta(),
-                request.getCardOptional().getCard_sns_x(),
-                request.getCardOptional().getCard_email(),
-                request.getCardOptional().getCard_MBTI(),
-                request.getCardOptional().getCard_music(),
-                request.getCardOptional().getCard_movie(),
-                request.getCardOptional().getCard_hobby(),
-                request.getCardOptional().getCard_address(),
+    private void saveFanCard(Card card, CardCreateRequest request) {
+        CardFan cardFan = new CardFan(
                 request.getFan().getCard_fan_genre(),
                 request.getFan().getCard_fan_first(),
                 request.getFan().getCard_fan_second(),
                 request.getFan().getCard_fan_reason()
         );
-        card.setUserId(user_id); // 사용자 ID 설정
-        cardFanRepository.save(card); // 카드 저장
-        return card;
+        cardFan.setCard(card);  // Card 객체를 CardStudent에 설정
+        //cardFan.setUserId(card.getUserId()); // 사용자 ID 설정
+        cardFanRepository.save(cardFan); // 카드 저장
+        //return card;
     }
 
 

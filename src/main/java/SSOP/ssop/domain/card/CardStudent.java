@@ -6,11 +6,15 @@ import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("student")
-public class CardStudent extends Card {
+public class CardStudent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "card_id")
-    private Card card;
+    private Card card;      // card의 id
 
     // 필수
     @Column(name = "card_student_school")
@@ -40,23 +44,6 @@ public class CardStudent extends Card {
     }
 
     public CardStudent(
-            String card_name,
-            String card_introduction,
-            String card_template,
-            String card_cover,
-            Avatar avatar,
-            String profile_image_url,
-            String card_birth,
-            Boolean card_bSecrete,
-            String card_tel,
-            String card_sns_insta,
-            String card_sns_x,
-            String card_email,
-            String card_MBTI,
-            String card_music,
-            String card_movie,
-            String card_hobby,
-            String card_address,
             String card_student_school,
             String card_student_grade,
             String card_student_major,
@@ -65,7 +52,6 @@ public class CardStudent extends Card {
             String card_student_role,
             String card_student_status
     ) {
-        super(card_name, card_introduction, card_template, card_cover, avatar, profile_image_url, card_birth, card_bSecrete, card_tel, card_sns_insta, card_sns_x, card_email, card_MBTI, card_music, card_movie, card_hobby, card_address);
 
 //        if (card_student_school == null || card_student_school.isBlank() ||
 //                card_student_grade == null || card_student_grade.isBlank()) {
@@ -79,6 +65,10 @@ public class CardStudent extends Card {
         this.card_student_club = card_student_club;
         this.card_student_role = card_student_role;
         this.card_student_status = card_student_status;
+    }
+
+    public Card getCard() {
+        return card;
     }
 
     public String getCard_student_school() {
@@ -107,6 +97,10 @@ public class CardStudent extends Card {
 
     public String getCard_student_status() {
         return card_student_status;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 
     public void setCard_student_school(String card_student_school) {

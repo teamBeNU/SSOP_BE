@@ -5,11 +5,15 @@ import lombok.Getter;
 
 @Entity
 @DiscriminatorValue("fan")
-public class CardFan extends Card {
+public class CardFan {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "card_id")
-    private Card card;
+    private Card card;      // card의 id
 
     // 필수
     @Column(name = "card_fan_genre")
@@ -29,34 +33,20 @@ public class CardFan extends Card {
     }
 
     public CardFan(
-            String card_name,
-            String card_introduction,
-            String card_template,
-            String card_cover,
-            Avatar avatar,
-            String profile_image_url,
-            String card_birth,
-            Boolean card_bSecrete,
-            String card_tel,
-            String card_sns_insta,
-            String card_sns_x,
-            String card_email,
-            String card_MBTI,
-            String card_music,
-            String card_movie,
-            String card_hobby,
-            String card_address,
             String card_fan_genre,
             String card_fan_first,
             String card_fan_second,
             String card_fan_reason
     ) {
-        super(card_name, card_introduction, card_template, card_cover, avatar, profile_image_url, card_birth, card_bSecrete, card_tel, card_sns_insta, card_sns_x, card_email, card_MBTI, card_music, card_movie, card_hobby, card_address);
 
         this.card_fan_genre = card_fan_genre;
         this.card_fan_first = card_fan_first;
         this.card_fan_second = card_fan_second;
         this.card_fan_reason = card_fan_reason;
+    }
+
+    public Card getCard() {
+        return card;
     }
 
     public String getCard_fan_genre() {
@@ -73,6 +63,10 @@ public class CardFan extends Card {
 
     public String getCard_fan_reason() {
         return card_fan_reason;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 
     public void setCard_fan_genre(String card_fan_genre) {

@@ -14,10 +14,6 @@ import lombok.Getter;
 @DiscriminatorColumn(name = "DTYPE")
 public class Card {
 
-//    @ManyToOne
-//    @JoinColumn(name = "userId")
-//    private User user;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long card_id;
@@ -70,7 +66,7 @@ public class Card {
     @Lob
     private String memo;
 
-    protected Card() {}
+    public Card() {}
 
     @Builder
     public Card(String card_name, String card_introduction, String card_template, String card_cover, Avatar avatar, String profile_image_url, String card_birth, Boolean card_bSecrete, String card_tel, String card_sns_insta, String card_sns_x, String card_email, String card_MBTI, String card_music, String card_movie, String card_hobby, String card_address) {
