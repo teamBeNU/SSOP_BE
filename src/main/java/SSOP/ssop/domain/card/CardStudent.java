@@ -13,25 +13,27 @@ public class CardStudent extends Card {
     private Card card;
 
     // 필수
-    @Column(nullable = false)
-    private String card_tel;
+    @Column(name = "card_student_school")
+    private String card_student_school;     // 학교
 
-    @Column(nullable = false)
-    private LocalDate card_birth;
+    @Column(name = "card_student_grade")
+    private String card_student_grade;      // 학년(초중고-1~6학년, 대학(원)-1~4학년+추가학기)
 
-    @Column(nullable = false)
-    private Boolean card_bSecrete;
-
-    @Column(nullable = false)
-    private String card_school;
-
-    @Column(nullable = false)
-    private String card_grade;
+    @Column(name = "card_student_major")
+    private String card_student_major;  // 전공(대학(원)생만 필수)
 
     // 선택
-    private String card_student_major;
-    private String card_student_club;
-    private String card_student_role;
+    @Column(name = "card_student_id")
+    private String card_student_id;         // 학번
+
+    @Column(name = "card_student_club")
+    private String card_student_club;       // 동아리
+
+    @Column(name = "card_student_role")
+    private String card_student_role;       // 역할
+
+    @Column(name = "card_student_status")
+    private String card_student_status;  // 재학상태(재학 중, 휴학 중, 졸업 예정)
 
     public CardStudent() {
         super();
@@ -40,65 +42,59 @@ public class CardStudent extends Card {
     public CardStudent(
             String card_name,
             String card_introduction,
-            String template,
+            String card_template,
             String card_cover,
             Avatar avatar,
             String profile_image_url,
-            SNS card_SNS,
+            String card_birth,
+            Boolean card_bSecrete,
+            String card_tel,
+            String card_sns_insta,
+            String card_sns_x,
             String card_email,
             String card_MBTI,
-            Music card_music,
+            String card_music,
             String card_movie,
-            String card_tel,
-            LocalDate card_birth,
-            Boolean card_bSecrete,
-            String card_school,
-            String card_grade,
+            String card_hobby,
+            String card_address,
+            String card_student_school,
+            String card_student_grade,
             String card_student_major,
+            String card_student_id,
             String card_student_club,
-            String card_student_role
+            String card_student_role,
+            String card_student_status
     ) {
-        super(card_name, card_introduction, template, card_cover, avatar, profile_image_url, card_SNS, card_email, card_MBTI, card_music, card_movie);
+        super(card_name, card_introduction, card_template, card_cover, avatar, profile_image_url, card_birth, card_bSecrete, card_tel, card_sns_insta, card_sns_x, card_email, card_MBTI, card_music, card_movie, card_hobby, card_address);
 
-        if (card_tel == null || card_tel.isBlank() ||
-            card_birth == null || card_bSecrete == null ||
-            card_school == null || card_school.isBlank() ||
-            card_grade == null || card_grade.isBlank()) {
-            throw new IllegalArgumentException();
-        }
+//        if (card_student_school == null || card_student_school.isBlank() ||
+//                card_student_grade == null || card_student_grade.isBlank()) {
+//            throw new IllegalArgumentException();
+//        }
 
-        this.card_tel = card_tel;
-        this.card_birth = card_birth;
-        this.card_bSecrete = card_bSecrete;
-        this.card_school = card_school;
-        this.card_grade = card_grade;
+        this.card_student_school = card_student_school;
+        this.card_student_grade = card_student_grade;
         this.card_student_major = card_student_major;
+        this.card_student_id = card_student_id;
         this.card_student_club = card_student_club;
         this.card_student_role = card_student_role;
+        this.card_student_status = card_student_status;
     }
 
-    public String getCard_tel() {
-        return card_tel;
+    public String getCard_student_school() {
+        return card_student_school;
     }
 
-    public LocalDate getCard_birth() {
-        return card_birth;
-    }
-
-    public Boolean getCard_bSecrete() {
-        return card_bSecrete;
-    }
-
-    public String getCard_school() {
-        return card_school;
-    }
-
-    public String getCard_grade() {
-        return card_grade;
+    public String getCard_student_grade() {
+        return card_student_grade;
     }
 
     public String getCard_student_major() {
         return card_student_major;
+    }
+
+    public String getCard_student_id() {
+        return card_student_id;
     }
 
     public String getCard_student_club() {
@@ -109,28 +105,24 @@ public class CardStudent extends Card {
         return card_student_role;
     }
 
-    public void setCard_tel(String card_tel) {
-        this.card_tel = card_tel;
+    public String getCard_student_status() {
+        return card_student_status;
     }
 
-    public void setCard_birth(LocalDate card_birth) {
-        this.card_birth = card_birth;
+    public void setCard_student_school(String card_student_school) {
+        this.card_student_school = card_student_school;
     }
 
-    public void setCard_bSecrete(Boolean card_bSecrete) {
-        this.card_bSecrete = card_bSecrete;
-    }
-
-    public void setCard_school(String card_school) {
-        this.card_school = card_school;
-    }
-
-    public void setCard_grade(String card_grade) {
-        this.card_grade = card_grade;
+    public void setCard_student_grade(String card_student_grade) {
+        this.card_student_grade = card_student_grade;
     }
 
     public void setCard_student_major(String card_student_major) {
         this.card_student_major = card_student_major;
+    }
+
+    public void setCard_student_id(String card_student_id) {
+        this.card_student_id = card_student_id;
     }
 
     public void setCard_student_club(String card_student_club) {
@@ -139,5 +131,9 @@ public class CardStudent extends Card {
 
     public void setCard_student_role(String card_student_role) {
         this.card_student_role = card_student_role;
+    }
+
+    public void setCard_student_status(String card_student_status) {
+        this.card_student_status = card_student_status;
     }
 }

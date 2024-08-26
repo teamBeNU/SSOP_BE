@@ -33,57 +33,57 @@ public class TeamSpMemberService {
     @Autowired
     private CardService cardService;
 
-    // 기존 카드 제출
-    public void SubmitCard(Long teamId, Long cardId, Long userId) {
-        // 1. 팀스페이스 멤버 조회
-        TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀스페이스 멤버입니다."));
-
-        // 2. 유저 카드 목록에서 제출할 카드가 있는지 확인
-        List<CardResponse> myCards = cardService.getMyCards(userId);
-        boolean isCardOwnedByUser = myCards.stream()
-                .anyMatch(card -> card.getCard_id().equals(cardId));
-        if (!isCardOwnedByUser) {
-            throw new IllegalArgumentException("사용자의 카드 목록에 카드가 존재하지 않습니다.");
-        }
-
-        // 3. 이미 제출된 카드가 있는지 확인
-        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId);
-
-        if (existingMembership.isPresent()) {
-            TeamSpMember existingMember = existingMembership.get();
-
-            // 기존 카드가 null -> 요청한 cardId로 업데이트
-//            if (existingMember.getCard() == null) {
+//    // 기존 카드 제출
+//    public void SubmitCard(Long teamId, Long cardId, Long userId) {
+//        // 1. 팀스페이스 멤버 조회
+//        TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 팀스페이스 멤버입니다."));
+//
+//        // 2. 유저 카드 목록에서 제출할 카드가 있는지 확인
+//        List<CardResponse> myCards = cardService.getMyCards(userId);
+//        boolean isCardOwnedByUser = myCards.stream()
+//                .anyMatch(card -> card.getCard_id().equals(cardId));
+//        if (!isCardOwnedByUser) {
+//            throw new IllegalArgumentException("사용자의 카드 목록에 카드가 존재하지 않습니다.");
+//        }
+//
+//        // 3. 이미 제출된 카드가 있는지 확인
+//        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId);
+//
+//        if (existingMembership.isPresent()) {
+//            TeamSpMember existingMember = existingMembership.get();
+//
+//            // 기존 카드가 null -> 요청한 cardId로 업데이트
+////            if (existingMember.getCard() == null) {
+////                Card card = cardRepository.findById(cardId)
+////                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
+////                existingMember.setCard(card);
+////                teamSpMemberRepository.save(existingMember);
+////                return; // 업데이트 완료 후 메소드 종료
+////            } else {
+////                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
+////                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
+////            }
+//            if (existingMember.getCardId() == null) {
 //                Card card = cardRepository.findById(cardId)
 //                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-//                existingMember.setCard(card);
+//                existingMember.setCardId(card.getCard_id());
 //                teamSpMemberRepository.save(existingMember);
 //                return; // 업데이트 완료 후 메소드 종료
 //            } else {
 //                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
 //                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
 //            }
-            if (existingMember.getCardId() == null) {
-                Card card = cardRepository.findById(cardId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-                existingMember.setCardId(card.getCard_id());
-                teamSpMemberRepository.save(existingMember);
-                return; // 업데이트 완료 후 메소드 종료
-            } else {
-                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
-                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
-            }
-        }
-        // 4. 카드 제출을 위해 새로운 TeamSpMember 엔티티를 생성
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-
-        // 새로운 TeamSpMember 엔티티를 생성하여 카드 정보를 저장
-//        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), card);
-        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), cardId);
-        teamSpMemberRepository.save(newTeamSpMember);
-    }
+//        }
+//        // 4. 카드 제출을 위해 새로운 TeamSpMember 엔티티를 생성
+//        Card card = cardRepository.findById(cardId)
+//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
+//
+//        // 새로운 TeamSpMember 엔티티를 생성하여 카드 정보를 저장
+////        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), card);
+//        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), cardId);
+//        teamSpMemberRepository.save(newTeamSpMember);
+//    }
 
     // 팀스페이스 참여 정보 조회
     public List<TeamSpMemberDto> getTeamMembers() {

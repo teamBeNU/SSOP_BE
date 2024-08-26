@@ -1,40 +1,33 @@
 package SSOP.ssop.dto.card.request;
 
+import jakarta.persistence.Column;
+
 import java.time.LocalDate;
 
 public class CardStudentCreateRequest {
 
-    private String card_tel;
-    private LocalDate card_birth;
-    private Boolean card_bSecrete;
-    private String card_school;
-    private String card_grade;
-    private String card_student_major;
-    private String card_student_club;
-    private String card_student_role;
+    private String card_student_school;     // 학교
+    private String card_student_grade;      // 학년
+    private String card_student_major;      // 전공
+    private String card_student_id;         // 학번
+    private String card_student_club;       // 동아리
+    private String card_student_role;       // 역할
+    private String card_student_status;     // 재학상태
 
-    public String getCard_tel() {
-        return card_tel;
+    public String getCard_student_school() {
+        return card_student_school;
     }
 
-    public LocalDate getCard_birth() {
-        return card_birth;
-    }
-
-    public Boolean getCard_bSecrete() {
-        return card_bSecrete;
-    }
-
-    public String getCard_school() {
-        return card_school;
-    }
-
-    public String getCard_grade() {
-        return card_grade;
+    public String getCard_student_grade() {
+        return card_student_grade;
     }
 
     public String getCard_student_major() {
         return card_student_major;
+    }
+
+    public String getCard_student_id() {
+        return card_student_id;
     }
 
     public String getCard_student_club() {
@@ -43,5 +36,37 @@ public class CardStudentCreateRequest {
 
     public String getCard_student_role() {
         return card_student_role;
+    }
+
+    public String getCard_student_status() {
+        return card_student_status;
+    }
+
+    public void setCard_student_school(String card_student_school) {
+        this.card_student_school = card_student_school;
+    }
+
+    public void setCard_student_grade(String card_student_grade) {
+        this.card_student_grade = card_student_grade;
+    }
+
+    public void setCard_student_major(String card_student_major) {
+        this.card_student_major = card_student_major;
+    }
+
+    public void setCard_student_id(String card_student_id) {
+        this.card_student_id = card_student_id;
+    }
+
+    public void setCard_student_club(String card_student_club) {
+        this.card_student_club = card_student_club;
+    }
+
+    public void setCard_student_role(String card_student_role) {
+        this.card_student_role = card_student_role;
+    }
+
+    public void setCard_student_status(String card_student_status) {
+        this.card_student_status = card_student_status;
     }
 }
