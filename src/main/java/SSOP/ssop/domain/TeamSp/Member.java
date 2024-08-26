@@ -16,7 +16,7 @@ public class Member {
     @Column(name = "card_id")
     private Long cardId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "teamsp_member_id") // TeamSpMember의 id를 참조 (team_id와 user_id를 가진)
     private TeamSpMember teamSpMember;
 
