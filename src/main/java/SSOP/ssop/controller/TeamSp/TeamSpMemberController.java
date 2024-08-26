@@ -1,15 +1,13 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.config.UserDetail;
-import SSOP.ssop.dto.EnterTeamSpDto;
-import SSOP.ssop.dto.TeamSpMemberDto;
-import SSOP.ssop.service.TeamSpMemberService;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.card.request.SubmitCardRequest;
+import SSOP.ssop.security.annotation.Login;
+import SSOP.ssop.service.TeamSp.TeamSpMemberService;
+import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,20 +25,20 @@ public class TeamSpMemberController {
         this.teamSpMemberService = teamSpMemberService;
     }
 
-    // 팀 스페이스 입장
-    @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    // 기존 카드 제출
+    @PostMapping("/submit-card")
+    public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
         try {
-            teamSpMemberService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
-            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
+            Long cardId = submitCardRequest.getCard_id();
+            teamSpMemberService.SubmitCard(teamId, cardId, userId);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -58,7 +56,7 @@ public class TeamSpMemberController {
 
     // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
     @GetMapping("/member")
-    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") long teamId) {
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") Long teamId) {
         Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
 
         if (teamSpMemberDto.isPresent()) {
@@ -71,14 +69,14 @@ public class TeamSpMemberController {
 
     // 유저별 참여 중인 팀스페이스 정보 조회
     @GetMapping("user")
-    public ResponseEntity<?> getTeamMemberByUserId(@RequestParam("userId") long userId) {
+    public ResponseEntity<?> getTeamSpByUserId(@RequestParam("userId") Long userId) {
         try {
-            List<TeamSpMemberDto> teamMemberDtos = teamSpMemberService.getTeamMemberByUserId(userId);
+            List<TeamSpByUserDto> teamSpByUserDto = teamSpMemberService.getTeamSpByUserId(userId);
 
-            if (teamMemberDtos.isEmpty()) {
+            if (teamSpByUserDto.isEmpty()) {
                 return ResponseEntity.noContent().build(); // 참여 중인 팀스페이스가 없는 경우
             }
-            return ResponseEntity.ok(teamMemberDtos);
+            return ResponseEntity.ok(teamSpByUserDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "팀스페이스 정보를 조회하는 도중 오류가 발생했습니다: " + e.getMessage()));

@@ -1,4 +1,4 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.User;
 
 import SSOP.ssop.domain.User;
 import SSOP.ssop.config.UserDetail;

@@ -24,8 +24,6 @@ public class CardResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private CardWorker worker;
 
-    private String memo;
-
     public CardResponse(Card card) {
         this.user_id = card.getUserId();
         this.card_id = card.getCard_id();
@@ -60,8 +58,6 @@ public class CardResponse {
             CardWorker workerCard = (CardWorker) card;
             this.worker = new CardWorkerResponse(workerCard.getCard_tel(), workerCard.getCard_birth(), workerCard.getCard_job());
         }
-
-        this.memo = card.getMemo();
     }
 
     // Getters and Setters
@@ -135,13 +131,5 @@ public class CardResponse {
 
     public void setWorker(CardWorker worker) {
         this.worker = worker;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 }

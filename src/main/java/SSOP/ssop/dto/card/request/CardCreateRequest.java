@@ -11,7 +11,7 @@ public class CardCreateRequest {
     private String card_template;
     private String card_cover;
     private Avatar avatar;
-
+    private String profile_image_url;
     private SNS card_SNS;
     private String card_email;
     private String card_MBTI;
@@ -39,6 +39,10 @@ public class CardCreateRequest {
 
     public Avatar getAvatar() {
         return avatar;
+    }
+
+    public String getProfile_image_url() {
+        return profile_image_url;
     }
 
     public SNS getCard_SNS() {

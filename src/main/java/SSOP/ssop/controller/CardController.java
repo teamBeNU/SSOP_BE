@@ -10,13 +10,14 @@ import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
-import SSOP.ssop.service.UserService;
+import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -37,9 +38,11 @@ public class CardController {
         this.cardRepository = cardRepository;
     }
 
-    // 카드 생성
     @PostMapping("/create")
-    public ResponseEntity<?> saveCard(@RequestBody CardCreateRequest request) {
+    public ResponseEntity<?> saveCard(
+            @RequestPart("card") CardCreateRequest request,
+            @RequestPart(name = "image", required = false) MultipartFile file
+    ) {
         try {
             // 현재 인증된 사용자의 정보를 가져옴
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,7 +59,7 @@ public class CardController {
             Long authenticatedUserId = userDetail.getUser().getUserId();
 
             // 카드 생성 서비스 호출
-            boolean isSaved = cardService.saveCard(request, authenticatedUserId);
+            boolean isSaved = cardService.saveCard(request, authenticatedUserId, file);
 
             // 카드 생성이 성공적으로 이루어졌는지 확인
             if (isSaved) {

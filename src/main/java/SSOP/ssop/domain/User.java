@@ -19,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("user_id")
-    private long userId;
+    private Long userId;
 
     private String user_name;
     private String email;
@@ -63,8 +63,10 @@ public class User {
         this.password = password;
     }
 
+    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
+
     public void enterTeamSp(TeamSp teamSp) {
-        this.teamSpMembers.add(new TeamSpMember(teamSp, this));
+        this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));
     }
 
     // Getter & Setter
@@ -112,15 +114,19 @@ public class User {
         this.user_birth = user_birth;
     }
 
+    public List<String> getSaved_card_list() {
+        return saved_card_list;
+    }
+
+    public void setSaved_card_list(List<String> saved_card_list) {
+        this.saved_card_list = saved_card_list;
+    }
+
     public Set<TeamSpMember> getTeamSpMembers() {
         return teamSpMembers;
     }
 
     public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
         this.teamSpMembers = teamSpMembers;
-    }
-
-    public List<String> getSaved_card_list() {
-        return saved_card_list;
     }
 }

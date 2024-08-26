@@ -1,14 +1,16 @@
 package SSOP.ssop.domain.card;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
 @Entity
 @DiscriminatorValue("worker")
 public class CardWorker extends Card {
+
+    @OneToOne
+    @JoinColumn(name = "card_id")
+    private Card card;
 
     // 필수
     @Column(nullable = false)
@@ -34,7 +36,7 @@ public class CardWorker extends Card {
             String template,
             String card_cover,
             Avatar avatar,
-
+            String profile_image_url,
             SNS card_SNS,
             String card_email,
             String card_MBTI,
@@ -44,8 +46,8 @@ public class CardWorker extends Card {
             LocalDate card_birth,
             Boolean card_bSecrete,
             String card_job
-    ) { // String profile_image_url,
-        super(card_name, card_introduction, template, card_cover, avatar, card_SNS, card_email, card_MBTI, card_music, card_movie);
+    ) {
+        super(card_name, card_introduction, template, card_cover, avatar, profile_image_url, card_SNS, card_email, card_MBTI, card_music, card_movie);
 
         if (card_tel == null || card_tel.isBlank() ||
         card_birth == null || card_bSecrete == null ||

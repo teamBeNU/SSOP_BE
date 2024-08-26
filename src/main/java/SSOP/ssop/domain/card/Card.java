@@ -41,6 +41,9 @@ public class Card {
     @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private Avatar avatar;  // card_cover가 avatar일 때만 사용
 
+    @Column(nullable = false)
+    private String profile_image_url;
+
     // 공통 선택
     @Embedded
     private SNS card_SNS;
@@ -54,6 +57,13 @@ public class Card {
 
     private String card_movie;
 
+    // 그 외
+//    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private CardStudent cardStudent;
+//
+//    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private CardWorker cardWorker;
+
     @Lob
     private String memo;
 
@@ -66,6 +76,7 @@ public class Card {
             String card_template,
             String card_cover,
             Avatar avatar,
+            String profile_image_url,
             SNS card_SNS,
             String card_email,
             String card_MBTI,
@@ -74,7 +85,7 @@ public class Card {
     ) {
         if (card_name == null || card_name.isBlank() ||
                 card_introduction == null || card_introduction.isBlank() ||
-                card_template == null || card_cover == null) {
+                card_template == null || card_cover == null || profile_image_url == null) {
             throw new IllegalArgumentException();
         }
 
@@ -83,6 +94,7 @@ public class Card {
         this.card_template = card_template;
         this.card_cover = card_cover;
         this.avatar = avatar;
+        this.profile_image_url = profile_image_url;
         this.card_SNS = card_SNS;
         this.card_email = card_email;
         this.card_MBTI = card_MBTI;

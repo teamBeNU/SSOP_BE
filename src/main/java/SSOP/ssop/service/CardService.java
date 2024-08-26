@@ -1,19 +1,19 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.User;
-import SSOP.ssop.domain.card.Avatar;
-import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.domain.card.CardStudent;
-import SSOP.ssop.domain.card.CardWorker;
+import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.*;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,15 +38,20 @@ public class CardService {
 
     // 카드 생성
     @Transactional
-    public boolean saveCard(CardCreateRequest request, Long user_id) {
+    public boolean saveCard(CardCreateRequest request, Long user_id, MultipartFile file) {
         try {
+            String profileImageUrl = null;
+            if (file != null && !file.isEmpty()) {
+                profileImageUrl = saveImage(file);
+            }
+
             Card card;
             switch (request.getCard_template()) {
                 case "student":
-                    card = saveStudentCard(request.getStudent(), request, user_id);
+                    card = saveStudentCard(request.getStudent(), request, user_id, profileImageUrl);
                     break;
                 case "worker":
-                    card = saveWorkerCard(request.getWorker(), request, user_id);
+                    card = saveWorkerCard(request.getWorker(), request, user_id, profileImageUrl);
                     break;
                 default:
                     throw new IllegalArgumentException("템플릿 없음");
@@ -80,13 +85,37 @@ public class CardService {
         return avatar;
     }
 
-    private Card saveStudentCard(CardStudentCreateRequest studentRequest, CardCreateRequest request, Long user_id) {    // , String profileImageUrl
+    private String saveImage(MultipartFile file) throws Exception {
+
+        String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
+        String relativePath = "/src/main/resources/static/uploads/profiles/";    // 이미지 저장 경로 설정 (로컬 경로)
+        String uploadDir = projectRootPath + relativePath;
+
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
+        }
+
+        UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
+        String fileName = uuid + "_" + file.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        // String filePath = uploadDir + fileName;    // 저장할 파일 경로 설정
+
+        // 파일 저장
+        File saveFile = new File(directory, fileName);
+        file.transferTo(saveFile);  // 파일 저장
+
+        //return filePath;    // 저장된 파일 경로 리턴
+        return "/uploads/profiles/" + fileName;
+    }
+
+    private Card saveStudentCard(CardStudentCreateRequest studentRequest, CardCreateRequest request, Long user_id, String profileImageUrl) {    // ,
         CardStudent card = new CardStudent(
                 request.getCard_name(),
                 request.getCard_introduction(),
                 request.getCard_template(),
                 request.getCard_cover(),
                 null, // Avatar를 나중에 설정
+                profileImageUrl,    // 저장된 이미지 URL
                 request.getCard_SNS(),
                 request.getCard_email(),
                 request.getCard_MBTI(),
@@ -106,13 +135,14 @@ public class CardService {
         return card;
     }
 
-    private Card saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request, Long user_id) {   //, String profileImageUrl
+    private Card saveWorkerCard(CardWorkerCreateRequest workerRequest, CardCreateRequest request, Long user_id, String profileImageUrl) {   //, String profileImageUrl
         CardWorker card = new CardWorker(
                 request.getCard_name(),
                 request.getCard_introduction(),
                 request.getCard_template(),
                 request.getCard_cover(),
                 null, // Avatar를 나중에 설정
+                profileImageUrl,    // 저장된 이미지 URL
                 request.getCard_SNS(),
                 request.getCard_email(),
                 request.getCard_MBTI(),
@@ -141,7 +171,6 @@ public class CardService {
                 .map(CardResponse::new)
                 .collect(Collectors.toList());
     }
-
     // 상대 카드 목록 조회
     public List<CardResponse> getSavedCards(long userId) {
         User user = userRepository.findById(userId)
