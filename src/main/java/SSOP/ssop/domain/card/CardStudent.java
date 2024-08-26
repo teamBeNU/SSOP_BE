@@ -12,8 +12,8 @@ public class CardStudent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "card_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "card_id", nullable = false)
     private Card card;      // card의 id
 
     // 필수

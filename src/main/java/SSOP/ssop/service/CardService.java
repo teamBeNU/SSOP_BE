@@ -97,21 +97,6 @@ public class CardService {
         return avatar;
     }
 
-    private void saveAvatar(Card card, CardCreateRequest request) {
-        Avatar avatar = new Avatar();
-        avatar.setFace(request.getAvatar().getFace());
-        avatar.setHair(request.getAvatar().getHair());
-        avatar.setHairColor(request.getAvatar().getHairColor());
-        avatar.setClothes(request.getAvatar().getClothes());
-        avatar.setAcc(request.getAvatar().getAcc());
-        avatar.setBg(request.getAvatar().getBg());
-        avatar.setBgColor(request.getAvatar().getBgColor());
-        avatar.setCard(card);
-        avatarRepository.save(avatar);
-        card.setAvatar(avatar);
-        cardRepository.save(card);
-    }
-
     private String saveImage(MultipartFile file) throws Exception {
 
         String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
@@ -156,11 +141,6 @@ public class CardService {
                 request.getCardOptional().getCard_address()
         );
         card.setUserId(user_id);
-//        card.setProfile_image_url(profileImageUrl);
-//        card.setCard_name(request.getCardEssential().getCard_name());
-//        card.setCard_introduction(request.getCardEssential().getCard_introduction());
-//        card.setCard_template(request.getCardEssential().getCard_template());
-//        card.setCard_cover(request.getCardEssential().getCard_cover());
         cardRepository.save(card);
         return card;
     }
@@ -176,7 +156,6 @@ public class CardService {
                 request.getStudent().getCard_student_status()
         );
         cardStudent.setCard(card);  // Card 객체를 CardStudent에 설정
-        //cardStudent.setUserId(card.getUserId()); // 사용자 ID 설정
         cardStudentRepository.save(cardStudent); // 카드 저장
         //return card;
     }
@@ -189,7 +168,6 @@ public class CardService {
                 request.getWorker().getCard_worker_department()
         );
         cardWorker.setCard(card);  // Card 객체를 CardStudent에 설정
-        //cardWorker.setUserId(card.getUserId()); // 사용자 ID 설정
         cardWorkerRepository.save(cardWorker); // 카드 저장
         //return card;
     }
@@ -202,7 +180,6 @@ public class CardService {
                 request.getFan().getCard_fan_reason()
         );
         cardFan.setCard(card);  // Card 객체를 CardStudent에 설정
-        //cardFan.setUserId(card.getUserId()); // 사용자 ID 설정
         cardFanRepository.save(cardFan); // 카드 저장
         //return card;
     }
