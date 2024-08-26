@@ -53,17 +53,6 @@ public class TeamSpMemberService {
         if (existingMembership.isPresent()) {
             TeamSpMember existingMember = existingMembership.get();
 
-            // 기존 카드가 null -> 요청한 cardId로 업데이트
-//            if (existingMember.getCard() == null) {
-//                Card card = cardRepository.findById(cardId)
-//                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-//                existingMember.setCard(card);
-//                teamSpMemberRepository.save(existingMember);
-//                return; // 업데이트 완료 후 메소드 종료
-//            } else {
-//                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
-//                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
-//            }
             if (existingMember.getCardId() == null) {
                 Card card = cardRepository.findById(cardId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
@@ -80,7 +69,6 @@ public class TeamSpMemberService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
 
         // 새로운 TeamSpMember 엔티티를 생성하여 카드 정보를 저장
-//        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), card);
         TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), cardId);
         teamSpMemberRepository.save(newTeamSpMember);
     }
@@ -113,12 +101,6 @@ public class TeamSpMemberService {
                     TeamSp teamSp = teamSpMap.get(entry.getKey());
 
                     // 팀에 포함된 모든 사용자에 대해 카드 ID 목록을 가져옵니다
-//                    List<Long> cardIds = members.stream()
-//                            .filter(member -> member.getTeamSp().getTeam_id().equals(entry.getKey()))
-//                            .map(member -> member.getCard() != null ? member.getCard().getCard_id() : null)
-//                            .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
-//                            .distinct()  // 중복된 카드 ID를 제거
-//                            .collect(Collectors.toList());
                     List<Long> cardIds = members.stream()
                             .filter(member -> member.getTeamSp().getTeam_id().equals(entry.getKey()))
                             .map(member -> member.getCardId() != null ? member.getCardId() : null)
@@ -139,7 +121,7 @@ public class TeamSpMemberService {
                             membersDetail                    // 멤버 카드 정보
                     );
                 })
-                .filter(dto -> !dto.getCard_ids().isEmpty()) // 카드 ID 목록이 비어있지 않은 경우만 반환
+//                .filter(dto -> !dto.getCard_ids().isEmpty()) // 카드 ID 목록이 비어있지 않은 경우만 반환
                 .collect(Collectors.toList());
     }
 
@@ -163,11 +145,6 @@ public class TeamSpMemberService {
                 .collect(Collectors.toList());
 
         // 사용자의 카드 목록 조회 및 카드 ID 추출
-//        List<Long> cardIds = members.stream()
-//                .map(member -> member.getCard() != null ? member.getCard().getCard_id() : null)
-//                .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
-//                .distinct()  // 중복된 카드 ID를 제거
-//                .collect(Collectors.toList());
         List<Long> cardIds = members.stream()
                 .map(member -> member.getCardId() != null ? member.getCardId() : null)
                 .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
@@ -214,13 +191,6 @@ public class TeamSpMemberService {
                 ));
 
         // 팀 ID와 카드 ID를 조회
-//        Map<Long, Long> teamCardIdMap = members.stream()
-//                .filter(member -> member.getCard() != null)
-//                .collect(Collectors.toMap(
-//                        member -> member.getTeamSp().getTeam_id(),
-//                        member -> member.getCard().getCard_id(),
-//                        (existing, replacement) -> existing // 같은 team_id가 있을 경우 기존 값을 유지
-//                ));
         Map<Long, Long> teamCardIdMap = members.stream()
                 .filter(member -> member.getCardId() != null)
                 .collect(Collectors.toMap(
