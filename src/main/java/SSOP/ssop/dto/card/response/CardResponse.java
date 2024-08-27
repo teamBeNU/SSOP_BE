@@ -84,10 +84,14 @@ public class CardResponse {
                     cardWorker.getCard_worker_position(),
                     cardWorker.getCard_worker_department()
             );
+        } else if (card.getCard_template().equals("fan")) {
+            this.fan = new CardFanResponse(
+                    cardFan.getCard_fan_genre(),
+                    cardFan.getCard_fan_first(),
+                    cardFan.getCard_fan_second(),
+                    cardFan.getCard_fan_reason()
+            );
         }
-//        else if (card.getCard_template().equals("fan")) {
-//            this.fan = new CardFanResponse(fan);
-//        }
     }
 
     public Long getUser_id() {
