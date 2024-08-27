@@ -188,10 +188,6 @@ public class CardService {
 
     // 모든 카드 조회
     public List<CardResponse> getAllCards() {
-//        List<Card> cards = cardRepository.findAll();
-//        return cards.stream()
-//                .map(CardResponse::new)
-//                .collect(Collectors.toList());
         List<Card> cards = cardRepository.findAll();
         List<CardResponse> responses = new ArrayList<>();
 
@@ -205,6 +201,10 @@ public class CardService {
             } else if (card.getCard_template().equals("worker")) {
                 cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
             } else if (card.getCard_template().equals("fan")) {
+                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+            } else if (card.getCard_template().equals("free")) {
+                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
                 cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
             }
 

@@ -91,6 +91,34 @@ public class CardResponse {
                     cardFan.getCard_fan_second(),
                     cardFan.getCard_fan_reason()
             );
+        } else if (card.getCard_template().equals("free")) {
+            if (cardStudent != null) {
+                this.student = new CardStudentResponse(
+                        cardStudent.getCard_student_school(),
+                        cardStudent.getCard_student_grade(),
+                        cardStudent.getCard_student_major(),
+                        cardStudent.getCard_student_id(),
+                        cardStudent.getCard_student_club(),
+                        cardStudent.getCard_student_role(),
+                        cardStudent.getCard_student_status()
+                );
+            }
+            if (cardWorker != null) {
+                this.worker = new CardWorkerResponse(
+                        cardWorker.getCard_worker_company(),
+                        cardWorker.getCard_worker_job(),
+                        cardWorker.getCard_worker_position(),
+                        cardWorker.getCard_worker_department())
+                ;
+            }
+            if (cardFan != null) {
+                this.fan = new CardFanResponse(
+                        cardFan.getCard_fan_genre(),
+                        cardFan.getCard_fan_first(),
+                        cardFan.getCard_fan_second(),
+                        cardFan.getCard_fan_reason()
+                );
+            }
         }
     }
 
