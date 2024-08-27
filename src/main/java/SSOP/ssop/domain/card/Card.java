@@ -1,8 +1,5 @@
 package SSOP.ssop.domain.card;
 
-import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardStudentUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,8 +12,9 @@ import lombok.Getter;
 public class Card {
 
     @Id
+    @Column(name = "card_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long card_id;
+    private Long cardId;
 
     @Column(nullable = false)
     private Long userId;
@@ -63,6 +61,8 @@ public class Card {
 
     private String card_address;        // 거주지
 
+
+
     @Lob
     private String memo;
 
@@ -94,8 +94,8 @@ public class Card {
         this.card_address = card_address;
     }
 
-    public Long getCard_id() {
-        return card_id;
+    public Long getCardId() {
+        return cardId;
     }
 
     public Long getUserId() {
@@ -174,8 +174,8 @@ public class Card {
         return memo;
     }
 
-    public void setCard_id(Long card_id) {
-        this.card_id = card_id;
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
     }
 
     public void setUserId(Long userId) {

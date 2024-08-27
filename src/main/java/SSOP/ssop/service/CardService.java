@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -185,14 +186,34 @@ public class CardService {
     }
 
 
-
-//    // 모든 카드 조회
-//    public List<CardResponse> getAllCards() {
-//        return cardRepository.findAll().stream()
+    // 모든 카드 조회
+    public List<CardResponse> getAllCards() {
+//        List<Card> cards = cardRepository.findAll();
+//        return cards.stream()
 //                .map(CardResponse::new)
 //                .collect(Collectors.toList());
-//    }
-//
+        List<Card> cards = cardRepository.findAll();
+        List<CardResponse> responses = new ArrayList<>();
+
+        for (Card card : cards) {
+            CardStudent cardStudent = null;
+            CardWorker cardWorker = null;
+            CardFan cardFan = null;
+
+            if (card.getCard_template().equals("student")) {
+                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+            } else if (card.getCard_template().equals("worker")) {
+                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
+            } else if (card.getCard_template().equals("fan")) {
+                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+            }
+
+            responses.add(new CardResponse(card, cardStudent, cardWorker, cardFan));
+        }
+
+        return responses;
+    }
+
 //    // 내 카드 목록 조회
 //    public List<CardResponse> getMyCards(long userId) {
 //        return cardRepository.findByUserId(userId).stream()

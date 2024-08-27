@@ -23,7 +23,7 @@ public class CardWorker {
     @Column(name = "card_worker_job")
     private String card_worker_job;         // 직무
 
-    // 산텍
+    // 선택
     @Column(name = "card_worker_position")
     private String card_worker_position;    // 직위
 
