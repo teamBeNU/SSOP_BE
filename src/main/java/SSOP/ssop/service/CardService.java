@@ -263,13 +263,13 @@ public class CardService {
 
     }
 
-//    // 특정 카드 상세 조회
-//    public CardResponse getCard(long cardId) {
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//        return new CardResponse(card);
-//    }
-//
+    // 특정 카드 상세 조회
+    public CardResponse getCard(long cardId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+        return createCardResponse(card);
+    }
+
 //    // 카드 수정
 //    public void updateCard(CardUpdateRequest request) {
 //        Card card = cardRepository.findById(request.getCard_id())
