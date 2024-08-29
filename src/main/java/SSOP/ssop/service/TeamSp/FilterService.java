@@ -16,10 +16,10 @@ public class FilterService {
     private FilterRepository filterRepository;
 
     // MBTI 목록 받아오기
-    public List<String> getDistinctMBTIList() {
+    public List<String> findDistinctCardMBTIByTeamId(Long teamId) {
 
         // DB에서 유일한 MBTI 값 목록 가져오기
-        List<String> mbtiList = filterRepository.findDistinctCardMBTI();
+        List<String> mbtiList = filterRepository.findDistinctCardMBTIByTeamId(teamId);
 
         // MBTI 값이 없는 항목 제거
         return mbtiList.stream()
@@ -28,18 +28,18 @@ public class FilterService {
     }
 
     // MBTI별 멤버 필터링
-    public List<FilterDto> getMembersByMBTI(String mbti) {
-        List<Member> filter = filterRepository.findByCardMBTI(mbti);
+    public List<FilterDto> getMembersByMBTI(Long teamId, String mbti) {
+        List<Member> filter = filterRepository.findByCardMBTIAndTeamId(mbti, teamId);
         return filter.stream()
                 .map(FilterDto::new)
                 .collect(Collectors.toList());
     }
 
     // Role 목록 받아오기
-    public List<String> getDistinctRoleList() {
+    public List<String> findDistinctCardRoleByTeamId(Long teamId) {
 
         // DB에서 유일한 MBTI 값 목록 가져오기
-        List<String> roleList = filterRepository.findDistinctCardRole();
+        List<String> roleList = filterRepository.findDistinctCardRoleByTeamId(teamId);
 
         // MBTI 값이 없는 항목 제거
         return roleList.stream()
@@ -48,18 +48,18 @@ public class FilterService {
     }
 
     // 역할별 멤버 필터링
-    public List<FilterDto> getMembersByRole(String role) {
-        List<Member> filter = filterRepository.findByCardRole(role);
+    public List<FilterDto> getMembersByRole(Long teamId, String role) {
+        List<Member> filter = filterRepository.findByCardRoleAndTeamId(role, teamId);
         return filter.stream()
                 .map(FilterDto::new)
                 .collect(Collectors.toList());
     }
 
     // Major 목록 받아오기
-    public List<String> getDistinctMajorList() {
+    public List<String> findDistinctCardMajorByTeamId(Long teamId) {
 
         // DB에서 유일한 MBTI 값 목록 가져오기
-        List<String> majorList = filterRepository.findDistinctCardMajor();
+        List<String> majorList = filterRepository.findDistinctCardMajorByTeamId(teamId);
 
         // MBTI 값이 없는 항목 제거
         return majorList.stream()
@@ -68,8 +68,8 @@ public class FilterService {
     }
 
     // 전공별 멤버 필터링
-    public List<FilterDto> getMembersByMajor(String major) {
-        List<Member> filter = filterRepository.findByCardMajor(major);
+    public List<FilterDto> getMembersByMajor(Long teamId, String major) {
+        List<Member> filter = filterRepository.findByCardMajorAndTeamId(major, teamId);
         return filter.stream()
                 .map(FilterDto::new)
                 .collect(Collectors.toList());

@@ -3,10 +3,7 @@ package SSOP.ssop.controller.TeamSp;
 import SSOP.ssop.dto.TeamSp.FilterDto;
 import SSOP.ssop.service.TeamSp.FilterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,46 +11,46 @@ import java.util.List;
 @RequestMapping("/api/filter")
 public class FilterController {
 
-    private FilterService filterService;
+    private final FilterService filterService;
 
     @Autowired
     public FilterController(FilterService filterService) {
         this.filterService = filterService;
     }
 
-    // MBTI 리스트 목록
+    // 팀 ID에 한정된 MBTI 목록
     @GetMapping("/list/mbti")
-    public List<String> getMBTIFilters() {
-        return filterService.getDistinctMBTIList();
+    public List<String> getMBTIFilters(@RequestParam Long teamId) {
+        return filterService.findDistinctCardMBTIByTeamId(teamId);
     }
 
-    // MBTI 필터링
+    // 팀 ID와 MBTI에 한정된 멤버 필터링
     @GetMapping("/mbti")
-    public List<FilterDto> getMembersByMBTI(@RequestParam String mbti) {
-        return filterService.getMembersByMBTI(mbti);
+    public List<FilterDto> getMembersByMBTI(@RequestParam Long teamId, @RequestParam String mbti) {
+        return filterService.getMembersByMBTI(teamId, mbti);
     }
 
-    // 역할(role) 리스트 목록
+    // 팀 ID에 한정된 역할(role) 목록
     @GetMapping("/list/role")
-    public List<String> getRoleFilters() {
-        return filterService.getDistinctRoleList();
+    public List<String> getRoleFilters(@RequestParam Long teamId) {
+        return filterService.findDistinctCardRoleByTeamId(teamId);
     }
 
-    // 역할(role) 필터링
+    // 팀 ID와 역할(role)에 한정된 멤버 필터링
     @GetMapping("/role")
-    public List<FilterDto> getMembersByRole(@RequestParam String role) {
-        return filterService.getMembersByRole(role);
+    public List<FilterDto> getMembersByRole(@RequestParam Long teamId, @RequestParam String role) {
+        return filterService.getMembersByRole(teamId, role);
     }
 
-    // 전공(major) 리스트 목록
+    // 팀 ID에 한정된 전공(major) 목록
     @GetMapping("/list/major")
-    public List<String> getMajorFilters() {
-        return filterService.getDistinctMajorList();
+    public List<String> getMajorFilters(@RequestParam Long teamId) {
+        return filterService.findDistinctCardMajorByTeamId(teamId);
     }
 
-    // 전공(major) 필터링
+    // 팀 ID와 전공(major)에 한정된 멤버 필터링
     @GetMapping("/major")
-    public List<FilterDto> getMembersByMajor(@RequestParam String major) {
-        return filterService.getMembersByMajor(major);
+    public List<FilterDto> getMembersByMajor(@RequestParam Long teamId, @RequestParam String major) {
+        return filterService.getMembersByMajor(teamId, major);
     }
 }
