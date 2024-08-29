@@ -185,6 +185,32 @@ public class CardService {
         //return card;
     }
 
+    // 카드 조회 응답
+    private CardResponse createCardResponse(Card card) {
+        CardStudent cardStudent = null;
+        CardWorker cardWorker = null;
+        CardFan cardFan = null;
+
+        switch (card.getCard_template()) {
+            case "student":
+                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+                break;
+            case "worker":
+                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
+                break;
+            case "fan":
+                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+                break;
+            case "free":
+                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
+                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+                break;
+        }
+
+        return new CardResponse(card, cardStudent, cardWorker, cardFan);
+    }
+
 
     // 모든 카드 조회
     public List<CardResponse> getAllCards() {
@@ -192,23 +218,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            CardStudent cardStudent = null;
-            CardWorker cardWorker = null;
-            CardFan cardFan = null;
-
-            if (card.getCard_template().equals("student")) {
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("worker")) {
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("fan")) {
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("free")) {
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-            }
-
-            responses.add(new CardResponse(card, cardStudent, cardWorker, cardFan));
+            responses.add(createCardResponse(card));
         }
 
         return responses;
@@ -216,31 +226,11 @@ public class CardService {
 
     // 내 카드 목록 조회
     public List<CardResponse> getMyCards(long userId) {
-//        return cardRepository.findByUserId(userId).stream()
-//                .map(CardResponse::new)
-//                .collect(Collectors.toList());
-
         List<Card> cards = cardRepository.findByUserId(userId);
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            CardStudent cardStudent = null;
-            CardWorker cardWorker = null;
-            CardFan cardFan = null;
-
-            if (card.getCard_template().equals("student")) {
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("worker")) {
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("fan")) {
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-            } else if (card.getCard_template().equals("free")) {
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-            }
-
-            responses.add(new CardResponse(card, cardStudent, cardWorker, cardFan));
+        responses.add(createCardResponse(card));
         }
 
         return responses;
