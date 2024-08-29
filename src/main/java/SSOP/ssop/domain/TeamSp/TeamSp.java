@@ -2,7 +2,6 @@ package SSOP.ssop.domain.TeamSp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
@@ -39,6 +38,14 @@ public class TeamSp {
     @Embedded
     private FanOptional fanOptional;
 
+    @ElementCollection
+    @CollectionTable(name = "student_plus", joinColumns = @JoinColumn(name = "team_id"))
+    @Column(name = "student_plus")
+    private List<String> plus;
+
+    @Column(name = "student_card_cover")
+    private String cardCover;
+
     @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<TeamSpMember> members;
@@ -46,15 +53,19 @@ public class TeamSp {
     // 기본 생성자
     protected TeamSp() {}
 
-    // 전체 필드를 초기화 생성자
+    // 전체 필드를 초기화하는 생성자
     public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
-                  StudentOptional studentOptional, WorkerOptional workerOptional) {
+                  StudentOptional studentOptional, WorkerOptional workerOptional, FanOptional fanOptional,
+                  List<String> plus, String cardCover) {
         this.team_name = team_name;
         this.team_comment = team_comment;
         this.isTemplate = isTemplate;
         this.template = template;
-        setStudentOptional(studentOptional);
-        setWorkerOptional(workerOptional);
+        this.studentOptional = studentOptional;
+        this.workerOptional = workerOptional;
+        this.fanOptional = fanOptional;
+        this.plus = plus;
+        this.cardCover = cardCover;
     }
 
     // Template 값에 따라 변수 반환
@@ -73,18 +84,49 @@ public class TeamSp {
         return null;
     }
 
+    // Template이 "fan"일 때만 FanOptional을 반환
+    public FanOptional getFanOptional() {
+        if ("fan".equals(template)) {
+            return (fanOptional != null && fanOptional.checkNullValue()) ? null : fanOptional;
+        }
+        return null;
+    }
     // template에 따라 필요한 Optional 객체만 설정
     public void setStudentOptional(StudentOptional studentOptional) {
-        if ("student".equals(template)) {
+        if ("student".equals(template) || "free".equals(template)) {
             this.studentOptional = studentOptional;
-            this.workerOptional = null;
+            if ("student".equals(template)) {
+                this.workerOptional = null;
+                this.fanOptional = null;
+            }
         }
     }
 
     public void setWorkerOptional(WorkerOptional workerOptional) {
-        if ("worker".equals(template)) {
+        if ("worker".equals(template) || "free".equals(template)) {
             this.workerOptional = workerOptional;
-            this.studentOptional = null;
+            if ("worker".equals(template)) {
+                this.studentOptional = null;
+                this.fanOptional = null;
+            }
+        }
+    }
+
+    public void setFanOptional(FanOptional fanOptional) {
+        if ("fan".equals(template) || "free".equals(template)) {
+            this.fanOptional = fanOptional;
+            if ("fan".equals(template)) {
+                this.studentOptional = null;
+                this.workerOptional = null;
+            }
+        }
+    }
+
+    public void setFreeOptional(StudentOptional studentOptional, WorkerOptional workerOptional, FanOptional fanOptional) {
+        if ("free".equals(template)) {
+            this.studentOptional = studentOptional;
+            this.workerOptional = workerOptional;
+            this.fanOptional = fanOptional;
         }
     }
 
@@ -98,6 +140,7 @@ public class TeamSp {
         member.setTeamSp(null); // 참조를 제거
     }
 
+    // Getters and Setters
     public Long getTeam_id() {
         return team_id;
     }
@@ -160,5 +203,21 @@ public class TeamSp {
 
     public void setMembers(List<TeamSpMember> members) {
         this.members = members;
+    }
+
+    public List<String> getPlus() {
+        return plus;
+    }
+
+    public void setPlus(List<String> plus) {
+        this.plus = plus;
+    }
+
+    public String getCardCover() {
+        return cardCover;
+    }
+
+    public void setCardCover(String cardCover) {
+        this.cardCover = cardCover;
     }
 }
