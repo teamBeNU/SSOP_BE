@@ -31,6 +31,10 @@ public class TeamSpController {
     @PostMapping("/create")
     public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
         try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("message", "팀스페이스 생성 완료"));
@@ -43,8 +47,11 @@ public class TeamSpController {
     // 팀 스페이스 입장
     @PostMapping("/enter")
     public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
-
         try {
+            if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
         } catch (IllegalArgumentException e) {
@@ -80,6 +87,10 @@ public class TeamSpController {
     @PatchMapping
     public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") Long teamId, @RequestBody TeamSp teamSp, @Login Long userId) {
         try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
         } catch (IllegalArgumentException e) {
@@ -100,6 +111,10 @@ public class TeamSpController {
     @DeleteMapping
     public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") Long teamId, @Login Long userId) {
         try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             teamSpService.deleteTeamSp(teamId, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));
         } catch (IllegalArgumentException e) {

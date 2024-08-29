@@ -36,6 +36,10 @@ public class MemberController {
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
         try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             // 팀스페이스 멤버 카드 생성 서비스 호출
             memberService.saveMember(teamId, userId, memberDto, file);
             return ResponseEntity.ok(Map.of("code", 200, "message", "팀스페이스 멤버 카드 생성 완료"));

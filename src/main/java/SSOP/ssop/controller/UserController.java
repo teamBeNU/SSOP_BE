@@ -5,6 +5,7 @@ import SSOP.ssop.dto.User.LoginDto;
 import SSOP.ssop.dto.User.UserDto;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.User.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +49,10 @@ public class UserController {
     // 유저 비밀번호 수정
     @PatchMapping("/password")
     public ResponseEntity<?> updatePassword(@Login Long userId, @RequestBody UserDto userDto) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효한 토큰이 없습니다"));
+        }
         userDto.setUserId(userId);
         return userService.updatePassword(userDto);
     }
@@ -55,6 +60,10 @@ public class UserController {
     // 유저 전화번호 수정
     @PatchMapping("/phone")
     public ResponseEntity<?> updatePhone(@Login Long userId, @RequestBody UserDto userDto) {
+        if (userId == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "유효한 토큰이 없습니다"));
+    }
         userDto.setUserId(userId);
         return userService.updatePhone(userDto);
     }
@@ -62,12 +71,20 @@ public class UserController {
     // 유저 이름 & 생년월일 수정
     @PatchMapping("/namebirth")
     public ResponseEntity<?> updateNameBirth(@Login Long userId, @RequestBody UserDto userDto) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효한 토큰이 없습니다"));
+        }
         userDto.setUserId(userId);
         return userService.updateNameBirth(userDto);
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@Login Long userId) {
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효한 토큰이 없습니다"));
+        }
         return userService.deleteUser(userId);
     }
 }
