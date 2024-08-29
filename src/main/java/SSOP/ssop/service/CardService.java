@@ -5,6 +5,7 @@ import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.*;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
+import SSOP.ssop.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,17 +27,19 @@ public class CardService {
     private CardStudentRepository cardStudentRepository;
     private CardWorkerRepository cardWorkerRepository;
     private CardFanRepository cardFanRepository;
+    private final CardUtils cardUtils;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository, CardFanRepository cardFanRepository) {
+    public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository, CardFanRepository cardFanRepository, CardUtils cardUtils) {
         this.cardRepository = cardRepository;
         this.avatarRepository = avatarRepository;
         this.cardStudentRepository = cardStudentRepository;
         this.cardWorkerRepository = cardWorkerRepository;
         this.cardFanRepository = cardFanRepository;
+        this.cardUtils = cardUtils;
     }
 
     // 카드 생성
@@ -187,30 +189,30 @@ public class CardService {
     }
 
     // 카드 조회 응답
-    private CardResponse createCardResponse(Card card) {
-        CardStudent cardStudent = null;
-        CardWorker cardWorker = null;
-        CardFan cardFan = null;
-
-        switch (card.getCard_template()) {
-            case "student":
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-                break;
-            case "worker":
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-                break;
-            case "fan":
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-                break;
-            case "free":
-                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-                break;
-        }
-
-        return new CardResponse(card, cardStudent, cardWorker, cardFan);
-    }
+//    private CardResponse createCardResponse(Card card) {
+//        CardStudent cardStudent = null;
+//        CardWorker cardWorker = null;
+//        CardFan cardFan = null;
+//
+//        switch (card.getCard_template()) {
+//            case "student":
+//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+//                break;
+//            case "worker":
+//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
+//                break;
+//            case "fan":
+//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+//                break;
+//            case "free":
+//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
+//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
+//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
+//                break;
+//        }
+//
+//        return new CardResponse(card, cardStudent, cardWorker, cardFan);
+//    }
 
 
     // 모든 카드 조회
@@ -219,7 +221,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(createCardResponse(card));
+            responses.add(cardUtils.createCardResponse(card));
         }
 
         return responses;
@@ -231,7 +233,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-        responses.add(createCardResponse(card));
+        responses.add(cardUtils.createCardResponse(card));
         }
 
         return responses;
@@ -257,7 +259,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(createCardResponse(card));
+            responses.add(cardUtils.createCardResponse(card));
         }
 
         return responses;
@@ -268,7 +270,7 @@ public class CardService {
     public CardResponse getCard(long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-        return createCardResponse(card);
+        return cardUtils.createCardResponse(card);
     }
 
     // 카드 수정
@@ -277,127 +279,31 @@ public class CardService {
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
         // 공통 필드 업데이트
-        updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
-        updateFieldIfNotNull(request.getCard_introduction(), card::setCard_introduction);
-        updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
-        updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
-        updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
-        updateFieldIfNotNull(request.getProfile_image_url(), card::setProfile_image_url);
-        updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
-        updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
-        updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
-        updateFieldIfNotNull(request.getCard_sns_insta(), card::setCard_sns_insta);
-        updateFieldIfNotNull(request.getCard_sns_x(), card::setCard_sns_x);
-        updateFieldIfNotNull(request.getCard_email(), card::setCard_email);
-        updateFieldIfNotNull(request.getCard_MBTI(), card::setCard_MBTI);
-        updateFieldIfNotNull(request.getCard_music(), card::setCard_music);
-        updateFieldIfNotNull(request.getCard_movie(), card::setCard_movie);
-        updateFieldIfNotNull(request.getCard_hobby(), card::setCard_hobby);
-        updateFieldIfNotNull(request.getCard_address(), card::setCard_address);
+        cardUtils.updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
+        cardUtils.updateFieldIfNotNull(request.getCard_introduction(), card::setCard_introduction);
+        cardUtils.updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
+        cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
+        cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
+        cardUtils.updateFieldIfNotNull(request.getProfile_image_url(), card::setProfile_image_url);
+        cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
+        cardUtils.updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
+        cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
+        cardUtils.updateFieldIfNotNull(request.getCard_sns_insta(), card::setCard_sns_insta);
+        cardUtils.updateFieldIfNotNull(request.getCard_sns_x(), card::setCard_sns_x);
+        cardUtils.updateFieldIfNotNull(request.getCard_email(), card::setCard_email);
+        cardUtils.updateFieldIfNotNull(request.getCard_MBTI(), card::setCard_MBTI);
+        cardUtils.updateFieldIfNotNull(request.getCard_music(), card::setCard_music);
+        cardUtils.updateFieldIfNotNull(request.getCard_movie(), card::setCard_movie);
+        cardUtils.updateFieldIfNotNull(request.getCard_hobby(), card::setCard_hobby);
+        cardUtils.updateFieldIfNotNull(request.getCard_address(), card::setCard_address);
 
         // 템플릿 별 업데이트
-        updateTemplateSpecificFields(card, request);
+        cardUtils.updateTemplateSpecificFields(card, request);
 
         cardRepository.save(card);
     }
 
-    private <T> void updateFieldIfNotNull(T value, Consumer<T> updater) {
-        if (value != null) {
-            updater.accept(value);
-        }
-    }
-
-    private void updateTemplateSpecificFields(Card card, CardUpdateRequest request) {
-        Long cardId = card.getCardId();
-
-        switch (card.getCard_template()) {
-            case "student":
-                if (request.getStudent() != null) {
-                    CardStudent cardStudent = cardStudentRepository.findByCard_CardId(cardId);
-                    if (cardStudent != null) {
-                        updateStudentCard(cardStudent, request.getStudent());
-                    } else {
-                        throw new IllegalArgumentException("CardStudent entity not found for this card.");
-                    }
-                }
-                break;
-            case "worker":
-                if (request.getWorker() != null) {
-                    CardWorker cardWorker = cardWorkerRepository.findByCard_CardId(cardId);
-                    if (cardWorker != null) {
-                        updateWorkerCard(cardWorker, request.getWorker());
-                    } else {
-                        throw new IllegalArgumentException("CardWorker entity not found for this card.");
-                    }
-                }
-                break;
-            case "fan":
-                if (request.getFan() != null) {
-                    CardFan cardFan = cardFanRepository.findByCard_CardId(cardId);
-                    if (cardFan != null) {
-                        updateFanCard(cardFan, request.getFan());
-                    } else {
-                        throw new IllegalArgumentException("CardFan entity not found for this card");
-                    }
-                }
-                break;
-            case "free":
-                if (request.getStudent() != null) {
-                    CardStudent cardStudent = cardStudentRepository.findByCard_CardId(cardId);
-                    if (cardStudent != null) {
-                        updateStudentCard(cardStudent, request.getStudent());
-                    } else {
-                        throw new IllegalArgumentException("CardStudent entity not found for this card.");
-                    }
-                }
-                if (request.getWorker() != null) {
-                    CardWorker cardWorker = cardWorkerRepository.findByCard_CardId(cardId);
-                    if (cardWorker != null) {
-                        updateWorkerCard(cardWorker, request.getWorker());
-                    } else {
-                        throw new IllegalArgumentException("CardWorker entity not found for this card.");
-                    }
-                }
-                if (request.getFan() != null) {
-                    CardFan cardFan = cardFanRepository.findByCard_CardId(cardId);
-                    if (cardFan != null) {
-                        updateFanCard(cardFan, request.getFan());
-                    } else {
-                        throw new IllegalArgumentException("CardFan entity not found for this card");
-                    }
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("지정된 템플릿이 없습니다.");
-        }
-    }
-
-    private void updateStudentCard(CardStudent card, CardStudentUpdateRequest studentRequest) {
-        updateFieldIfNotNull(studentRequest.getCard_student_school(), card::setCard_student_school);
-        updateFieldIfNotNull(studentRequest.getCard_student_grade(), card::setCard_student_grade);
-        updateFieldIfNotNull(studentRequest.getCard_student_major(), card::setCard_student_major);
-        updateFieldIfNotNull(studentRequest.getCard_student_id(), card::setCard_student_id);
-        updateFieldIfNotNull(studentRequest.getCard_student_club(), card::setCard_student_club);
-        updateFieldIfNotNull(studentRequest.getCard_student_role(), card::setCard_student_role);
-        updateFieldIfNotNull(studentRequest.getCard_student_status(), card::setCard_student_status);
-    }
-
-    private void updateWorkerCard(CardWorker card, CardWorkerUpdateRequest workerRequest) {
-        updateFieldIfNotNull(workerRequest.getCard_worker_company(), card::setCard_worker_company);
-        updateFieldIfNotNull(workerRequest.getCard_worker_job(), card::setCard_worker_job);
-        updateFieldIfNotNull(workerRequest.getCard_worker_position(), card::setCard_worker_position);
-        updateFieldIfNotNull(workerRequest.getCard_worker_department(), card::setCard_worker_department);
-    }
-
-    private void updateFanCard(CardFan card, CardFanUpdateRequest fanRequest) {
-        updateFieldIfNotNull(fanRequest.getCard_fan_genre(), card::setCard_fan_genre);
-        updateFieldIfNotNull(fanRequest.getCard_fan_first(), card::setCard_fan_first);
-        updateFieldIfNotNull(fanRequest.getCard_fan_second(), card::setCard_fan_second);
-        updateFieldIfNotNull(fanRequest.getCard_fan_reason(), card::setCard_fan_reason);
-    }
-
-
-//    // 카드 삭제
+   //    // 카드 삭제
 //    public void deleteCard(long cardId, long userId) {
 //        Card card = cardRepository.findById(cardId)
 //                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));

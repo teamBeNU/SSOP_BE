@@ -105,7 +105,7 @@ public class CardController {
     public ResponseEntity<?> updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
         request.setCard_id(cardId);
         cardService.updateCard(request);
-        return ResponseEntity.ok(Map.of("code", 200, "message", "카드가 수정되었습니다."));
+        return ResponseEntity.ok().body(Map.of("message", "카드가 수정되었습니다."));
     }
 
 
