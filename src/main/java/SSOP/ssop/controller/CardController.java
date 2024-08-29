@@ -81,14 +81,14 @@ public class CardController {
 //        List<CardResponse> cards = cardService.getSavedCards(userId);
 //        return ResponseEntity.ok(cards);
 //    }
-//
-//    // 상대 카드 저장
-//    @PostMapping("/save")
-//    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
-//        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
-//        return ResponseEntity.ok(response);
-//    }
-//
+
+    // 상대 카드 저장
+    @PostMapping("/save")
+    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
+        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
+        return ResponseEntity.ok(response);
+    }
+
 //    // 특정 카드 상세 조회
 //    @GetMapping("/view")
 //    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
