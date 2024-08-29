@@ -3,9 +3,9 @@ package SSOP.ssop.service.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.repository.TeamSpRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
-import SSOP.ssop.repository.TeamSpMemberRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -6,7 +6,7 @@ import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.User.LoginDto;
 import SSOP.ssop.dto.User.UserDto;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
-import SSOP.ssop.repository.CardRepository;
+import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

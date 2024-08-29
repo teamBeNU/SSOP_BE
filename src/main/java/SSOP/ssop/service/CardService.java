@@ -1,20 +1,16 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.*;
-import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
+import SSOP.ssop.repository.Card.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class CardService {

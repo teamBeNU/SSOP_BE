@@ -2,12 +2,13 @@ package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
-import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
-import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.repository.*;
+import SSOP.ssop.repository.Card.CardRepository;
+import SSOP.ssop.repository.TeamSp.MemberRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

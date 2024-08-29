@@ -2,7 +2,7 @@ package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.dto.TeamSp.FilterDto;
-import SSOP.ssop.repository.FilterRepository;
+import SSOP.ssop.repository.TeamSp.FilterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
