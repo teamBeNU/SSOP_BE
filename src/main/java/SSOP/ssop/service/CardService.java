@@ -236,31 +236,33 @@ public class CardService {
         return responses;
     }
 
-//    // 상대 카드 목록 조회
-//    public List<CardResponse> getSavedCards(long userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저아이디입니다 : " + userId));
-//
-//        List<String> savedCardList = user.getSaved_card_list();
-//
-//        if (savedCardList == null || savedCardList.isEmpty()) {
-//            return Collections.emptyList(); // 저장한 카드가 없는 경우
-//        }
-//
-//        List<Long> savedCardListAsLongs = savedCardList.stream()
-//                .map(Long::valueOf)
-//                .collect(Collectors.toList());
-//
-//        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
-//
-//        List<CardResponse> cardResponses = cards.stream()
-//                .map(CardResponse::new)
-//                .collect(Collectors.toList());
-//
-//        return cardResponses;
-//
-//    }
-//
+    // 상대 카드 목록 조회
+    public List<CardResponse> getSavedCards(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저아이디입니다 : " + userId));
+
+        List<String> savedCardList = user.getSaved_card_list();
+
+        if (savedCardList == null || savedCardList.isEmpty()) {
+            return Collections.emptyList(); // 저장한 카드가 없는 경우
+        }
+
+        List<Long> savedCardListAsLongs = savedCardList.stream()
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+
+        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
+
+        List<CardResponse> responses = new ArrayList<>();
+
+        for (Card card : cards) {
+            responses.add(createCardResponse(card));
+        }
+
+        return responses;
+
+    }
+
 //    // 특정 카드 상세 조회
 //    public CardResponse getCard(long cardId) {
 //        Card card = cardRepository.findById(cardId)
