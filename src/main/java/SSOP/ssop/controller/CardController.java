@@ -1,6 +1,10 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
+import SSOP.ssop.dto.card.request.MemoRequest;
+import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
@@ -11,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController

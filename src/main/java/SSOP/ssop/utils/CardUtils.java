@@ -9,9 +9,9 @@ import SSOP.ssop.dto.card.request.CardStudentUpdateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.CardWorkerUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.repository.CardFanRepository;
-import SSOP.ssop.repository.CardStudentRepository;
-import SSOP.ssop.repository.CardWorkerRepository;
+import SSOP.ssop.repository.Card.CardFanRepository;
+import SSOP.ssop.repository.Card.CardStudentRepository;
+import SSOP.ssop.repository.Card.CardWorkerRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
