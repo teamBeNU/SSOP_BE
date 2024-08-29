@@ -7,13 +7,25 @@ import lombok.*;
 import java.util.List;
 
 @Embeddable
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class StudentOptional {
+
     @Column(name = "student_showAge")
     private Boolean showAge;
+
+    @Column(name = "student_showMBTI")
+    private Boolean showMBTI;
+
+    @Column(name = "student_showTel")
+    private Boolean showTel;
+
+    @Column(name = "student_showEmail")
+    private Boolean showEmail;
+
+    @Column(name = "student_showSNS")
+    private Boolean showSNS;
 
     @Column(name = "student_showSchool")
     private Boolean showSchool;
@@ -35,17 +47,11 @@ public class StudentOptional {
     @Column(name = "student_showRole")
     private List<String> showRole;
 
-    @Column(name = "student_showTel")
-    private Boolean showTel;
+    @Column(name = "student_showStatus")
+    private Boolean showStatus;
 
-    @Column(name = "student_showSNS")
-    private Boolean showSNS;
-
-    @Column(name = "student_showEmail")
-    private Boolean showEmail;
-
-    @Column(name = "student_showMBTI")
-    private Boolean showMBTI;
+    @Column(name = "student_showHobby")
+    private Boolean showHobby;
 
     @Column(name = "student_showMusic")
     private Boolean showMusic;
@@ -53,116 +59,93 @@ public class StudentOptional {
     @Column(name = "student_showMovie")
     private Boolean showMovie;
 
+    @Column(name = "student_showLive")
+    private Boolean showLive;
+
+    @ElementCollection
+    @CollectionTable(name = "student_plus", joinColumns = @JoinColumn(name = "team_id"))
+    @Column(name = "student_plus")
+    private List<String> plus;
+
+    @Column(name = "student_card_cover")
+    private String cardCover;
+
     public boolean checkNullValue() {
-        return showAge == null && showSchool == null && showGrade == null &&
-                showStudNum == null && showMajor == null && showClub == null &&
-                (showRole == null || showRole.isEmpty()) && showTel == null &&
-                showSNS == null && showEmail == null && showMBTI == null &&
-                showMusic == null && showMovie == null;
+        return showAge == null && showMBTI == null && showTel == null && showEmail == null && showSNS == null &&
+                showSchool == null && showGrade == null && showStudNum == null && showMajor == null &&
+                showClub == null && (showRole == null || showRole.isEmpty()) && showStatus == null &&
+                showHobby == null && showMusic == null && showMovie == null && showLive == null;
     }
 
     public Boolean getShowAge() {
         return showAge;
     }
 
-    public void setShowAge(Boolean showAge) {
-        this.showAge = showAge;
-    }
-
-    public Boolean getShowSchool() {
-        return showSchool;
-    }
-
-    public void setShowSchool(Boolean showSchool) {
-        this.showSchool = showSchool;
-    }
-
-    public Boolean getShowGrade() {
-        return showGrade;
-    }
-
-    public void setShowGrade(Boolean showGrade) {
-        this.showGrade = showGrade;
-    }
-
-    public Boolean getShowStudNum() {
-        return showStudNum;
-    }
-
-    public void setShowStudNum(Boolean showStudNum) {
-        this.showStudNum = showStudNum;
-    }
-
-    public Boolean getShowMajor() {
-        return showMajor;
-    }
-
-    public void setShowMajor(Boolean showMajor) {
-        this.showMajor = showMajor;
-    }
-
-    public Boolean getShowClub() {
-        return showClub;
-    }
-
-    public void setShowClub(Boolean showClub) {
-        this.showClub = showClub;
-    }
-
-    public List<String> getShowRole() {
-        return showRole;
-    }
-
-    public void setShowRole(List<String> showRole) {
-        this.showRole = showRole;
+    public Boolean getShowMBTI() {
+        return showMBTI;
     }
 
     public Boolean getShowTel() {
         return showTel;
     }
 
-    public void setShowTel(Boolean showTel) {
-        this.showTel = showTel;
+    public Boolean getShowEmail() {
+        return showEmail;
     }
 
     public Boolean getShowSNS() {
         return showSNS;
     }
 
-    public void setShowSNS(Boolean showSNS) {
-        this.showSNS = showSNS;
+    public Boolean getShowSchool() {
+        return showSchool;
     }
 
-    public Boolean getShowEmail() {
-        return showEmail;
+    public Boolean getShowGrade() {
+        return showGrade;
     }
 
-    public void setShowEmail(Boolean showEmail) {
-        this.showEmail = showEmail;
+    public Boolean getShowStudNum() {
+        return showStudNum;
     }
 
-    public Boolean getShowMBTI() {
-        return showMBTI;
+    public Boolean getShowMajor() {
+        return showMajor;
     }
 
-    public void setShowMBTI(Boolean showMBTI) {
-        this.showMBTI = showMBTI;
+    public Boolean getShowClub() {
+        return showClub;
+    }
+
+    public List<String> getShowRole() {
+        return showRole;
+    }
+
+    public Boolean getShowStatus() {
+        return showStatus;
+    }
+
+    public Boolean getShowHobby() {
+        return showHobby;
     }
 
     public Boolean getShowMusic() {
         return showMusic;
     }
 
-    public void setShowMusic(Boolean showMusic) {
-        this.showMusic = showMusic;
-    }
-
     public Boolean getShowMovie() {
         return showMovie;
     }
 
-    public void setShowMovie(Boolean showMovie) {
-        this.showMovie = showMovie;
+    public Boolean getShowLive() {
+        return showLive;
+    }
+
+    public List<String> getPlus() {
+        return plus;
+    }
+
+    public String getCardCover() {
+        return cardCover;
     }
 }
-
