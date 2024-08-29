@@ -3,7 +3,11 @@ package SSOP.ssop.domain.card;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @DiscriminatorValue("worker")
 public class CardWorker {
@@ -45,46 +49,6 @@ public class CardWorker {
         this.card_worker_company = card_worker_company;
         this.card_worker_job = card_worker_job;
         this.card_worker_position = card_worker_position;
-        this.card_worker_department = card_worker_department;
-    }
-
-    public Card getCard() {
-        return card;
-    }
-
-    public String getCard_worker_company() {
-        return card_worker_company;
-    }
-
-    public String getCard_worker_job() {
-        return card_worker_job;
-    }
-
-    public String getCard_worker_position() {
-        return card_worker_position;
-    }
-
-    public String getCard_worker_department() {
-        return card_worker_department;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
-    public void setCard_worker_company(String card_worker_company) {
-        this.card_worker_company = card_worker_company;
-    }
-
-    public void setCard_worker_job(String card_worker_job) {
-        this.card_worker_job = card_worker_job;
-    }
-
-    public void setCard_worker_position(String card_worker_position) {
-        this.card_worker_position = card_worker_position;
-    }
-
-    public void setCard_worker_department(String card_worker_department) {
         this.card_worker_department = card_worker_department;
     }
 }

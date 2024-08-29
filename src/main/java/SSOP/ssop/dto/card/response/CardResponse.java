@@ -2,7 +2,11 @@ package SSOP.ssop.dto.card.response;
 
 import SSOP.ssop.domain.card.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardResponse {
 
@@ -120,93 +124,5 @@ public class CardResponse {
                 );
             }
         }
-    }
-
-    public Long getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
-    }
-
-    public Long getCard_id() {
-        return card_id;
-    }
-
-    public void setCard_id(Long card_id) {
-        this.card_id = card_id;
-    }
-
-    public String getCard_template() {
-        return card_template;
-    }
-
-    public void setCard_template(String card_template) {
-        this.card_template = card_template;
-    }
-
-    public String getCard_cover() {
-        return card_cover;
-    }
-
-    public void setCard_cover(String card_cover) {
-        this.card_cover = card_cover;
-    }
-
-    public CardEssential getCardEssential() {
-        return cardEssential;
-    }
-
-    public void setCardEssential(CardEssential cardEssential) {
-        this.cardEssential = cardEssential;
-    }
-
-    public CardOptional getCardOptional() {
-        return cardOptional;
-    }
-
-    public void setCardOptional(CardOptional cardOptional) {
-        this.cardOptional = cardOptional;
-    }
-
-    public CardStudent getStudent() {
-        return student;
-    }
-
-    public void setStudent(CardStudent student) {
-        this.student = student;
-    }
-
-    public CardWorker getWorker() {
-        return worker;
-    }
-
-    public void setWorker(CardWorker worker) {
-        this.worker = worker;
-    }
-
-    public CardFan getFan() {
-        return fan;
-    }
-
-    public void setFan(CardFan fan) {
-        this.fan = fan;
-    }
-
-    public Avatar getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(Avatar avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getProfile_image_url() {
-        return profile_image_url;
-    }
-
-    public void setProfile_image_url(String profile_image_url) {
-        this.profile_image_url = profile_image_url;
     }
 }
