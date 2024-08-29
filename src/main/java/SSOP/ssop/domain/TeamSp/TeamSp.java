@@ -36,6 +36,9 @@ public class TeamSp {
     @Embedded
     private WorkerOptional workerOptional;
 
+    @Embedded
+    private FanOptional fanOptional;
+
     @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<TeamSpMember> members;
@@ -64,19 +67,25 @@ public class TeamSp {
 
     // Template이 "worker"일 때만 WorkerOptional을 반환
     public WorkerOptional getWorkerOptional() {
-        if ("free".equals(template)) {
+        if ("worker".equals(template)) {
             return (workerOptional != null && workerOptional.checkNullValue()) ? null : workerOptional;
         }
         return null;
     }
 
-    // 각 파일에 모두 null값이면 변수값 null로 반환
+    // template에 따라 필요한 Optional 객체만 설정
     public void setStudentOptional(StudentOptional studentOptional) {
-        this.studentOptional = studentOptional != null && studentOptional.checkNullValue() ? null : studentOptional;
+        if ("student".equals(template)) {
+            this.studentOptional = studentOptional;
+            this.workerOptional = null;
+        }
     }
 
     public void setWorkerOptional(WorkerOptional workerOptional) {
-        this.workerOptional = workerOptional != null && workerOptional.checkNullValue() ? null : workerOptional;
+        if ("worker".equals(template)) {
+            this.workerOptional = workerOptional;
+            this.studentOptional = null;
+        }
     }
 
     public void updateTeamName(String team_name) {
