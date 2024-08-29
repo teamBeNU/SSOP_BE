@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,19 +89,33 @@ public class UserService {
         }
     }
 
+    // 기존 비밀번호 검증
+    public ResponseEntity<?> validateCurrentPassword(Long userId, String currentPassword) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "존재하지 않는 사용자입니다."));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "기존 비밀번호가 일치하지 않습니다."));
+        }
+
+        return ResponseEntity.ok().body(Map.of("message", "기존 비밀번호가 확인되었습니다."));
+    }
+
     // 유저 비밀번호 수정
-    public ResponseEntity<?> updatePassword(UserDto userDto) {
-        if (!userRepository.existsById(userDto.getUserId())) {
+    public ResponseEntity<?> updatePassword(Long userId, String newPassword) {
+        if (!userRepository.existsById(userId)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "존재하지 않는 사용자입니다."));
         }
 
-        User user = userRepository.findById(userDto.getUserId()).get();
-        user.setPassword(passwordEncoder.encode(userDto.getPassword())); // 비밀번호 암호화
+        User user = userRepository.findById(userId).get();
+        user.setPassword(passwordEncoder.encode(newPassword)); // 비밀번호 암호화
         userRepository.save(user);
 
         return ResponseEntity.ok().body(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
     }
+
 
     // 유저 전화번호 수정
     public ResponseEntity<?> updatePhone(UserDto userDto) {
@@ -118,10 +133,10 @@ public class UserService {
 
     // 유저 이름 & 생년월일 수정
     public ResponseEntity<?> updateNameBirth(UserDto userDto) {
-        if (!userRepository.existsById(userDto.getUserId())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
-        }
+//        if (!userRepository.existsById(userDto.getUserId())) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                    .body(Map.of("message", "존재하지 않는 사용자입니다."));
+//        }
 
         User user = userRepository.findById(userDto.getUserId()).get();
         // body에서 요청하지 않았다면 기존 값 유지
