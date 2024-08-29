@@ -1,22 +1,22 @@
 package SSOP.ssop.domain.card;
 
-import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardStudentUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "card")
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "DTYPE")
 public class Card {
 
     @Id
+    @Column(name = "card_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long card_id;
+    private Long cardId;
 
     @Column(nullable = false)
     private Long userId;
@@ -63,8 +63,7 @@ public class Card {
 
     private String card_address;        // 거주지
 
-    @Lob
-    private String memo;
+    private String memo;            // 메모
 
     public Card() {}
 
@@ -92,165 +91,5 @@ public class Card {
         this.card_movie = card_movie;
         this.card_hobby = card_hobby;
         this.card_address = card_address;
-    }
-
-    public Long getCard_id() {
-        return card_id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public String getCard_name() {
-        return card_name;
-    }
-
-    public String getCard_introduction() {
-        return card_introduction;
-    }
-
-    public String getCard_template() {
-        return card_template;
-    }
-
-    public String getCard_cover() {
-        return card_cover;
-    }
-
-    public Avatar getAvatar() {
-        return avatar;
-    }
-
-    public String getProfile_image_url() {
-        return profile_image_url;
-    }
-
-    public String getCard_birth() {
-        return card_birth;
-    }
-
-    public Boolean getCard_bSecrete() {
-        return card_bSecrete;
-    }
-
-    public String getCard_tel() {
-        return card_tel;
-    }
-
-    public String getCard_sns_insta() {
-        return card_sns_insta;
-    }
-
-    public String getCard_sns_x() {
-        return card_sns_x;
-    }
-
-    public String getCard_email() {
-        return card_email;
-    }
-
-    public String getCard_MBTI() {
-        return card_MBTI;
-    }
-
-    public String getCard_music() {
-        return card_music;
-    }
-
-    public String getCard_movie() {
-        return card_movie;
-    }
-
-    public String getCard_hobby() {
-        return card_hobby;
-    }
-
-    public String getCard_address() {
-        return card_address;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setCard_id(Long card_id) {
-        this.card_id = card_id;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public void setCard_name(String card_name) {
-        this.card_name = card_name;
-    }
-
-    public void setCard_introduction(String card_introduction) {
-        this.card_introduction = card_introduction;
-    }
-
-    public void setCard_template(String card_template) {
-        this.card_template = card_template;
-    }
-
-    public void setCard_cover(String card_cover) {
-        this.card_cover = card_cover;
-    }
-
-    public void setAvatar(Avatar avatar) {
-        this.avatar = avatar;
-    }
-
-    public void setProfile_image_url(String profile_image_url) {
-        this.profile_image_url = profile_image_url;
-    }
-
-    public void setCard_birth(String card_birth) {
-        this.card_birth = card_birth;
-    }
-
-    public void setCard_bSecrete(Boolean card_bSecrete) {
-        this.card_bSecrete = card_bSecrete;
-    }
-
-    public void setCard_tel(String card_tel) {
-        this.card_tel = card_tel;
-    }
-
-    public void setCard_sns_insta(String card_sns_insta) {
-        this.card_sns_insta = card_sns_insta;
-    }
-
-    public void setCard_sns_x(String card_sns_x) {
-        this.card_sns_x = card_sns_x;
-    }
-
-    public void setCard_email(String card_email) {
-        this.card_email = card_email;
-    }
-
-    public void setCard_MBTI(String card_MBTI) {
-        this.card_MBTI = card_MBTI;
-    }
-
-    public void setCard_music(String card_music) {
-        this.card_music = card_music;
-    }
-
-    public void setCard_movie(String card_movie) {
-        this.card_movie = card_movie;
-    }
-
-    public void setCard_hobby(String card_hobby) {
-        this.card_hobby = card_hobby;
-    }
-
-    public void setCard_address(String card_address) {
-        this.card_address = card_address;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
     }
 }

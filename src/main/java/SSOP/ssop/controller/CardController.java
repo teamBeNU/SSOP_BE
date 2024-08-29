@@ -51,53 +51,54 @@ public class CardController {
         }
     }
 
-//    // 모든 카드 조회
-//    @GetMapping("/view/total")
-//    public ResponseEntity<List<CardResponse>> getAllCards() {
-//        List<CardResponse> cards = cardService.getAllCards();
-//        return ResponseEntity.ok(cards);
-//    }
-//
-//    // 내 카드 목록 조회
-//    @GetMapping("/view/mine")
-//    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
-//        List<CardResponse> cards = cardService.getMyCards(userId);
-//        return ResponseEntity.ok(cards);
-//    }
-//
-//    // 상대 카드 목록 조회
-//    @GetMapping("/view/saved")
-//    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
-//        List<CardResponse> cards = cardService.getSavedCards(userId);
-//        return ResponseEntity.ok(cards);
-//    }
-//
-//    // 상대 카드 저장
-//    @PostMapping("/save")
-//    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
-//        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    // 특정 카드 상세 조회
-//    @GetMapping("/view")
-//    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
-//        CardResponse cardResponse = cardService.getCard(cardId);
-//        if (cardResponse != null) {
-//            return ResponseEntity.ok(cardResponse);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//        }
-//    }
-//
-//    // 카드 수정 (내카드)
-//    @PatchMapping("/edit")
-//    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
-//        request.setCard_id(cardId);
-//        cardService.updateCard(request);
-//    }
-//
-//
+    // 모든 카드 조회
+    @GetMapping("/view/total")
+    public ResponseEntity<List<CardResponse>> getAllCards() {
+        List<CardResponse> cards = cardService.getAllCards();
+        return ResponseEntity.ok(cards);
+    }
+
+    // 내 카드 목록 조회
+    @GetMapping("/view/mine")
+    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
+        List<CardResponse> cards = cardService.getMyCards(userId);
+        return ResponseEntity.ok(cards);
+    }
+
+    // 상대 카드 목록 조회
+    @GetMapping("/view/saved")
+    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
+        List<CardResponse> cards = cardService.getSavedCards(userId);
+        return ResponseEntity.ok(cards);
+    }
+
+    // 상대 카드 저장
+    @PostMapping("/save")
+    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
+        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
+        return ResponseEntity.ok(response);
+    }
+
+    // 특정 카드 상세 조회
+    @GetMapping("/view")
+    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
+        CardResponse cardResponse = cardService.getCard(cardId);
+        if (cardResponse != null) {
+            return ResponseEntity.ok(cardResponse);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    // 카드 수정 (내카드)
+    @PatchMapping("/edit")
+    public ResponseEntity<?> updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+        request.setCard_id(cardId);
+        cardService.updateCard(request);
+        return ResponseEntity.ok().body(Map.of("message", "카드가 수정되었습니다."));
+    }
+
+
 //    // 카드 삭제 (내카드 & 상대카드)
 //    @DeleteMapping("/delete")
 //    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
@@ -112,11 +113,11 @@ public class CardController {
 //            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
 //        }
 //    }
-//
-//    // 상대 카드 메모
-//    @PostMapping("/memo")
-//    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
-//        cardService.writeMemo(cardId, userId, memo.getMemo());
-//    }
+
+    // 상대 카드 메모
+    @PostMapping("/memo")
+    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
+        cardService.writeMemo(cardId, userId, memo.getMemo());
+    }
 
 }
