@@ -63,8 +63,7 @@ public class Card {
 
     private String card_address;        // 거주지
 
-    @Lob
-    private String memo;
+    private String memo;            // 메모
 
     public Card() {}
 

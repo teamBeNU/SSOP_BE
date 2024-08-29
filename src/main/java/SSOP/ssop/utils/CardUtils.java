@@ -30,7 +30,7 @@ public class CardUtils {
         this.cardFanRepository = cardFanRepository;
     }
 
-    public CardResponse createCardResponse(Card card) {
+    public CardResponse createCardResponse(Card card, boolean isNotMyCard) {
         CardStudent cardStudent = null;
         CardWorker cardWorker = null;
         CardFan cardFan = null;
@@ -51,8 +51,7 @@ public class CardUtils {
                 cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
                 break;
         }
-
-        return new CardResponse(card, cardStudent, cardWorker, cardFan);
+        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard);
     }
 
     // null값 확인
@@ -151,4 +150,6 @@ public class CardUtils {
         updateFieldIfNotNull(fanRequest.getCard_fan_second(), card::setCard_fan_second);
         updateFieldIfNotNull(fanRequest.getCard_fan_reason(), card::setCard_fan_reason);
     }
+
+
 }

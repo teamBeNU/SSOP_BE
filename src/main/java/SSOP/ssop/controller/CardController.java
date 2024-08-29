@@ -123,11 +123,11 @@ public class CardController {
 //            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
 //        }
 //    }
-//
-//    // 상대 카드 메모
-//    @PostMapping("/memo")
-//    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
-//        cardService.writeMemo(cardId, userId, memo.getMemo());
-//    }
+
+    // 상대 카드 메모
+    @PostMapping("/memo")
+    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
+        cardService.writeMemo(cardId, userId, memo.getMemo());
+    }
 
 }

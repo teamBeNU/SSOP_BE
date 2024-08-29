@@ -34,11 +34,17 @@ public class CardResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String profile_image_url;
 
-    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan) {
+    private String memo;
+
+    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard) {
         this.user_id = card.getUserId();
         this.card_id = card.getCardId();
         this.card_template = card.getCard_template();
         this.card_cover = card.getCard_cover();
+
+        if(isNotMyCard) {
+            this.memo = card.getMemo();
+        }
 
         if (card.getAvatar() != null) {
             this.avatar = new AvatarResponse(
