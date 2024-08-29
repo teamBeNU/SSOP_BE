@@ -70,27 +70,26 @@ public class TeamSp {
 
     // Template 값에 따라 변수 반환
     public StudentOptional getStudentOptional() {
-        if ("student".equals(template)) {
+        if ("student".equals(template) || "free".equals(template)) {
             return (studentOptional != null && studentOptional.checkNullValue()) ? null : studentOptional;
         }
         return null;
     }
 
-    // Template이 "worker"일 때만 WorkerOptional을 반환
     public WorkerOptional getWorkerOptional() {
-        if ("worker".equals(template)) {
+        if ("worker".equals(template) || "free".equals(template)) {
             return (workerOptional != null && workerOptional.checkNullValue()) ? null : workerOptional;
         }
         return null;
     }
 
-    // Template이 "fan"일 때만 FanOptional을 반환
     public FanOptional getFanOptional() {
-        if ("fan".equals(template)) {
+        if ("fan".equals(template) || "free".equals(template)) {
             return (fanOptional != null && fanOptional.checkNullValue()) ? null : fanOptional;
         }
         return null;
     }
+
     // template에 따라 필요한 Optional 객체만 설정
     public void setStudentOptional(StudentOptional studentOptional) {
         if ("student".equals(template) || "free".equals(template)) {
