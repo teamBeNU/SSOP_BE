@@ -40,26 +40,13 @@ public class CardController {
 
     @PostMapping("/create")
     public ResponseEntity<?> saveCard(
+            @Login Long userId,
             @RequestPart("card") CardCreateRequest request,
             @RequestPart(name = "image", required = false) MultipartFile file
     ) {
         try {
-            // 현재 인증된 사용자의 정보를 가져옴
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            // 인증 정보가 없을 경우 처리
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("code", 401, "message", "사용자 인증 필요"));
-            }
-
-            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-
-            // 인증된 사용자의 userId 가져오기
-            Long authenticatedUserId = userDetail.getUser().getUserId();
-
             // 카드 생성 서비스 호출
-            boolean isSaved = cardService.saveCard(request, authenticatedUserId, file);
+            boolean isSaved = cardService.saveCard(request, userId, file);
 
             // 카드 생성이 성공적으로 이루어졌는지 확인
             if (isSaved) {
@@ -74,72 +61,72 @@ public class CardController {
         }
     }
 
-    // 모든 카드 조회
-    @GetMapping("/view/total")
-    public ResponseEntity<List<CardResponse>> getAllCards() {
-        List<CardResponse> cards = cardService.getAllCards();
-        return ResponseEntity.ok(cards);
-    }
-
-    // 내 카드 목록 조회
-    @GetMapping("/view/mine")
-    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
-        List<CardResponse> cards = cardService.getMyCards(userId);
-        return ResponseEntity.ok(cards);
-    }
-
-    // 상대 카드 목록 조회
-    @GetMapping("/view/saved")
-    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
-        List<CardResponse> cards = cardService.getSavedCards(userId);
-        return ResponseEntity.ok(cards);
-    }
-
-    // 상대 카드 저장
-    @PostMapping("/save")
-    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
-        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
-        return ResponseEntity.ok(response);
-    }
-
-    // 특정 카드 상세 조회
-    @GetMapping("/view")
-    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
-        CardResponse cardResponse = cardService.getCard(cardId);
-        if (cardResponse != null) {
-            return ResponseEntity.ok(cardResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    // 카드 수정 (내카드)
-    @PatchMapping("/edit")
-    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
-        request.setCard_id(cardId);
-        cardService.updateCard(request);
-    }
-
-
-    // 카드 삭제 (내카드 & 상대카드)
-    @DeleteMapping("/delete")
-    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
-
-        if (card.getUserId().equals(userId)) {
-            cardService.deleteCard(cardId, userId);
-            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
-        } else {
-            userService.deleteSavedCard(userId, cardId);
-            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
-        }
-    }
-
-    // 상대 카드 메모
-    @PostMapping("/memo")
-    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
-        cardService.writeMemo(cardId, userId, memo.getMemo());
-    }
+//    // 모든 카드 조회
+//    @GetMapping("/view/total")
+//    public ResponseEntity<List<CardResponse>> getAllCards() {
+//        List<CardResponse> cards = cardService.getAllCards();
+//        return ResponseEntity.ok(cards);
+//    }
+//
+//    // 내 카드 목록 조회
+//    @GetMapping("/view/mine")
+//    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
+//        List<CardResponse> cards = cardService.getMyCards(userId);
+//        return ResponseEntity.ok(cards);
+//    }
+//
+//    // 상대 카드 목록 조회
+//    @GetMapping("/view/saved")
+//    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
+//        List<CardResponse> cards = cardService.getSavedCards(userId);
+//        return ResponseEntity.ok(cards);
+//    }
+//
+//    // 상대 카드 저장
+//    @PostMapping("/save")
+//    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
+//        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    // 특정 카드 상세 조회
+//    @GetMapping("/view")
+//    public ResponseEntity<CardResponse> getCardsById(@RequestParam Long cardId) {
+//        CardResponse cardResponse = cardService.getCard(cardId);
+//        if (cardResponse != null) {
+//            return ResponseEntity.ok(cardResponse);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//    }
+//
+//    // 카드 수정 (내카드)
+//    @PatchMapping("/edit")
+//    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+//        request.setCard_id(cardId);
+//        cardService.updateCard(request);
+//    }
+//
+//
+//    // 카드 삭제 (내카드 & 상대카드)
+//    @DeleteMapping("/delete")
+//    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
+//        Card card = cardRepository.findById(cardId)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
+//
+//        if (card.getUserId().equals(userId)) {
+//            cardService.deleteCard(cardId, userId);
+//            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
+//        } else {
+//            userService.deleteSavedCard(userId, cardId);
+//            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
+//        }
+//    }
+//
+//    // 상대 카드 메모
+//    @PostMapping("/memo")
+//    public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
+//        cardService.writeMemo(cardId, userId, memo.getMemo());
+//    }
 
 }
