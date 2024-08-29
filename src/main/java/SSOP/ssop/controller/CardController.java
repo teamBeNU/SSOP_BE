@@ -68,13 +68,13 @@ public class CardController {
         return ResponseEntity.ok(cards);
     }
 
-//    // 내 카드 목록 조회
-//    @GetMapping("/view/mine")
-//    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
-//        List<CardResponse> cards = cardService.getMyCards(userId);
-//        return ResponseEntity.ok(cards);
-//    }
-//
+    // 내 카드 목록 조회
+    @GetMapping("/view/mine")
+    public ResponseEntity<List<CardResponse>> getMyCards(@Login Long userId) {
+        List<CardResponse> cards = cardService.getMyCards(userId);
+        return ResponseEntity.ok(cards);
+    }
+
 //    // 상대 카드 목록 조회
 //    @GetMapping("/view/saved")
 //    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
