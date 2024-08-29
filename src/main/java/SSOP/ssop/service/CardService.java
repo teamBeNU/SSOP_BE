@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -270,98 +271,132 @@ public class CardService {
         return createCardResponse(card);
     }
 
-//    // 카드 수정
-//    public void updateCard(CardUpdateRequest request) {
-//        Card card = cardRepository.findById(request.getCard_id())
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        // 공통 필드 업데이트
-//        if (request.getCard_name() != null) {
-//            card.setCard_name(request.getCard_name());
-//        }
-//        if (request.getCard_introduction() != null) {
-//            card.setCard_introduction(request.getCard_introduction());
-//        }
-//        if (request.getCard_template() != null) {
-//            card.setCard_template(request.getCard_template());
-//        }
-//        if (request.getCard_cover() != null) {
-//            card.setCard_cover(request.getCard_cover());
-//        }
-//        if (request.getCard_SNS() != null) {
-//            card.setCard_SNS(request.getCard_SNS());
-//        }
-//        if (request.getCard_email() != null) {
-//            card.setCard_email(request.getCard_email());
-//        }
-//        if (request.getCard_MBTI() != null) {
-//            card.setCard_MBTI(request.getCard_MBTI());
-//        }
-//        if (request.getCard_music() != null) {
-//            card.setCard_music(request.getCard_music());
-//        }
-//        if (request.getCard_movie() != null) {
-//            card.setCard_movie(request.getCard_movie());
-//        }
-//
-//        //템플릿 별 업데이트
-//        switch (card.getCard_template()) {
-//            case "student":
-//                if (request.getStudent() == null) {
-//                    break;
-//                }
-//                updateStudentCard((CardStudent) card, request.getStudent());
-//                break;
-//            case "worker":
-//                if (request.getWorker() == null) {
-//                    break;
-//                }
-//                updateWorkerCard((CardWorker) card, request.getWorker());
-//                break;
-//            default:
-//                throw new IllegalArgumentException("지정된 템플릿이 없습니다.");
-//        }
-//        cardRepository.save(card);
-//        throw new IllegalArgumentException("카드가 수정되었습니다.");
-//    }
-//
-//    private void updateStudentCard(CardStudent card, CardStudentUpdateRequest studentRequest) {
-//        if (studentRequest.getCard_tel() != null) {
-//            card.setCard_tel(studentRequest.getCard_tel());
-//        }
-//        if (studentRequest.getCard_birth() != null) {
-//            card.setCard_birth(studentRequest.getCard_birth());
-//        }
-//        if (studentRequest.getCard_school() != null) {
-//            card.setCard_school(studentRequest.getCard_school());
-//        }
-//        if (studentRequest.getCard_grade() != null) {
-//            card.setCard_grade(studentRequest.getCard_grade());
-//        }
-//        if (studentRequest.getCard_student_major() != null) {
-//            card.setCard_student_major(studentRequest.getCard_student_major());
-//        }
-//        if (studentRequest.getCard_student_club() != null) {
-//            card.setCard_student_club(studentRequest.getCard_student_club());
-//        }
-//        if (studentRequest.getCard_student_role() != null) {
-//            card.setCard_student_role(studentRequest.getCard_student_role());
-//        }
-//    }
-//
-//    private void updateWorkerCard(CardWorker card, CardWorkerUpdateRequest workerRequest) {
-//        if (workerRequest.getCard_tel() != null) {
-//            card.setCard_tel(workerRequest.getCard_tel());
-//        }
-//        if (workerRequest.getCard_birth() != null) {
-//            card.setCard_birth(workerRequest.getCard_birth());
-//        }
-//        if (workerRequest.getCard_job() != null) {
-//            card.setCard_job(workerRequest.getCard_job());
-//        }
-//    }
-//
-//
+    // 카드 수정
+    public void updateCard(CardUpdateRequest request) {
+        Card card = cardRepository.findById(request.getCard_id())
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        // 공통 필드 업데이트
+        updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
+        updateFieldIfNotNull(request.getCard_introduction(), card::setCard_introduction);
+        updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
+        updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
+        updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
+        updateFieldIfNotNull(request.getProfile_image_url(), card::setProfile_image_url);
+        updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
+        updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
+        updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
+        updateFieldIfNotNull(request.getCard_sns_insta(), card::setCard_sns_insta);
+        updateFieldIfNotNull(request.getCard_sns_x(), card::setCard_sns_x);
+        updateFieldIfNotNull(request.getCard_email(), card::setCard_email);
+        updateFieldIfNotNull(request.getCard_MBTI(), card::setCard_MBTI);
+        updateFieldIfNotNull(request.getCard_music(), card::setCard_music);
+        updateFieldIfNotNull(request.getCard_movie(), card::setCard_movie);
+        updateFieldIfNotNull(request.getCard_hobby(), card::setCard_hobby);
+        updateFieldIfNotNull(request.getCard_address(), card::setCard_address);
+
+        // 템플릿 별 업데이트
+        updateTemplateSpecificFields(card, request);
+
+        cardRepository.save(card);
+    }
+
+    private <T> void updateFieldIfNotNull(T value, Consumer<T> updater) {
+        if (value != null) {
+            updater.accept(value);
+        }
+    }
+
+    private void updateTemplateSpecificFields(Card card, CardUpdateRequest request) {
+        Long cardId = card.getCardId();
+
+        switch (card.getCard_template()) {
+            case "student":
+                if (request.getStudent() != null) {
+                    CardStudent cardStudent = cardStudentRepository.findByCard_CardId(cardId);
+                    if (cardStudent != null) {
+                        updateStudentCard(cardStudent, request.getStudent());
+                    } else {
+                        throw new IllegalArgumentException("CardStudent entity not found for this card.");
+                    }
+                }
+                break;
+            case "worker":
+                if (request.getWorker() != null) {
+                    CardWorker cardWorker = cardWorkerRepository.findByCard_CardId(cardId);
+                    if (cardWorker != null) {
+                        updateWorkerCard(cardWorker, request.getWorker());
+                    } else {
+                        throw new IllegalArgumentException("CardWorker entity not found for this card.");
+                    }
+                }
+                break;
+            case "fan":
+                if (request.getFan() != null) {
+                    CardFan cardFan = cardFanRepository.findByCard_CardId(cardId);
+                    if (cardFan != null) {
+                        updateFanCard(cardFan, request.getFan());
+                    } else {
+                        throw new IllegalArgumentException("CardFan entity not found for this card");
+                    }
+                }
+                break;
+            case "free":
+                if (request.getStudent() != null) {
+                    CardStudent cardStudent = cardStudentRepository.findByCard_CardId(cardId);
+                    if (cardStudent != null) {
+                        updateStudentCard(cardStudent, request.getStudent());
+                    } else {
+                        throw new IllegalArgumentException("CardStudent entity not found for this card.");
+                    }
+                }
+                if (request.getWorker() != null) {
+                    CardWorker cardWorker = cardWorkerRepository.findByCard_CardId(cardId);
+                    if (cardWorker != null) {
+                        updateWorkerCard(cardWorker, request.getWorker());
+                    } else {
+                        throw new IllegalArgumentException("CardWorker entity not found for this card.");
+                    }
+                }
+                if (request.getFan() != null) {
+                    CardFan cardFan = cardFanRepository.findByCard_CardId(cardId);
+                    if (cardFan != null) {
+                        updateFanCard(cardFan, request.getFan());
+                    } else {
+                        throw new IllegalArgumentException("CardFan entity not found for this card");
+                    }
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("지정된 템플릿이 없습니다.");
+        }
+    }
+
+    private void updateStudentCard(CardStudent card, CardStudentUpdateRequest studentRequest) {
+        updateFieldIfNotNull(studentRequest.getCard_student_school(), card::setCard_student_school);
+        updateFieldIfNotNull(studentRequest.getCard_student_grade(), card::setCard_student_grade);
+        updateFieldIfNotNull(studentRequest.getCard_student_major(), card::setCard_student_major);
+        updateFieldIfNotNull(studentRequest.getCard_student_id(), card::setCard_student_id);
+        updateFieldIfNotNull(studentRequest.getCard_student_club(), card::setCard_student_club);
+        updateFieldIfNotNull(studentRequest.getCard_student_role(), card::setCard_student_role);
+        updateFieldIfNotNull(studentRequest.getCard_student_status(), card::setCard_student_status);
+    }
+
+    private void updateWorkerCard(CardWorker card, CardWorkerUpdateRequest workerRequest) {
+        updateFieldIfNotNull(workerRequest.getCard_worker_company(), card::setCard_worker_company);
+        updateFieldIfNotNull(workerRequest.getCard_worker_job(), card::setCard_worker_job);
+        updateFieldIfNotNull(workerRequest.getCard_worker_position(), card::setCard_worker_position);
+        updateFieldIfNotNull(workerRequest.getCard_worker_department(), card::setCard_worker_department);
+    }
+
+    private void updateFanCard(CardFan card, CardFanUpdateRequest fanRequest) {
+        updateFieldIfNotNull(fanRequest.getCard_fan_genre(), card::setCard_fan_genre);
+        updateFieldIfNotNull(fanRequest.getCard_fan_first(), card::setCard_fan_first);
+        updateFieldIfNotNull(fanRequest.getCard_fan_second(), card::setCard_fan_second);
+        updateFieldIfNotNull(fanRequest.getCard_fan_reason(), card::setCard_fan_reason);
+    }
+
+
 //    // 카드 삭제
 //    public void deleteCard(long cardId, long userId) {
 //        Card card = cardRepository.findById(cardId)

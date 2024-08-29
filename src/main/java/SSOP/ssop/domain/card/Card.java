@@ -61,8 +61,6 @@ public class Card {
 
     private String card_address;        // 거주지
 
-
-
     @Lob
     private String memo;
 
@@ -253,4 +251,6 @@ public class Card {
     public void setMemo(String memo) {
         this.memo = memo;
     }
+
+
 }
