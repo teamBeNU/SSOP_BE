@@ -109,20 +109,20 @@ public class CardController {
     }
 
 
-//    // 카드 삭제 (내카드 & 상대카드)
-//    @DeleteMapping("/delete")
-//    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
-//
-//        if (card.getUserId().equals(userId)) {
-//            cardService.deleteCard(cardId, userId);
-//            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
-//        } else {
-//            userService.deleteSavedCard(userId, cardId);
-//            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
-//        }
-//    }
+    // 카드 삭제 (내카드 & 상대카드)
+    @DeleteMapping("/delete")
+    public void deleteCard(@RequestParam long cardId, @Login Long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
+
+        if (card.getUserId().equals(userId)) {
+            cardService.deleteCard(cardId, userId);
+            throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
+        } else {
+            userService.deleteSavedCard(userId, cardId);
+            throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
+        }
+    }
 
     // 상대 카드 메모
     @PostMapping("/memo")

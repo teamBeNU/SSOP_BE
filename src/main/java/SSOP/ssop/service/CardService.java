@@ -188,33 +188,6 @@ public class CardService {
         //return card;
     }
 
-    // 카드 조회 응답
-//    private CardResponse createCardResponse(Card card) {
-//        CardStudent cardStudent = null;
-//        CardWorker cardWorker = null;
-//        CardFan cardFan = null;
-//
-//        switch (card.getCard_template()) {
-//            case "student":
-//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "worker":
-//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "fan":
-//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "free":
-//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-//                break;
-//        }
-//
-//        return new CardResponse(card, cardStudent, cardWorker, cardFan);
-//    }
-
-
     // 모든 카드 조회
     public List<CardResponse> getAllCards() {
         List<Card> cards = cardRepository.findAll();
@@ -303,13 +276,20 @@ public class CardService {
         cardRepository.save(card);
     }
 
-   //    // 카드 삭제
-//    public void deleteCard(long cardId, long userId) {
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        cardRepository.delete(card);
-//    }
+    // 카드 삭제
+    @Transactional
+    public void deleteCard(long cardId, long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        String template = card.getCard_template();
+
+        cardUtils.deleteIfExists(template, "student", cardStudentRepository, cardId);
+        cardUtils.deleteIfExists(template, "worker", cardWorkerRepository, cardId);
+        cardUtils.deleteIfExists(template, "fan", cardFanRepository, cardId);
+
+        cardRepository.delete(card);
+    }
 
     // 상대 카드 메모 작성
     public void writeMemo(long cardId, long userId, String memo) {

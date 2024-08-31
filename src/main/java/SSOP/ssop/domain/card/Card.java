@@ -65,6 +65,15 @@ public class Card {
 
     private String memo;            // 메모
 
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardFan cardFan;
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardStudent cardStudent;
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardWorker cardWorker;
+
     public Card() {}
 
     @Builder

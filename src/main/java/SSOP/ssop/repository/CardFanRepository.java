@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface CardFanRepository extends JpaRepository<CardFan, Integer> {
+public interface CardFanRepository extends JpaRepository<CardFan, Long> {
     //CardFan findByCardId(Long cardId);
     CardFan findByCard_CardId(Long cardId);
 }
