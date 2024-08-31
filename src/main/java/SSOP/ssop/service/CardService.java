@@ -215,7 +215,7 @@ public class CardService {
     // 상대 카드 목록 조회
     public List<CardResponse> getSavedCards(long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저아이디입니다 : " + userId));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
 
         List<String> savedCardList = user.getSaved_card_list();
 
@@ -294,14 +294,14 @@ public class CardService {
     // 상대 카드 메모 작성
     public void writeMemo(long cardId, long userId, String memo) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다"));
 
         if(card.getUserId() == userId) {
             throw new IllegalArgumentException("본인 카드입니다");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
         List<Long> savedCardListAsLongs = user.getSaved_card_list().stream()
                 .map(Long::valueOf)
@@ -318,7 +318,7 @@ public class CardService {
                 throw new CustomException(HttpStatus.OK, "메모가 수정되었습니다");
             }
         } else {
-            throw new IllegalArgumentException("저장한 카드가 아닙니다.");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "저장한 카드가 아닙니다.");
         }
 
 

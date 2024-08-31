@@ -102,10 +102,10 @@ public class CardController {
 
     // 카드 수정 (내카드)
     @PatchMapping("/edit")
-    public ResponseEntity<?> updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
         request.setCard_id(cardId);
         cardService.updateCard(request);
-        return ResponseEntity.ok().body(Map.of("message", "카드가 수정되었습니다."));
+        throw new CustomException(HttpStatus.OK, "카드가 수정되었습니다.");
     }
 
 
