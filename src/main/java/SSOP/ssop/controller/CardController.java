@@ -105,7 +105,6 @@ public class CardController {
         throw new CustomException(HttpStatus.OK, "카드가 수정되었습니다.");
     }
 
-
     // 카드 삭제 (내카드 & 상대카드)
     @DeleteMapping("/delete")
     public void deleteCard(@RequestParam long cardId, @Login Long userId) {
