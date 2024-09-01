@@ -26,21 +26,21 @@ public class TeamSpMemberController {
     }
 
     // 기존 카드 제출
-//    @PostMapping("/submit-card")
-//    public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
-//        try {
-//            Long cardId = submitCardRequest.getCard_id();
-//            teamSpMemberService.SubmitCard(teamId, cardId, userId);
-//            return ResponseEntity.status(HttpStatus.OK)
-//                    .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//                    .body(Map.of("message", e.getMessage()));
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(Map.of("message", e.getMessage()));
-//        }
-//    }
+    @PostMapping("/submit-card")
+    public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
+        try {
+            Long cardId = submitCardRequest.getCard_id();
+            teamSpMemberService.SubmitCard(teamId, cardId, userId);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
 
     // 모든 팀스페이스 참여 정보 조회
     @GetMapping("member/total")
