@@ -43,8 +43,8 @@ public class MemberResponse {
         this.memberStudent = new MemberStudentDto(
                 member.getCard_student_school(),
                 member.getCard_student_grade(),
-                member.getCard_student_major(),
                 member.getCard_student_id(),
+                member.getCard_student_major(),
                 member.getCard_student_club(),
                 member.getCard_student_role(),
                 member.getCard_student_status()

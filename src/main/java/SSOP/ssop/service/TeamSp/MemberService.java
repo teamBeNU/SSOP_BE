@@ -54,7 +54,11 @@ public class MemberService {
         memberRepository.save(member);
 
         // teamSpMember의 card_id를 null에서 0으로 변경
-        teamSpMember.setCardId(0L);
+        if (teamSpMember.getCardId() == null) {
+            teamSpMember.setCardId(0L);
+        } else {
+            throw new IllegalArgumentException("이미 카드가 생성된 사용자입니다.");
+        }
     }
 
     private String saveImage(MultipartFile file, Long teamId) throws Exception {
