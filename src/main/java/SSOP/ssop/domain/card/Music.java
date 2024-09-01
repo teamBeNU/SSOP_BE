@@ -2,7 +2,11 @@ package SSOP.ssop.domain.card;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Embeddable
 public class Music {
 
@@ -12,19 +16,4 @@ public class Music {
     @Column(name = "singer")
     private String singer;
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getSinger() {
-        return singer;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setSinger(String singer) {
-        this.singer = singer;
-    }
 }
