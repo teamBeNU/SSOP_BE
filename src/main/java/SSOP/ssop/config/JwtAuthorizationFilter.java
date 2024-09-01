@@ -1,7 +1,7 @@
 package SSOP.ssop.config;
 
 import SSOP.ssop.domain.User;
-import SSOP.ssop.service.UserDetailService;
+import SSOP.ssop.service.User.UserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +18,10 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtProvider jwtProvider;
-    private final UserDetailService userDetailService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtProvider jwtProvider, UserDetailService userDetailService) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtProvider jwtProvider) {
         super(authenticationManager);
         this.jwtProvider = jwtProvider;
-        this.userDetailService = userDetailService;
     }
 
     // 요청이 있을 때마다 필터 호출

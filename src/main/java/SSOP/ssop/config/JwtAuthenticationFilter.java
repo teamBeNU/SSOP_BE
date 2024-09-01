@@ -1,6 +1,6 @@
 package SSOP.ssop.config;
 
-import SSOP.ssop.dto.LoginDto;
+import SSOP.ssop.dto.User.LoginDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
