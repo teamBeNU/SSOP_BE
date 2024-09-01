@@ -1,6 +1,5 @@
 package SSOP.ssop.controller;
 
-import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
@@ -14,8 +13,6 @@ import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -129,5 +126,4 @@ public class CardController {
     public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
         cardService.writeMemo(cardId, userId, memo.getMemo());
     }
-
 }

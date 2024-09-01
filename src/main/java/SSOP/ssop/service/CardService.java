@@ -3,19 +3,22 @@ package SSOP.ssop.service;
 import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
-import SSOP.ssop.dto.card.request.*;
+import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import SSOP.ssop.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
