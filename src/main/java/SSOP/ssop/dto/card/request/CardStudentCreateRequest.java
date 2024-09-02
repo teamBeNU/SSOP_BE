@@ -1,47 +1,17 @@
 package SSOP.ssop.dto.card.request;
 
-import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CardStudentCreateRequest {
 
-    private String card_tel;
-    private LocalDate card_birth;
-    private Boolean card_bSecrete;
-    private String card_school;
-    private String card_grade;
-    private String card_student_major;
-    private String card_student_club;
-    private String card_student_role;
-
-    public String getCard_tel() {
-        return card_tel;
-    }
-
-    public LocalDate getCard_birth() {
-        return card_birth;
-    }
-
-    public Boolean getCard_bSecrete() {
-        return card_bSecrete;
-    }
-
-    public String getCard_school() {
-        return card_school;
-    }
-
-    public String getCard_grade() {
-        return card_grade;
-    }
-
-    public String getCard_student_major() {
-        return card_student_major;
-    }
-
-    public String getCard_student_club() {
-        return card_student_club;
-    }
-
-    public String getCard_student_role() {
-        return card_student_role;
-    }
-}
+    private String card_student_school;     // 학교
+    private String card_student_grade;      // 학년
+    private String card_student_major;      // 전공
+    private String card_student_id;         // 학번
+    private String card_student_club;       // 동아리
+    private String card_student_role;       // 역할
+    private String card_student_status;     // 재학상태
+   }

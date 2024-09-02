@@ -1,9 +1,10 @@
-package SSOP.ssop.dto;
+package SSOP.ssop.dto.User;
 
 import SSOP.ssop.domain.User;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 public class UserDto {
@@ -14,6 +15,8 @@ public class UserDto {
     private LocalDate user_birth;
     private String user_phone;
     private String social_type;
+    private List<String> saved_card_list;
+
 
     public UserDto() {
     }
@@ -26,6 +29,7 @@ public class UserDto {
         this.user_birth = user.getUser_birth();
         this.user_phone = user.getUser_phone();
         this.social_type = user.getSocial_type();
+        this.saved_card_list = user.getSaved_card_list();
     }
 
     public String getUser_name() {
@@ -82,5 +86,13 @@ public class UserDto {
 
     public void setSocial_type(String social_type) {
         this.social_type = social_type;
+    }
+
+    public List<String> getSaved_card_list() {
+        return saved_card_list;
+    }
+
+    public void setSaved_card_list(List<String> saved_card_list) {
+        this.saved_card_list = saved_card_list;
     }
 }

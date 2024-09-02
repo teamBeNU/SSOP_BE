@@ -1,8 +1,10 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.TeamSp.TeamSp;
-import SSOP.ssop.service.TeamSpService;
+import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
+import SSOP.ssop.security.annotation.Login;
+import SSOP.ssop.service.TeamSp.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +29,7 @@ public class TeamSpController {
 
     // 팀스페이스 생성
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
         try {
             teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,6 +37,18 @@ public class TeamSpController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "팀스페이스 생성 실패"));
+        }
+    }
+
+    // 팀 스페이스 입장
+    @PostMapping("/enter")
+    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
+
+        try {
+            teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
+            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
         }
     }
 
@@ -57,7 +65,7 @@ public class TeamSpController {
 
     // 특정 팀스페이스 조회
     @GetMapping
-    public ResponseEntity<?> getTeamById(@RequestParam("team_id") long teamId) {
+    public ResponseEntity<?> getTeamById(@RequestParam("team_id") Long teamId) {
         TeamSp teamSp = teamSpService.getTeamById(teamId);
 
         if (teamSp != null) {
@@ -70,13 +78,7 @@ public class TeamSpController {
 
     // 팀스페이스 이름 수정 (호스트만)
     @PatchMapping
-    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") long teamId, @RequestBody TeamSp teamSp) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") Long teamId, @RequestBody TeamSp teamSp, @Login Long userId) {
         try {
             TeamSp updatedTeamSp = teamSpService.updateTeamSp(teamId, teamSp, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스 이름 업데이트 완료"));
@@ -96,13 +98,7 @@ public class TeamSpController {
 
     // 팀스페이스 삭제 (호스트-삭제 / 참여자-퇴장)
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") long teamId) {
-
-        // 현재 인증된 사용자 정보를 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        long userId = ((UserDetail) userDetails).getUser().getUserId();
-
+    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") Long teamId, @Login Long userId) {
         try {
             teamSpService.deleteTeamSp(teamId, userId);
             return ResponseEntity.ok(Map.of("message", "팀스페이스가 삭제되었습니다."));

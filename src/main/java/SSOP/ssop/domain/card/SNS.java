@@ -2,7 +2,11 @@ package SSOP.ssop.domain.card;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Embeddable
 public class SNS {
 
@@ -11,20 +15,4 @@ public class SNS {
 
     @Column(name = "x")
     private String x;
-
-    public String getInsta() {
-        return insta;
-    }
-
-    public String getX() {
-        return x;
-    }
-
-    public void setInsta(String insta) {
-        this.insta = insta;
-    }
-
-    public void setX(String x) {
-        this.x = x;
-    }
 }

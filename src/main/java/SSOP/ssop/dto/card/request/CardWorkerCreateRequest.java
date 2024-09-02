@@ -1,27 +1,14 @@
 package SSOP.ssop.dto.card.request;
 
-import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CardWorkerCreateRequest {
 
-    private String card_tel;
-    private LocalDate card_birth;
-    private Boolean card_bSecrete;
-    private String card_job;
-
-    public String getCard_tel() {
-        return card_tel;
-    }
-
-    public LocalDate getCard_birth() {
-        return card_birth;
-    }
-
-    public Boolean getCard_bSecrete() {
-        return card_bSecrete;
-    }
-
-    public String getCard_job() {
-        return card_job;
-    }
+    private String card_worker_company;     // 회사
+    private String card_worker_job;         // 직무
+    private String card_worker_position;    // 직위
+    private String card_worker_department;  // 부서
 }

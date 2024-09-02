@@ -1,6 +1,5 @@
 package SSOP.ssop.controller;
 
-import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
@@ -10,13 +9,12 @@ import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
-import SSOP.ssop.service.UserService;
+import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -37,26 +35,15 @@ public class CardController {
         this.cardRepository = cardRepository;
     }
 
-    // 카드 생성
     @PostMapping("/create")
-    public ResponseEntity<?> saveCard(@RequestBody CardCreateRequest request) {
+    public ResponseEntity<?> saveCard(
+            @Login Long userId,
+            @RequestPart("card") CardCreateRequest request,
+            @RequestPart(name = "image", required = false) MultipartFile file
+    ) {
         try {
-            // 현재 인증된 사용자의 정보를 가져옴
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-            // 인증 정보가 없을 경우 처리
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("code", 401, "message", "사용자 인증 필요"));
-            }
-
-            UserDetail userDetail = (UserDetail) authentication.getPrincipal();
-
-            // 인증된 사용자의 userId 가져오기
-            Long authenticatedUserId = userDetail.getUser().getUserId();
-
             // 카드 생성 서비스 호출
-            boolean isSaved = cardService.saveCard(request, authenticatedUserId);
+            boolean isSaved = cardService.saveCard(request, userId, file);
 
             // 카드 생성이 성공적으로 이루어졌는지 확인
             if (isSaved) {
@@ -115,21 +102,21 @@ public class CardController {
     public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
         request.setCard_id(cardId);
         cardService.updateCard(request);
+        throw new CustomException(HttpStatus.OK, "카드가 수정되었습니다.");
     }
-
 
     // 카드 삭제 (내카드 & 상대카드)
     @DeleteMapping("/delete")
-    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
+    public void deleteCard(@RequestParam long cardId, @Login Long userId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
 
         if (card.getUserId().equals(userId)) {
             cardService.deleteCard(cardId, userId);
-            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
+            throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
         } else {
             userService.deleteSavedCard(userId, cardId);
-            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
+            throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
         }
     }
 
@@ -138,5 +125,4 @@ public class CardController {
     public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
         cardService.writeMemo(cardId, userId, memo.getMemo());
     }
-
 }
