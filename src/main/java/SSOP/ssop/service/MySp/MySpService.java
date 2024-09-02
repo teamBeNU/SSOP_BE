@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,5 +57,18 @@ public class MySpService {
                 .collect(Collectors.toList());
 
         return groupResponses;
+    }
+
+    // 마이스페이스 그룹 삭제 메서드
+    public boolean deleteMyspGroup(Long userId, Long groupId) {
+        // 그룹을 찾고, 사용자와 그룹의 연관성을 확인합니다.
+        Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
+
+        if (groupOptional.isPresent()) {
+            mySpRepository.delete(groupOptional.get());  // 그룹 삭제
+            return true;  // 삭제 성공
+        } else {
+            return false; // 그룹을 찾지 못했거나 권한이 없는 경우
+        }
     }
 }

@@ -1,11 +1,13 @@
 package SSOP.ssop.repository.MySp;
 
 import SSOP.ssop.domain.MySp.MySp;
+import SSOP.ssop.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MySpRepository extends JpaRepository<MySp, Long> {
 
@@ -13,4 +15,7 @@ public interface MySpRepository extends JpaRepository<MySp, Long> {
     @Query("SELECT m FROM MySp m WHERE m.user.userId = :userId")
     List<MySp> findByUserId(@Param("userId") long userId);
 
+    // 특정 유저의 그룹을 찾는 쿼리 메서드
+    @Query("SELECT m FROM MySp m WHERE m.group_id = :groupId AND m.user.userId = :userId")
+    Optional<MySp> findByGroupIdAndUserId(@Param("groupId") Long groupId, @Param("userId") Long userId);
 }

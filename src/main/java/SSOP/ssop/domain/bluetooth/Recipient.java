@@ -20,6 +20,10 @@ public class Recipient {
         this.status = status;
     }
 
+    public Recipient() {
+
+    }
+
     public Long getId() {
         return id;
     }

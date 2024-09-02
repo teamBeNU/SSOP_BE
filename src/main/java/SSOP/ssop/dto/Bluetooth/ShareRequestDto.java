@@ -1,4 +1,4 @@
-package SSOP.ssop.dto;
+package SSOP.ssop.dto.Bluetooth;
 
 public class ShareRequestDto {
     private Long cardId;

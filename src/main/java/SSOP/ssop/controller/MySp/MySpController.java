@@ -56,4 +56,31 @@ public class MySpController {
                     .body(Map.of("code", 500, "message", "그룹 목록 조회에 실패했습니다."));
         }
     }
+
+    // 마이스페이스 그룹 삭제
+    @DeleteMapping
+    public ResponseEntity<Map<String, Object>> deleteGroup(@Login Long userId, @RequestParam Long group_id) {
+        try {
+            // 토큰 검증 - 유효하지 않은 경우 401 Unauthorized 반환
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("code", 401, "message", "유효한 토큰이 없습니다."));
+            }
+
+            // 그룹 삭제 시도
+            boolean isDeleted = mySpService.deleteMyspGroup(userId, group_id);
+
+            // 삭제 성공 여부에 따라 응답 처리
+            if (isDeleted) {
+                return ResponseEntity.ok(Map.of("message", "그룹이 삭제되었습니다."));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "그룹을 삭제하지 못하였습니다."));
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 500 Internal Server Error 반환
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("code", 500, "message", "그룹 삭제에 실패했습니다."));
+        }
+    }
 }

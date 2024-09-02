@@ -15,7 +15,6 @@ public class LinkShare {
     private String link;
     private LocalDateTime expiryTime;
 
-    // 기본 생성자
     public LinkShare() {}
 
     // 생성자

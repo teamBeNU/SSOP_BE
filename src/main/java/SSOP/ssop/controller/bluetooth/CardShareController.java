@@ -1,8 +1,8 @@
 package SSOP.ssop.controller.bluetooth;
 
 import SSOP.ssop.domain.bluetooth.CardShareRequest;
-import SSOP.ssop.dto.ShareRequestDto;
-import SSOP.ssop.service.CardShareService;
+import SSOP.ssop.dto.Bluetooth.ShareRequestDto;
+import SSOP.ssop.service.Bluetooth.CardShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

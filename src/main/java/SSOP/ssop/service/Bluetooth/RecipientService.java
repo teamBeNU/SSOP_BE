@@ -1,7 +1,7 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.Bluetooth;
 
 import SSOP.ssop.domain.bluetooth.Recipient;
-import SSOP.ssop.repository.RecipientRepository;
+import SSOP.ssop.repository.Bluetooth.RecipientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

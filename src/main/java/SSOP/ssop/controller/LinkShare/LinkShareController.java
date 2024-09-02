@@ -1,10 +1,9 @@
-package SSOP.ssop.controller;
+package SSOP.ssop.controller.LinkShare;
 
 import SSOP.ssop.domain.link.LinkShare;
 import SSOP.ssop.dto.LinkShare.LinkRequestDto;
 import SSOP.ssop.dto.LinkShare.LinkResponseDto;
-import SSOP.ssop.service.LinkShareService;
-import jdk.dynalink.linker.LinkRequest;
+import SSOP.ssop.service.LinkShare.LinkShareService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;

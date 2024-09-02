@@ -1,8 +1,8 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.Notification;
 
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.notification.Notification;
-import SSOP.ssop.repository.NotificationRepository;
+import SSOP.ssop.repository.Notification.NotificationRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
