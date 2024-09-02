@@ -3,7 +3,7 @@ package SSOP.ssop.controller.notification;
 import SSOP.ssop.domain.notification.Notification;
 import SSOP.ssop.dto.notification.NotificationDto;
 import SSOP.ssop.dto.notification.NotificationRequestDto;
-import SSOP.ssop.service.NotificationService;
+import SSOP.ssop.service.Notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

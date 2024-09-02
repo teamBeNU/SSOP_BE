@@ -1,7 +1,7 @@
 package SSOP.ssop.controller.bluetooth;
 
 import SSOP.ssop.domain.bluetooth.Recipient;
-import SSOP.ssop.service.RecipientService;
+import SSOP.ssop.service.Bluetooth.RecipientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

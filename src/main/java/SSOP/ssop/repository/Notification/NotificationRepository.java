@@ -1,4 +1,4 @@
-package SSOP.ssop.repository;
+package SSOP.ssop.repository.Notification;
 
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.notification.Notification;

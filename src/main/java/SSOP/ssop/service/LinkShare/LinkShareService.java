@@ -1,7 +1,7 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.LinkShare;
 
 import SSOP.ssop.domain.link.LinkShare;
-import SSOP.ssop.repository.LinkShareRepository;
+import SSOP.ssop.repository.LinkShare.LinkShareRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
