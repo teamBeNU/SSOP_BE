@@ -59,9 +59,9 @@ public class MySpService {
         return groupResponses;
     }
 
-    // 마이스페이스 그룹 삭제 메서드
+    // 마이스페이스 그룹 삭제
     public boolean deleteMyspGroup(Long userId, Long groupId) {
-        // 그룹을 찾고, 사용자와 그룹의 연관성을 확인합니다.
+        // 그룹을 찾고, 사용자와 그룹의 연관성을 확인
         Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
 
         if (groupOptional.isPresent()) {
@@ -69,6 +69,19 @@ public class MySpService {
             return true;  // 삭제 성공
         } else {
             return false; // 그룹을 찾지 못했거나 권한이 없는 경우
+        }
+    }
+
+    // 마이스페이스 그룹명 변경
+    public MySp updateGroupName(Long userId, Long groupId, String newGroupName) {
+        Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
+
+        if (groupOptional.isPresent()) {
+            MySp group = groupOptional.get();
+            group.setGroup_name(newGroupName);  // 그룹명 변경
+            return mySpRepository.save(group);  // 변경사항 저장 및 반환
+        } else {
+            throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다.");
         }
     }
 }

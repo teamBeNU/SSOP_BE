@@ -1,5 +1,6 @@
 package SSOP.ssop.controller.MySp;
 
+import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.security.annotation.Login;
@@ -81,6 +82,37 @@ public class MySpController {
             // 예외 발생 시 500 Internal Server Error 반환
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("code", 500, "message", "그룹 삭제에 실패했습니다."));
+        }
+    }
+
+    // 마이스페이스 그룹명 변경
+    @PatchMapping
+    public ResponseEntity<?> updateGroupName(@Login Long userId,
+                                             @RequestParam Long group_id,
+                                             @RequestBody Map<String, String> request) {
+        try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("code", 401, "message", "유효한 토큰이 없습니다."));
+            }
+
+            String newGroupName = request.get("group_name");
+            if (newGroupName == null || newGroupName.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "그룹명을 입력해 주세요."));
+            }
+
+            MySp updatedGroup = mySpService.updateGroupName(userId, group_id, newGroupName);
+            return ResponseEntity.ok(Map.of(
+                    "group_id", updatedGroup.getGroup_id(),
+                    "group_name", updatedGroup.getGroup_name()
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "그룹명 변경에 실패했습니다."));
         }
     }
 }
