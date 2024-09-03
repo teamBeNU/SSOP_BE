@@ -71,6 +71,15 @@ public class Card {
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardFan cardFan;
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardStudent cardStudent;
+
+    @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CardWorker cardWorker;
+
     public Card() {}
 
     @Builder

@@ -12,6 +12,7 @@ import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardFanRepository;
 import SSOP.ssop.repository.Card.CardStudentRepository;
 import SSOP.ssop.repository.Card.CardWorkerRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
@@ -151,5 +152,13 @@ public class CardUtils {
         updateFieldIfNotNull(fanRequest.getCard_fan_reason(), card::setCard_fan_reason);
     }
 
+    // 존재하는 경우 삭제
+    public <T> void deleteIfExists(String template, String type, JpaRepository<T, Long> repository, long cardId) {
+        if (template.equals(type) || template.equals("free")) {
+            if (repository.existsById(cardId)) {
+                repository.deleteById(cardId);
+            }
+        }
+    }
 
 }

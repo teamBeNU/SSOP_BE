@@ -1,5 +1,6 @@
 package SSOP.ssop.controller;
 
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.MemoRequest;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -97,32 +99,30 @@ public class CardController {
 
     // 카드 수정 (내카드)
     @PatchMapping("/edit")
-    public ResponseEntity<?> updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
         request.setCard_id(cardId);
         cardService.updateCard(request);
-        return ResponseEntity.ok().body(Map.of("message", "카드가 수정되었습니다."));
+        throw new CustomException(HttpStatus.OK, "카드가 수정되었습니다.");
     }
 
+    // 카드 삭제 (내카드 & 상대카드)
+    @DeleteMapping("/delete")
+    public void deleteCard(@RequestParam long cardId, @Login Long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
 
-//    // 카드 삭제 (내카드 & 상대카드)
-//    @DeleteMapping("/delete")
-//    public void deleteCard(@RequestParam("cardId") long cardId, @Login Long userId) {
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
-//
-//        if (card.getUserId().equals(userId)) {
-//            cardService.deleteCard(cardId, userId);
-//            throw new IllegalArgumentException("내 카드를 삭제하였습니다.");
-//        } else {
-//            userService.deleteSavedCard(userId, cardId);
-//            throw new IllegalArgumentException("저장한 카드를 삭제했습니다.");
-//        }
-//    }
+        if (card.getUserId().equals(userId)) {
+            cardService.deleteCard(cardId, userId);
+            throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
+        } else {
+            userService.deleteSavedCard(userId, cardId);
+            throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
+        }
+    }
 
     // 상대 카드 메모
     @PostMapping("/memo")
     public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
         cardService.writeMemo(cardId, userId, memo.getMemo());
     }
-
 }
