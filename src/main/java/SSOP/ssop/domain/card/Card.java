@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -64,6 +67,10 @@ public class Card {
     private String card_address;        // 거주지
 
     private String memo;            // 메모
+
+    @CreationTimestamp // 카드 생성 시간
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Card() {}
 
