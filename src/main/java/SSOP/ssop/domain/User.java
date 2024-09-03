@@ -18,7 +18,6 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("user_id")
     private Long userId;
 
     private String user_name;
@@ -63,7 +62,7 @@ public class User {
         this.password = password;
     }
 
-    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
+    public void deleteSavedList(long cardId) { saved_card_list.remove(cardId); }
 
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));

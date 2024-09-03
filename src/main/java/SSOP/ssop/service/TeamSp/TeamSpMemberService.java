@@ -48,7 +48,7 @@ public class TeamSpMemberService {
         // 2. 유저 카드 목록에서 제출할 카드가 있는지 확인
         List<CardResponse> myCards = cardService.getMyCards(userId);
         boolean isCardOwnedByUser = myCards.stream()
-                .anyMatch(card -> card.getCard_id().equals(cardId));
+                .anyMatch(card -> card.getCardId().equals(cardId));
         if (!isCardOwnedByUser) {
             throw new IllegalArgumentException("사용자의 카드 목록에 카드가 존재하지 않습니다.");
         }
@@ -75,7 +75,7 @@ public class TeamSpMemberService {
         // 팀 ID와 사용자 ID 목록으로 그룹화
         Map<Long, List<Long>> teamMembersMap = members.stream()
                 .collect(Collectors.groupingBy(
-                        member -> member.getTeamSp().getTeam_id(),
+                        member -> member.getTeamSp().getTeamId(),
                         Collectors.mapping(
                                 member -> member.getUser().getUserId(),
                                 Collectors.toList()
@@ -85,7 +85,7 @@ public class TeamSpMemberService {
         // 2. 팀스페이스 ID 목록으로 팀 이름과 팀 설명을 가져오는 맵
         Map<Long, TeamSp> teamSpMap = teamSpRepository.findAll().stream()
                 .collect(Collectors.toMap(
-                        TeamSp::getTeam_id,
+                        TeamSp::getTeamId,
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
@@ -96,7 +96,7 @@ public class TeamSpMemberService {
 
                     // 팀에 포함된 모든 사용자에 대해 카드 ID 목록을 가져옵니다
                     List<Long> cardIds = members.stream()
-                            .filter(member -> member.getTeamSp().getTeam_id().equals(entry.getKey()))
+                            .filter(member -> member.getTeamSp().getTeamId().equals(entry.getKey()))
                             .map(member -> member.getCardId() != null ? member.getCardId() : null)
                             .filter(Objects::nonNull) // 카드 ID가 null이 아닌 경우만 필터링
                             .distinct()  // 중복된 카드 ID를 제거
@@ -115,17 +115,17 @@ public class TeamSpMemberService {
                             membersDetail                    // 멤버 카드 정보
                     );
                 })
-                .filter(dto -> !dto.getCard_ids().isEmpty()) // 카드 ID 목록이 비어있지 않은 경우만 반환
+                .filter(dto -> !dto.getCardIds().isEmpty()) // 카드 ID 목록이 비어있지 않은 경우만 반환
                 .collect(Collectors.toList());
     }
 
     // 특정 id 팀스페이스 참여 정보 조회
-    public Optional<TeamSpMemberDto> getTeamMemberById(Long team_id) {
+    public Optional<TeamSpMemberDto> getTeamMemberById(Long teamId) {
         // 팀스페이스의 멤버 정보를 조회
-        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(team_id);
+        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(teamId);
 
         // 팀스페이스 정보를 조회
-        TeamSp teamSp = teamSpRepository.findById(team_id)
+        TeamSp teamSp = teamSpRepository.findById(teamId)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
 
         // 멤버 정보가 없으면 빈 Optional 반환
@@ -146,12 +146,12 @@ public class TeamSpMemberService {
                 .collect(Collectors.toList());
 
         // team id를 통해 MemberResponse 객체를 가져옴
-        List<MemberResponse> membersDetail = memberRepository.findByTeamId(team_id).stream()
+        List<MemberResponse> membersDetail = memberRepository.findByTeamId(teamId).stream()
                 .map(MemberResponse::new).collect(Collectors.toList());
 
         // DTO 객체 생성
         TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
-                Long.valueOf(team_id),
+                Long.valueOf(teamId),
                 teamSp.getTeam_name(), // 팀 이름
                 teamSp.getTeam_comment(), // 팀 설명
                 userIds.isEmpty() ? Collections.emptyList() : userIds, // 사용자 ID 목록
@@ -262,13 +262,13 @@ public class TeamSpMemberService {
         // 팀스페이스 ID 목록으로 변환
         Map<Long, List<TeamSpMember>> teamMembersMap = members.stream()
                 .collect(Collectors.groupingBy(
-                        member -> member.getTeamSp().getTeam_id()
+                        member -> member.getTeamSp().getTeamId()
                 ));
 
         // 팀 ID와 팀 이름 및 팀 설명을 조회
         Map<Long, TeamSp> teamSpMap = teamSpRepository.findAll().stream()
                 .collect(Collectors.toMap(
-                        TeamSp::getTeam_id,
+                        TeamSp::getTeamId,
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
@@ -276,9 +276,9 @@ public class TeamSpMemberService {
         Map<Long, Long> teamCardIdMap = members.stream()
                 .filter(member -> member.getCardId() != null)
                 .collect(Collectors.toMap(
-                        member -> member.getTeamSp().getTeam_id(),
+                        member -> member.getTeamSp().getTeamId(),
                         member -> member.getCardId(),
-                        (existing, replacement) -> existing // 같은 team_id가 있을 경우 기존 값을 유지
+                        (existing, replacement) -> existing // 같은 teamId가 있을 경우 기존 값을 유지
                 ));
 
         // 팀 ID와 카드 ID, 멤버 정보로 TeamSpByUserDto 생성

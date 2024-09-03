@@ -24,13 +24,13 @@ public class TeamSpService {
     private TeamSpMemberRepository teamSpMemberRepository;
 
     // 팀스페이스 생성
-    public void saveTeamSp(TeamSp teamSp, Long host_id) {
-        teamSp.setHost_id(host_id); // 호스트 ID 저장
+    public void saveTeamSp(TeamSp teamSp, Long hostId) {
+        teamSp.setHostId(hostId); // 호스트 ID 저장
         teamSp.setInviteCode(createInviteCode()); // 초대코드 자동 생성
         teamSpRepository.save(teamSp);
 
         // 2. 팀스페이스 생성 후 호스트를 자동으로 팀스페이스에 입장시킴
-        EnterTeamSp(teamSp.getInviteCode(), host_id);
+        EnterTeamSp(teamSp.getInviteCode(), hostId);
     }
 
     // 랜덤 코드 생성
@@ -55,7 +55,7 @@ public class TeamSpService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         // 3. 이미 입장한 사용자인지 종복 확인
-        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeam_id(), userId);
+        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamSp.getTeamId(), userId);
         if (existingMembership.isPresent()) {
             throw new IllegalArgumentException("이미 입장한 팀스페이스입니다.");
         }
@@ -73,8 +73,8 @@ public class TeamSpService {
     }
 
     // 특정 id 팀스페이스 조회
-    public TeamSp getTeamById(Long team_id) {
-        return teamSpRepository.findById(team_id).orElse(null);
+    public TeamSp getTeamById(Long teamId) {
+        return teamSpRepository.findById(teamId).orElse(null);
     }
 
     // 팀스페이스 이름 수정
@@ -82,7 +82,7 @@ public class TeamSpService {
         TeamSp existingTeamSp = teamSpRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
 
-        if (existingTeamSp.getHost_id() == userId) {
+        if (existingTeamSp.getHostId() == userId) {
             existingTeamSp.updateTeamName(teamSp.getTeam_name());
             return teamSpRepository.save(existingTeamSp);
         } else {
@@ -91,13 +91,13 @@ public class TeamSpService {
     }
 
     // 팀스페이스 삭제(호스트), 퇴장(참여자)
-    public void deleteTeamSp(Long team_id, Long userId) {
-        TeamSp teamSp = getTeamById(team_id);
+    public void deleteTeamSp(Long teamId, Long userId) {
+        TeamSp teamSp = getTeamById(teamId);
         if (teamSp == null) {
             throw new IllegalArgumentException("팀스페이스를 찾을 수 없습니다.");
         }
 
-        if (teamSp.getHost_id() == userId) {
+        if (teamSp.getHostId() == userId) {
             teamSpRepository.delete(teamSp);
         } else {
             // 참여자 처리

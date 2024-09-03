@@ -28,7 +28,7 @@ public class StudentOptional {
     private Boolean showClub;
 
     @ElementCollection
-    @CollectionTable(name = "student_roles", joinColumns = @JoinColumn(name = "team_id"))
+    @CollectionTable(name = "student_roles", joinColumns = @JoinColumn(name = "teamId"))
     @Column(name = "student_showRole")
     private List<String> showRole;
 

@@ -17,14 +17,14 @@ public class TeamSpMember {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "team_id", nullable = false)
+    @JoinColumn(name = "teamId", nullable = false)
     private TeamSp teamSp;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(name = "card_id")
+    @Column(name = "cardId")
     private Long cardId;
 
     @CreationTimestamp // INSERT 시 자동으로 값을 채워줌

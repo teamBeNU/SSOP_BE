@@ -54,7 +54,7 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        // teamSpMember의 card_id를 null에서 0으로 변경
+        // teamSpMember의 cardId를 null에서 0으로 변경
         if (teamSpMember.getCardId() == null) {
             teamSpMember.setCardId(0L);
             teamSpMember.setCreatedAt(LocalDateTime.now()); // 지정 템플릿 카드 생성시간으로 업데이트

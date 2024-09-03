@@ -30,7 +30,7 @@ public class TeamSpMemberController {
     @PostMapping("/submit-card")
     public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
         try {
-            Long cardId = submitCardRequest.getCard_id();
+            Long cardId = submitCardRequest.getCardId();
             teamSpMemberService.SubmitCard(teamId, cardId, userId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
@@ -55,9 +55,9 @@ public class TeamSpMemberController {
         }
     }
 
-    // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
+    // 특정 팀스페이스 참여 정보 조회
     @GetMapping("/member")
-    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") Long teamId) {
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("teamId") Long teamId) {
         Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
 
         if (teamSpMemberDto.isPresent()) {
