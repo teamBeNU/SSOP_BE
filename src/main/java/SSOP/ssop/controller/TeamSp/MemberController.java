@@ -41,7 +41,7 @@ public class MemberController {
         Long authenticatedUserId = userDetail.getUser().getUserId();
 
         try {
-            if (userId == null) {
+            if (authenticatedUserId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("message", "유효한 토큰이 없습니다"));
             }
