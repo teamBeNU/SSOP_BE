@@ -15,11 +15,11 @@ import java.util.Optional;
 public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long> {
     
     // 팀스페이스 입장
-    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :teamId AND t.user.userId = :userId")
-    Optional<TeamSpMember> findByTeamSpIdAndUserId(@Param("teamId") Long teamId, @Param("userId") Long userId);
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :teamSpId AND t.user.userId = :userId")
+    Optional<TeamSpMember> findByTeamSpIdAndUserId(@Param("teamSpId") Long teamSpId, @Param("userId") Long userId);
 
     // 팀스페이스별 참여 정보 조회
-    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :team_id ORDER BY t.createdAt DESC")
+    @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :teamId ORDER BY t.createdAt DESC")
     List<TeamSpMember> findByTeamSpId(@Param("teamId") Long teamId);
 
     // 유저별 참여 중인 팀스페이스 조회
