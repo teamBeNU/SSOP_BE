@@ -7,10 +7,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -28,7 +27,7 @@ public class User {
     private String social_type;
 
     @ElementCollection
-    private List<String> saved_card_list;
+    private Map<Long, LocalDateTime> saved_card_list = new HashMap<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TeamSpMember> teamSpMembers = new HashSet<>();
@@ -113,11 +112,11 @@ public class User {
         this.user_birth = user_birth;
     }
 
-    public List<String> getSaved_card_list() {
+    public Map<Long, LocalDateTime> getSaved_card_list() {
         return saved_card_list;
     }
 
-    public void setSaved_card_list(List<String> saved_card_list) {
+    public void setSaved_card_list(Map<Long, LocalDateTime> saved_card_list) {
         this.saved_card_list = saved_card_list;
     }
 
