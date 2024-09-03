@@ -21,6 +21,7 @@ public class User {
     @JsonProperty("user_id")
     private Long userId;
 
+    @JsonProperty("user_name")
     private String user_name;
     private String email;
     private String password;

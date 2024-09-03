@@ -56,7 +56,7 @@ public class TeamSpMemberService {
             if (existingMember.getCardId() == null) {
                 Card card = cardRepository.findById(cardId)
                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-                existingMember.setCardId(card.getCard_id());
+                existingMember.setCardId(card.getCardId());
                 teamSpMemberRepository.save(existingMember);
                 return; // 업데이트 완료 후 메소드 종료
             } else {
