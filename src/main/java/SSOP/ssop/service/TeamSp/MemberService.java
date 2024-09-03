@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -56,6 +57,8 @@ public class MemberService {
         // teamSpMember의 card_id를 null에서 0으로 변경
         if (teamSpMember.getCardId() == null) {
             teamSpMember.setCardId(0L);
+            teamSpMember.setCreatedAt(LocalDateTime.now()); // 지정 템플릿 카드 생성시간으로 업데이트
+            teamSpMemberRepository.save(teamSpMember);
         } else {
             throw new IllegalArgumentException("이미 카드가 생성된 사용자입니다.");
         }
