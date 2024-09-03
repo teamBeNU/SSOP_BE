@@ -1,106 +1,134 @@
 package SSOP.ssop.dto.card.response;
 
 import SSOP.ssop.domain.card.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CardResponse {
 
-    private long userId;
-    private long card_id;
-    private String card_template;
+    private Long user_id;
+    private Long card_id;
+
+    private String card_template;  // student or worker
     private String card_cover;
 
     private CardEssential cardEssential;
     private CardOptional cardOptional;
-    private TemplateEssential templateEssential;
-    private TemplateOptional templateOptional;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private CardStudent student;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private CardWorker worker;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private CardFan fan;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Avatar avatar;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String profile_image_url;
 
     private String memo;
 
-    public CardResponse(Card card) {
-        this.userId = card.getUser().getUserId();
-        this.card_id = card.getCard_id();
+    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard) {
+        this.user_id = card.getUserId();
+        this.card_id = card.getCardId();
         this.card_template = card.getCard_template();
-        this.card_cover = card.getcard_cover();
+        this.card_cover = card.getCard_cover();
+
+        if(isNotMyCard) {
+            this.memo = card.getMemo();
+        }
+
+        if (card.getAvatar() != null) {
+            this.avatar = new AvatarResponse(
+                    card.getAvatar().getFace(),
+                    card.getAvatar().getHair(),
+                    card.getAvatar().getHairColor(),
+                    card.getAvatar().getClothes(),
+                    card.getAvatar().getAcc(),
+                    card.getAvatar().getBg(),
+                    card.getAvatar().getBgColor()
+            );
+        }
+
+        if(card.getProfile_image_url() != null) {
+            this.profile_image_url = card.getProfile_image_url();
+        }
 
         this.cardEssential = new CardEssential(card.getCard_name(), card.getCard_introduction());
-        this.cardOptional = new CardOptional(card.getCard_SNS(), card.getCard_email(), card.getCard_MBTI(), card.getCard_music());
+        this.cardOptional = new CardOptional(
+                card.getCard_birth(),
+                card.getCard_bSecrete(),
+                card.getCard_tel(),
+                card.getCard_sns_insta(),
+                card.getCard_sns_x(),
+                card.getCard_email(),
+                card.getCard_MBTI(),
+                card.getCard_music(),
+                card.getCard_music(),
+                card.getCard_movie(),
+                card.getCard_hobby(),
+                card.getCard_address()
+        );
 
-        this.templateEssential = new TemplateEssential(card.getCard_tel(), card.getCard_birth(), card.getCard_school(), card.getCard_grade());
-        this.templateOptional = new TemplateOptional(card.getCard_studentId(), card.getCard_student_major(), card.getCard_student_role(), card.getCard_student_club());
-
-        this.memo = card.getMemo();
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public CardEssential getCardEssential() {
-        return cardEssential;
-    }
-
-    public void setCardEssential(CardEssential cardEssential) {
-        this.cardEssential = cardEssential;
-    }
-
-    public CardOptional getCardOptional() {
-        return cardOptional;
-    }
-
-    public void setCardOptional(CardOptional cardOptional) {
-        this.cardOptional = cardOptional;
-    }
-
-    public TemplateEssential getTemplateEssential() {
-        return templateEssential;
-    }
-
-    public void setTemplateEssential(TemplateEssential templateEssential) {
-        this.templateEssential = templateEssential;
-    }
-
-    public TemplateOptional getTemplateOptional() {
-        return templateOptional;
-    }
-
-    public void setTemplateOptional(TemplateOptional templateOptional) {
-        this.templateOptional = templateOptional;
-    }
-
-    public long getCard_id() {
-        return card_id;
-    }
-
-    public void setCard_id(long card_id) {
-        this.card_id = card_id;
-    }
-
-    public String getCard_template() {
-        return card_template;
-    }
-
-    public void setCard_template(String card_template) {
-        this.card_template = card_template;
-    }
-
-    public String getcard_cover() {
-        return card_cover;
-    }
-
-    public void setcard_cover(String card_cover) {
-        this.card_cover = card_cover;
-    }
-
-    public String getMemo() {
-        return memo;
-    }
-
-    public void setMemo(String memo) {
-        this.memo = memo;
+        if (card.getCard_template().equals("student")) {
+            this.student = new CardStudentResponse(
+                    cardStudent.getCard_student_school(),
+                    cardStudent.getCard_student_grade(),
+                    cardStudent.getCard_student_major(),
+                    cardStudent.getCard_student_id(),
+                    cardStudent.getCard_student_club(),
+                    cardStudent.getCard_student_role(),
+                    cardStudent.getCard_student_status());
+        } else if (card.getCard_template().equals("worker")) {
+            this.worker = new CardWorkerResponse(
+                    cardWorker.getCard_worker_company(),
+                    cardWorker.getCard_worker_job(),
+                    cardWorker.getCard_worker_position(),
+                    cardWorker.getCard_worker_department()
+            );
+        } else if (card.getCard_template().equals("fan")) {
+            this.fan = new CardFanResponse(
+                    cardFan.getCard_fan_genre(),
+                    cardFan.getCard_fan_first(),
+                    cardFan.getCard_fan_second(),
+                    cardFan.getCard_fan_reason()
+            );
+        } else if (card.getCard_template().equals("free")) {
+            if (cardStudent != null) {
+                this.student = new CardStudentResponse(
+                        cardStudent.getCard_student_school(),
+                        cardStudent.getCard_student_grade(),
+                        cardStudent.getCard_student_major(),
+                        cardStudent.getCard_student_id(),
+                        cardStudent.getCard_student_club(),
+                        cardStudent.getCard_student_role(),
+                        cardStudent.getCard_student_status()
+                );
+            }
+            if (cardWorker != null) {
+                this.worker = new CardWorkerResponse(
+                        cardWorker.getCard_worker_company(),
+                        cardWorker.getCard_worker_job(),
+                        cardWorker.getCard_worker_position(),
+                        cardWorker.getCard_worker_department())
+                ;
+            }
+            if (cardFan != null) {
+                this.fan = new CardFanResponse(
+                        cardFan.getCard_fan_genre(),
+                        cardFan.getCard_fan_first(),
+                        cardFan.getCard_fan_second(),
+                        cardFan.getCard_fan_reason()
+                );
+            }
+        }
     }
 }
-

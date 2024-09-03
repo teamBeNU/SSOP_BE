@@ -1,16 +1,22 @@
-package SSOP.ssop.service;
+package SSOP.ssop.service.User;
 
 import SSOP.ssop.config.JwtProvider;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.LoginDto;
-import SSOP.ssop.dto.UserDto;
+import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.dto.User.LoginDto;
+import SSOP.ssop.dto.User.UserDto;
+import SSOP.ssop.dto.card.response.CardSaveResponse;
+import SSOP.ssop.repository.CardRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,12 +25,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final CardRepository cardRepository;
 
     // 생성자 주입
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, CardRepository cardRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.cardRepository = cardRepository;
     }
 
     // 회원가입
@@ -69,7 +77,7 @@ public class UserService {
     }
 
     // 특정 유저 정보 출력
-    public ResponseEntity<?> getUser(long userId) {
+    public ResponseEntity<?> getUser(Long userId) {
         Optional<User> user = userRepository.findByUserId(userId);
         if (user.isPresent()) {
             // UserDto 객체를 직접 반환
@@ -116,25 +124,68 @@ public class UserService {
         }
 
         User user = userRepository.findById(userDto.getUserId()).get();
-        user.setUser_name(userDto.getUser_name());
-        user.setUser_birth(userDto.getUser_birth());
+        // body에서 요청하지 않았다면 기존 값 유지
+        if (userDto.getUser_name() != null) {
+            user.setUser_name(userDto.getUser_name());
+        }
+        if (userDto.getUser_birth() != null) {
+            user.setUser_birth(userDto.getUser_birth());
+        }
         userRepository.save(user);
 
         return ResponseEntity.ok().body(Map.of("message", "회원 정보가 성공적으로 변경되었습니다."));
     }
 
     // userId로 유저 삭제
-    public ResponseEntity<Map<String, String>> deleteUser(long userId) {
+    public ResponseEntity<Map<String, String>> deleteUser(Long userId) {
         Optional<User> userOptional = userRepository.findByUserId(userId);
 
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             userRepository.delete(user);
-            return ResponseEntity.ok(Map.of("message", "탈퇴되었습니다.."));
+            return ResponseEntity.ok(Map.of("message", "탈퇴되었습니다."));
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "존재하지 않는 사용자입니다."));
         }
     }
 
+    // 카드 저장
+    public CardSaveResponse addCardToSavedList(Long userId, Long cardId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드 아이디입니다 : " + cardId));
+
+        if(card.getUserId() == userId) {
+            throw new IllegalArgumentException("본인 카드입니다.");
+        }
+
+        List<String> savedCardList = user.getSaved_card_list();
+
+        if(savedCardList.contains(String.valueOf(cardId))) {
+            return new CardSaveResponse(false, "이미 저장된 카드입니다");
+        } else {
+            savedCardList.add(String.valueOf(cardId));
+            userRepository.save(user);
+            return new CardSaveResponse(true, "카드가 저장되었습니다");
+        }
+
+    }
+
+    // 저장된 카드 삭제
+    public void deleteSavedCard(Long userId, Long cardId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+
+        String cardIdAsString = String.valueOf(cardId);
+        List<String> savedCardList = user.getSaved_card_list();
+
+        if (savedCardList.remove(cardIdAsString)) {
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("저장한 카드가 아닙니다");
+        }
+    }
 }

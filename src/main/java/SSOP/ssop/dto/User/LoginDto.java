@@ -1,4 +1,4 @@
-package SSOP.ssop.dto;
+package SSOP.ssop.dto.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
