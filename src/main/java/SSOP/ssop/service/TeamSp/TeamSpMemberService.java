@@ -15,6 +15,7 @@ import SSOP.ssop.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,30 +52,17 @@ public class TeamSpMemberService {
         }
 
         // 3. 이미 제출된 카드가 있는지 확인
-        Optional<TeamSpMember> existingMembership = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId);
-
-        if (existingMembership.isPresent()) {
-            TeamSpMember existingMember = existingMembership.get();
-
-            // 기존 카드가 null -> 요청한 cardId로 업데이트
-            if (existingMember.getCardId() == null) {
-                Card card = cardRepository.findById(cardId)
-                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
-                existingMember.setCardId(card.getCardId());
-                teamSpMemberRepository.save(existingMember);
-                return; // 업데이트 완료 후 메소드 종료
-            } else {
-                // 카드가 null이 아니면 이미 제출한 카드가 있는 것으로 간주
-                throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
-            }
+        if (teamSpMember.getCardId() != null) {
+            throw new IllegalArgumentException("이미 제출한 카드가 있습니다. 한 명의 사용자는 하나의 카드만 제출할 수 있습니다.");
         }
         // 4. 카드 제출을 위해 새로운 TeamSpMember 엔티티를 생성
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드입니다."));
 
-        // 새로운 TeamSpMember 엔티티를 생성하여 카드 정보를 저장
-        TeamSpMember newTeamSpMember = new TeamSpMember(teamSpMember.getTeamSp(), teamSpMember.getUser(), cardId);
-        teamSpMemberRepository.save(newTeamSpMember);
+        // 기존 teamSpMember 객체에 카드 ID와 생성 시점 업데이트
+        teamSpMember.setCardId(card.getCardId());
+        teamSpMember.setCreatedAt(LocalDateTime.now()); // 필요하다면 갱신 시간으로 설정
+        teamSpMemberRepository.save(teamSpMember);
     }
 
     // 팀스페이스 참여 정보 조회

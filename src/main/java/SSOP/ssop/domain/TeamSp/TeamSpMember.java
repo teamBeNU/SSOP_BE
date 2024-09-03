@@ -3,7 +3,9 @@ package SSOP.ssop.domain.TeamSp;
 import SSOP.ssop.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +26,10 @@ public class TeamSpMember {
 
     @Column(name = "card_id")
     private Long cardId;
+
+    @CreationTimestamp // INSERT 시 자동으로 값을 채워줌
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @JsonIgnore
     @OneToMany(mappedBy = "teamSpMember", cascade = CascadeType.ALL, orphanRemoval = true)  // 이 라인을 추가
@@ -69,5 +75,13 @@ public class TeamSpMember {
 
     public void setCardId(Long cardId) {
         this.cardId = cardId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
