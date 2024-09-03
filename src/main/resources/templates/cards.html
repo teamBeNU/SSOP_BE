@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cards</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        table {
+            border: 1px #333 solid;
+            padding: 10px;
+            font-size: .9em;
+            box-shadow: 0 2px 5px rgba(0,0,0,.25);
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th {
+            text-align: left;
+        }
+
+        thead {
+            font-weight: bold;
+            color: #fff;
+            background: #333;
+        }
+
+        td, th {
+            padding: 1em .5em;
+            vertical-align: middle;
+        }
+
+        td {
+            border-bottom: 1px solid rgba(0,0,0,.1);
+            background: #fff;
+        }
+
+        a {
+            color: #333;
+        }
+
+        @media all and (max-width: 768px) {
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                text-align: right;
+            }
+
+            table {
+                position: relative;
+                padding-bottom: 0;
+                border: none;
+                box-shadow: 0 0 10px rgba(0,0,0,.2);
+            }
+
+            thead {
+                float: left;
+                white-space: nowrap;
+            }
+
+            tbody {
+                overflow-x: auto;
+                overflow-y: hidden;
+                position: relative;
+                white-space: nowrap;
+            }
+
+            tr {
+                display: inline-block;
+                vertical-align: top;
+            }
+
+            th {
+                border-bottom: 1px solid #a39485;
+            }
+
+            td {
+                border-bottom: 1px solid #e5e5e5;
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">SSOP Admin</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="users">Users</a></li>
+            <li class="active"><a href="cards">Cards</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h4> card table </h4>
+
+    <table>
+        <thead>
+        <tr>
+            <th>UserId</th>
+            <th>CardId</th>
+            <th>Name</th>
+            <th>Template</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Birth</th>
+            <th>Introduction</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each = "card : ${cards}">
+            <td th:text="${card.userId}"></td>
+            <td th:text="${card.cardId}"></td>
+            <td th:text="${card.card_name}"></td>
+            <td th:text="${card.card_template}"></td>
+            <td th:text="${card.card_email}"></td>
+            <td th:text="${card.card_tel}"></td>
+            <td th:text="${card.card_birth}"></td>
+            <td th:text="${card.card_introduction}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+

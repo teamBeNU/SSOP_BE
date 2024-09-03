@@ -5,6 +5,7 @@ import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "user")
 public class User {
 
@@ -21,6 +23,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("user_id")
     private Long userId;
+
+    private String role; // "ADMIN" or "USER"
 
     private String user_name;
     private String email;
@@ -68,86 +72,5 @@ public class User {
 
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));
-    }
-
-    // Getter & Setter
-    public long getUserId() {
-        return userId;
-    }
-
-    public String getUser_name() {
-        return user_name;
-    }
-
-    public LocalDate getUser_birth() {
-        return user_birth;
-    }
-
-    public String getUser_phone() {
-        return user_phone;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getSocial_type() {
-        return social_type;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUser_phone(String user_phone) {
-        this.user_phone = user_phone;
-    }
-
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
-    }
-
-    public void setUser_birth(LocalDate user_birth) {
-        this.user_birth = user_birth;
-    }
-
-    public List<String> getSaved_card_list() {
-        return saved_card_list;
-    }
-
-    public void setSaved_card_list(List<String> saved_card_list) {
-        this.saved_card_list = saved_card_list;
-    }
-
-    public Set<TeamSpMember> getTeamSpMembers() {
-        return teamSpMembers;
-    }
-
-    public void setTeamSpMembers(Set<TeamSpMember> teamSpMembers) {
-        this.teamSpMembers = teamSpMembers;
-    }
-
-    public List<String> getSaved_card_list() {
-        return saved_card_list;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setSocial_type(String social_type) {
-        this.social_type = social_type;
-    }
-
-    public void setSaved_card_list(List<String> saved_card_list) {
-        this.saved_card_list = saved_card_list;
     }
 }
