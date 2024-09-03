@@ -1,10 +1,12 @@
 package SSOP.ssop.service.TeamSp;
 
+import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardRepository;
@@ -157,6 +159,94 @@ public class TeamSpMemberService {
                 membersDetail       // 멤버 카드 정보
         );
         return Optional.of(teamSpMemberDto);
+    }
+
+    // 팀스페이스 ID별 최신순 정렬
+    public List<TeamSpMemSortedDto> findByTeamSpIdSortedByRecent(Long teamId) {
+        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(teamId);
+
+        return members.stream()
+                .map(member -> {
+                    Card card = null;
+                    String card_name = "Unknown";
+                    String card_birth = "Unknown";
+                    String card_status = "Unknown";
+
+                    // 카드 ID가 유효한 경우
+                    if (member.getCardId() != null && member.getCardId() != 0) {
+                        card = cardRepository.findById(member.getCardId()).orElse(null);
+                    } else {
+                        // 카드 ID가 0인 경우, userId로 Member 테이블에서 카드 정보 조회
+                        Long userId = member.getUser().getUserId(); // UserId를 가져옴
+                        Optional<Member> optionalMember = memberRepository.findByUserId(userId); // userId를 통해 Member 조회
+                        if (optionalMember.isPresent()) {
+                            Member foundMember = optionalMember.get();
+                            card_name = foundMember.getCard_name();
+                            card_birth = foundMember.getCard_birth() != null ? foundMember.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
+                            card_status = foundMember.getCard_introduction();
+                        }
+                    }
+                    if (card != null) {
+                        card_name = card.getCard_name();
+                        card_birth = card.getCard_birth() != null ? card.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
+                        card_status = card.getCard_template();
+                    }
+
+                    return new TeamSpMemSortedDto(
+                            member.getId(), // 팀스페이스 멤버의 ID
+                            card != null ? card.getCardId() : null,
+                            card_name,
+                            card_birth,
+                            card_status,
+                            member.getCreatedAt()
+                    );
+                })
+                .sorted(Comparator.comparing(TeamSpMemSortedDto::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+    }
+
+    // 팀스페이스 ID별 이름순 정렬
+    public List<TeamSpMemSortedDto> findByTeamSpIdSortedByUsername(Long teamId) {
+        List<TeamSpMember> members = teamSpMemberRepository.findByTeamSpId(teamId);
+
+        return members.stream()
+                .map(member -> {
+                    Card card = null;
+                    String card_name = "Unknown";
+                    String card_birth = "Unknown";
+                    String card_status = "Unknown";
+
+                    // 카드 ID가 유효한 경우
+                    if (member.getCardId() != null && member.getCardId() != 0) {
+                        card = cardRepository.findById(member.getCardId()).orElse(null);
+                    } else {
+                        // 카드 ID가 0인 경우, userId로 Member 테이블에서 카드 정보 조회
+                        Long userId = member.getUser().getUserId(); // UserId를 가져옴
+                        Optional<Member> optionalMember = memberRepository.findByUserId(userId); // userId를 통해 Member 조회
+                        if (optionalMember.isPresent()) {
+                            Member foundMember = optionalMember.get();
+                            card_name = foundMember.getCard_name();
+                            card_birth = foundMember.getCard_birth() != null ? foundMember.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
+                            card_status = foundMember.getCard_introduction();
+                        }
+                    }
+                    if (card != null) {
+                        card_name = card.getCard_name();
+                        card_birth = card.getCard_birth() != null ? card.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
+                        card_status = card.getCard_template();
+                    }
+
+                    return new TeamSpMemSortedDto(
+                            member.getId(), // 팀스페이스 멤버의 ID
+                            card != null ? card.getCardId() : null,
+                            card_name,
+                            card_birth,
+                            card_status,
+                            member.getCreatedAt()
+                    );
+                })
+                .sorted(Comparator.comparing(TeamSpMemSortedDto::getCard_name))
+                .collect(Collectors.toList());
     }
 
     // 유저별 참여 중인 팀스페이스 정보 조회
