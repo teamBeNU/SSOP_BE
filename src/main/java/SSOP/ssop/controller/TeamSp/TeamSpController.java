@@ -72,7 +72,7 @@ public class TeamSpController {
 
     // 특정 팀스페이스 조회
     @GetMapping
-    public ResponseEntity<?> getTeamById(@RequestParam("team_id") Long teamId) {
+    public ResponseEntity<?> getTeamById(@RequestParam("teamId") Long teamId) {
         TeamSp teamSp = teamSpService.getTeamById(teamId);
 
         if (teamSp != null) {
@@ -85,7 +85,7 @@ public class TeamSpController {
 
     // 팀스페이스 이름 수정 (호스트만)
     @PatchMapping
-    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("team_id") Long teamId, @RequestBody TeamSp teamSp, @Login Long userId) {
+    public ResponseEntity<Map<String, String>> updateTeamSp(@RequestParam("teamId") Long teamId, @RequestBody TeamSp teamSp, @Login Long userId) {
         try {
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -109,7 +109,7 @@ public class TeamSpController {
 
     // 팀스페이스 삭제 (호스트-삭제 / 참여자-퇴장)
     @DeleteMapping
-    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("team_id") Long teamId, @Login Long userId) {
+    public ResponseEntity<Map<String, String>> deleteTeamSp(@RequestParam("teamId") Long teamId, @Login Long userId) {
         try {
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

@@ -3,7 +3,8 @@ package SSOP.ssop.service;
 import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
-import SSOP.ssop.dto.card.request.*;
+import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import SSOP.ssop.utils.CardUtils;
@@ -15,9 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.UUID;
 
 @Service
 public class CardService {
@@ -189,33 +189,6 @@ public class CardService {
         //return card;
     }
 
-    // 카드 조회 응답
-//    private CardResponse createCardResponse(Card card) {
-//        CardStudent cardStudent = null;
-//        CardWorker cardWorker = null;
-//        CardFan cardFan = null;
-//
-//        switch (card.getCard_template()) {
-//            case "student":
-//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "worker":
-//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "fan":
-//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-//                break;
-//            case "free":
-//                cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
-//                cardWorker = cardWorkerRepository.findByCard_CardId(card.getCardId());
-//                cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
-//                break;
-//        }
-//
-//        return new CardResponse(card, cardStudent, cardWorker, cardFan);
-//    }
-
-
     // 모든 카드 조회
     public List<CardResponse> getAllCards() {
         List<Card> cards = cardRepository.findAll();
@@ -241,31 +214,31 @@ public class CardService {
     }
 
     // 상대 카드 목록 조회
-    public List<CardResponse> getSavedCards(long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저아이디입니다 : " + userId));
+//    public List<CardResponse> getSavedCards(long userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
+//
+//        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+//
+//        if (savedCardList == null || savedCardList.isEmpty()) {
+//            return Collections.emptyList(); // 저장한 카드가 없는 경우
+//        }
 
-        List<String> savedCardList = user.getSaved_card_list();
+//        List<Long> savedCardListAsLongs = savedCardList.stream()
+//                .map(Long::valueOf)
+//                .collect(Collectors.toList());
 
-        if (savedCardList == null || savedCardList.isEmpty()) {
-            return Collections.emptyList(); // 저장한 카드가 없는 경우
-        }
+//        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
 
-        List<Long> savedCardListAsLongs = savedCardList.stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+//        List<CardResponse> responses = new ArrayList<>();
 
-        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
+//        for (Card card : cards) {
+//            responses.add(cardUtils.createCardResponse(card, true));
+//        }
 
-        List<CardResponse> responses = new ArrayList<>();
+//        return responses;
 
-        for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, true));
-        }
-
-        return responses;
-
-    }
+//    }
 
     // 특정 카드 상세 조회
     public CardResponse getCard(long cardId) {
@@ -300,35 +273,40 @@ public class CardService {
 
         // 템플릿 별 업데이트
         cardUtils.updateTemplateSpecificFields(card, request);
-
+        card.setCreatedAt(LocalDateTime.now());
         cardRepository.save(card);
     }
 
-   //    // 카드 삭제
-//    public void deleteCard(long cardId, long userId) {
-//        Card card = cardRepository.findById(cardId)
-//                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-//
-//        cardRepository.delete(card);
-//    }
+    // 카드 삭제
+    @Transactional
+    public void deleteCard(long cardId, long userId) {
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        String template = card.getCard_template();
+
+        cardUtils.deleteIfExists(template, "student", cardStudentRepository, cardId);
+        cardUtils.deleteIfExists(template, "worker", cardWorkerRepository, cardId);
+        cardUtils.deleteIfExists(template, "fan", cardFanRepository, cardId);
+
+        cardRepository.delete(card);
+    }
 
     // 상대 카드 메모 작성
     public void writeMemo(long cardId, long userId, String memo) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다"));
 
         if(card.getUserId() == userId) {
             throw new IllegalArgumentException("본인 카드입니다");
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        List<Long> savedCardListAsLongs = user.getSaved_card_list().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
-        if (savedCardListAsLongs.contains(cardId)) {
+        if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {
                 card.setMemo(memo);
                 cardRepository.save(card);
@@ -339,9 +317,7 @@ public class CardService {
                 throw new CustomException(HttpStatus.OK, "메모가 수정되었습니다");
             }
         } else {
-            throw new IllegalArgumentException("저장한 카드가 아닙니다.");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "저장한 카드가 아닙니다.");
         }
-
-
     }
 }

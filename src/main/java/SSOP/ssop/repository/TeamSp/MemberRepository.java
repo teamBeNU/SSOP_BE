@@ -17,18 +17,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByTeamSpMemberId(Long teamspMemberId);
 
     // team id를 통해 해당 팀스페이스의 멤버 카드 조회
-    @Query("SELECT m FROM Member m WHERE m.teamSpMember.teamSp.team_id = :teamId")
+    @Query("SELECT m FROM Member m WHERE m.teamSpMember.teamSp.teamId = :teamId")
     List<Member> findByTeamId(@Param("teamId") long teamId);
 
     // user id가 가진 팀스페이스 멤버 카드 조회
     @Query("SELECT m FROM Member m WHERE m.teamSpMember.user.userId = :userId")
-    List<Member> findByUserId(@Param("userId") long userId);
+    Optional<Member> findByUserId(@Param("userId") long userId);
 
     // team id와 user id를 통해 특정 팀스페이스 멤버 카드 조회
-    @Query("SELECT m FROM Member m WHERE m.teamSpMember.teamSp.team_id = :teamId AND m.teamSpMember.user.userId = :userId")
+    @Query("SELECT m FROM Member m WHERE m.teamSpMember.teamSp.teamId = :teamId AND m.teamSpMember.user.userId = :userId")
     List<Member> findByTeamIdAndUserId(@Param("teamId") long teamId, @Param("userId") long userId);
-
-    // teamsp_member_id가 가진 팀스페이스 멤버 카드 조회
-    @Query("SELECT m FROM Member m WHERE m.teamSpMember.id = :id")
-    List<Member> findByTeamSpMemberId(@Param("id") long id);
 }

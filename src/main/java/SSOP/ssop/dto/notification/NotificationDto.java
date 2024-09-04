@@ -1,47 +1,21 @@
 package SSOP.ssop.dto.notification;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class NotificationDto {
-    private Long id;
+    private Long notification_id;
     private String title;
-    private String cardName;
+    private String card_name;
     private boolean accepted;
 
-    public NotificationDto(Long id, String title, String cardName, boolean accepted) {
-        this.id = id;
+
+    public NotificationDto(Long notification_id, String title, String card_name, boolean accepted) {
+        this.notification_id = notification_id;
         this.title = title;
-        this.cardName = cardName;
-        this.accepted = accepted;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getCardName() {
-        return cardName;
-    }
-
-    public void setCardName(String cardName) {
-        this.cardName = cardName;
-    }
-
-    public boolean isAccepted() {
-        return accepted;
-    }
-
-    public void setAccepted(boolean accepted) {
+        this.card_name = card_name;
         this.accepted = accepted;
     }
 }

@@ -1,12 +1,8 @@
 package SSOP.ssop.repository.Card;
 
-import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.domain.card.CardWorker;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface CardWorkerRepository extends CrudRepository<CardWorker, Long> {
-    //CardWorker findByCardId(Long cardId);
+public interface CardWorkerRepository extends JpaRepository<CardWorker, Long> {
    CardWorker findByCard_CardId(Long cardId);
 }

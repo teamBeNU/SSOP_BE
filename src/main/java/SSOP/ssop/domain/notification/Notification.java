@@ -2,68 +2,35 @@ package SSOP.ssop.domain.notification;
 
 import SSOP.ssop.domain.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long notification_id;
 
     private String title;
 
     private String card_name;
 
-    private boolean accepted;
+    private boolean accepted = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    public Notification() {
-        this.id = id;
+    // 기본 생성자
+    public Notification() {}
+
+    // 사용자 지정 생성자
+    public Notification(String title, String card_name, User user) {
         this.title = title;
         this.card_name = card_name;
-        this.accepted = accepted;
         this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getCard_name() {
-        return card_name;
-    }
-
-    public boolean isAccepted() {
-        return accepted;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setCard_name(String card_name) {
-        this.card_name = card_name;
-    }
-
-    public void setAccepted(boolean accepted) {
-        this.accepted = accepted;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+        this.accepted = false;
     }
 }

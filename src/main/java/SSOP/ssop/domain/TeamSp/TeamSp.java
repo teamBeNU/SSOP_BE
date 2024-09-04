@@ -9,10 +9,10 @@ public class TeamSp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id")
-    private Long team_id;
+    @Column(name = "teamId")
+    private Long teamId;
 
-    private Long host_id; // 호스트 ID 저장
+    private Long hostId; // 호스트 ID 저장
 
     @Column(name = "team_name")
     private String team_name;
@@ -39,7 +39,7 @@ public class TeamSp {
     private FanOptional fanOptional;
 
     @ElementCollection
-    @CollectionTable(name = "student_plus", joinColumns = @JoinColumn(name = "team_id"))
+    @CollectionTable(name = "student_plus", joinColumns = @JoinColumn(name = "teamId"))
     @Column(name = "student_plus")
     private List<String> plus;
 
@@ -140,20 +140,20 @@ public class TeamSp {
     }
 
     // Getters and Setters
-    public Long getTeam_id() {
-        return team_id;
+    public Long getTeamId() {
+        return teamId;
     }
 
-    public void setTeam_id(Long team_id) {
-        this.team_id = team_id;
+    public void setTeamId(Long teamId) {
+        this.teamId = teamId;
     }
 
-    public Long getHost_id() {
-        return host_id;
+    public Long getHostId() {
+        return hostId;
     }
 
-    public void setHost_id(Long host_id) {
-        this.host_id = host_id;
+    public void setHostId(Long hostId) {
+        this.hostId = hostId;
     }
 
     public String getTeam_name() {

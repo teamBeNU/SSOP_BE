@@ -14,7 +14,4 @@ public interface TeamSpRepository extends JpaRepository<TeamSp, Long> {
 
     // inviteCode 팀스페이스 조회
     Optional<TeamSp> findByInviteCode(int inviteCode);
-
-//    Optional<TeamSp> findByTeamName(String team_name);
-
 }

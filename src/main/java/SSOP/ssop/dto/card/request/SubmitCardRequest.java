@@ -6,5 +6,5 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SubmitCardRequest {
-    private Long card_id;
+    private Long cardId;
 }

@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -177,12 +179,12 @@ public class UserService {
             throw new IllegalArgumentException("본인 카드입니다.");
         }
 
-        List<String> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
-        if(savedCardList.contains(String.valueOf(cardId))) {
+        if(savedCardList.containsKey(cardId)) {
             return new CardSaveResponse(false, "이미 저장된 카드입니다");
         } else {
-            savedCardList.add(String.valueOf(cardId));
+            savedCardList.put(cardId, LocalDateTime.now());
             userRepository.save(user);
             return new CardSaveResponse(true, "카드가 저장되었습니다");
         }
@@ -194,10 +196,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
 
-        String cardIdAsString = String.valueOf(cardId);
-        List<String> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
-        if (savedCardList.remove(cardIdAsString)) {
+        if (savedCardList.remove(cardId) != null) {
             userRepository.save(user);
         } else {
             throw new IllegalArgumentException("저장한 카드가 아닙니다");

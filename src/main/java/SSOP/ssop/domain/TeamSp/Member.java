@@ -13,7 +13,7 @@ public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "card_id")
+    @Column(name = "cardId")
     private Long cardId;
 
     @ManyToOne(cascade = CascadeType.ALL)
