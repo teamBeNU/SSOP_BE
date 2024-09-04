@@ -4,7 +4,7 @@ import SSOP.ssop.domain.TeamSp.Member;
 
 public class MemberResponse {
 
-    private long user_id;
+    private long userId;
 
     private MemberEssentialDto memberEssential;
     private MemberOptionalDto memberOptional;
@@ -13,7 +13,7 @@ public class MemberResponse {
     private MemberFanDto memberFan;
 
     public MemberResponse(Member member) {
-        this.user_id = member.getTeamSpMember().getUser().getUserId();
+        this.userId = member.getTeamSpMember().getUser().getUserId();
 
         this.memberEssential = new MemberEssentialDto(
                 member.getCard_name(),
@@ -64,8 +64,8 @@ public class MemberResponse {
         );
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
     public MemberEssentialDto getMemberEssential() {

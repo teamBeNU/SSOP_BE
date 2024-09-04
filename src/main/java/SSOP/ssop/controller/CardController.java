@@ -6,7 +6,7 @@ import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.MemoRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
-import SSOP.ssop.repository.CardRepository;
+import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
 import SSOP.ssop.service.User.UserService;
@@ -73,11 +73,11 @@ public class CardController {
     }
 
     // 상대 카드 목록 조회
-    @GetMapping("/view/saved")
-    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
-        List<CardResponse> cards = cardService.getSavedCards(userId);
-        return ResponseEntity.ok(cards);
-    }
+//    @GetMapping("/view/saved")
+//    public ResponseEntity<List<CardResponse>> getSavedCards(@Login Long userId) {
+//        List<CardResponse> cards = cardService.getSavedCards(userId);
+//        return ResponseEntity.ok(cards);
+//    }
 
     // 상대 카드 저장
     @PostMapping("/save")

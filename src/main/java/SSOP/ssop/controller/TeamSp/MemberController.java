@@ -41,6 +41,10 @@ public class MemberController {
         Long authenticatedUserId = userDetail.getUser().getUserId();
 
         try {
+            if (authenticatedUserId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다"));
+            }
             // 팀스페이스 멤버 카드 생성 서비스 호출
             memberService.saveMember(teamId, authenticatedUserId, memberDto, file);
             return ResponseEntity.ok(Map.of("code", 200, "message", "팀스페이스 멤버 카드 생성 완료"));

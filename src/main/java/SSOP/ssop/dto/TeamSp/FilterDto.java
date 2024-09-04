@@ -3,24 +3,24 @@ package SSOP.ssop.dto.TeamSp;
 import SSOP.ssop.domain.TeamSp.Member;
 
 public class FilterDto {
-    private Long card_id;
+    private Long cardId;
     private String card_mbti;
     private String card_student_major;
     private String card_student_role;
 
     public FilterDto(Member member) {
-        this.card_id = member.getCardId();
+        this.cardId = member.getCardId();
         this.card_mbti = member.getCard_MBTI();
         this.card_student_major = member.getCard_student_major();
         this.card_student_role = member.getCard_student_role();
     }
 
-    public Long getCard_id() {
-        return card_id;
+    public Long getCardId() {
+        return cardId;
     }
 
-    public void setCard_id(Long card_id) {
-        this.card_id = card_id;
+    public void setCardId(Long cardId) {
+        this.cardId = cardId;
     }
 
     public String getCard_mbti() {

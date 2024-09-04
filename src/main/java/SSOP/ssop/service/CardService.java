@@ -8,6 +8,7 @@ import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import SSOP.ssop.utils.CardUtils;
+import SSOP.ssop.repository.Card.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class CardService {
@@ -216,31 +214,31 @@ public class CardService {
     }
 
     // 상대 카드 목록 조회
-    public List<CardResponse> getSavedCards(long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
+//    public List<CardResponse> getSavedCards(long userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
+//
+//        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+//
+//        if (savedCardList == null || savedCardList.isEmpty()) {
+//            return Collections.emptyList(); // 저장한 카드가 없는 경우
+//        }
 
-        List<String> savedCardList = user.getSaved_card_list();
+//        List<Long> savedCardListAsLongs = savedCardList.stream()
+//                .map(Long::valueOf)
+//                .collect(Collectors.toList());
 
-        if (savedCardList == null || savedCardList.isEmpty()) {
-            return Collections.emptyList(); // 저장한 카드가 없는 경우
-        }
+//        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
 
-        List<Long> savedCardListAsLongs = savedCardList.stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+//        List<CardResponse> responses = new ArrayList<>();
 
-        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
+//        for (Card card : cards) {
+//            responses.add(cardUtils.createCardResponse(card, true));
+//        }
 
-        List<CardResponse> responses = new ArrayList<>();
+//        return responses;
 
-        for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, true));
-        }
-
-        return responses;
-
-    }
+//    }
 
     // 특정 카드 상세 조회
     public CardResponse getCard(long cardId) {
@@ -275,7 +273,7 @@ public class CardService {
 
         // 템플릿 별 업데이트
         cardUtils.updateTemplateSpecificFields(card, request);
-
+        card.setCreatedAt(LocalDateTime.now());
         cardRepository.save(card);
     }
 
@@ -306,11 +304,9 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        List<Long> savedCardListAsLongs = user.getSaved_card_list().stream()
-                .map(Long::valueOf)
-                .collect(Collectors.toList());
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
-        if (savedCardListAsLongs.contains(cardId)) {
+        if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {
                 card.setMemo(memo);
                 cardRepository.save(card);
@@ -323,7 +319,5 @@ public class CardService {
         } else {
             throw new CustomException(HttpStatus.UNAUTHORIZED, "저장한 카드가 아닙니다.");
         }
-
-
     }
 }
