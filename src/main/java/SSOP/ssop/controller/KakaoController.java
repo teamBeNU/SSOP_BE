@@ -2,10 +2,16 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.KakaoUser;
 import SSOP.ssop.domain.OAuthToken;
+import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.User.LoginDto;
+import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.service.KakaoService;
+import SSOP.ssop.service.User.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +24,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/login/kakao")
@@ -31,15 +41,18 @@ public class KakaoController {
     @Value("${kakao.client.id}")
     private String kakaoClientId;
 
-    private final KakaoService kakaoService;
+    @Autowired
+    private KakaoService kakaoService;
 
     @Autowired
-    public KakaoController(KakaoService kakaoService) {
-        this.kakaoService = kakaoService;
-    }
+    private UserRepository userRepository;
 
-    @GetMapping
-    public @ResponseBody String kakaoCallback(String code) throws JsonProcessingException {
+    @Autowired
+    private UserService userService;
+
+
+    @GetMapping("/callback")
+    public String kakaoCallback(@RequestParam("code") String code, HttpServletRequest request1, HttpServletResponse response1) throws JsonProcessingException {
 
         RestTemplate rt = new RestTemplate();
 
@@ -51,13 +64,13 @@ public class KakaoController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoClientId);
-        params.add("redirect_uri", "http://localhost:8080/login/kakao");
+        params.add("redirect_uri", "http://localhost:8080/login/kakao/callback");
         params.add("code", code);
 
-        // HttpHeader와 HttpBody를 하나의 오브젝트에 담기
+        // Http Header와 Body를 하나의 오브젝트에 담기
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
-        // Http 요청하기 - post방식, 그리고 response변수의 응답 받음
+        // Http 요청
         ResponseEntity<String> response = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -90,15 +103,11 @@ public class KakaoController {
             String birthday = kakaoAccountNode.get("birthday") != null ? kakaoAccountNode.get("birthday").asText() : "";
             kakaoUserInfo.setBirthyear(birthyear);
             kakaoUserInfo.setBirthday(birthday);
-        } else {
-            // Handle the case where kakao_account node is missing
         }
 
         JsonNode propertiesNode = jsonNode.get("properties");
         if (propertiesNode != null) {
             kakaoUserInfo.setName(propertiesNode.get("nickname") != null ? propertiesNode.get("nickname").asText() : "");
-        } else {
-            // Handle the case where properties node is missing
         }
 
         kakaoUserInfo.setId(jsonNode.get("id") != null ? jsonNode.get("id").asLong() : 0);
@@ -108,9 +117,28 @@ public class KakaoController {
         kakaoUserInfo.setBirthyear(kakaoAccountNode != null ? kakaoAccountNode.get("birthyear").asText() : "");
         kakaoUserInfo.setBirthday(kakaoAccountNode != null ? kakaoAccountNode.get("birthday").asText() : "");
 
+        LoginDto kakaoLoginInfo = new LoginDto();
+        kakaoLoginInfo.setEmail(kakaoAccountNode != null && kakaoAccountNode.get("email") != null ? kakaoAccountNode.get("email").asText() : "");
 
-        kakaoService.saveOrUpdateUser(kakaoUserInfo);
+        Optional<User> existingUser = userRepository.findByEmail(kakaoUserInfo.getEmail());
 
-        return "index.html";
+        if (existingUser.isPresent()) {
+            String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
+            try {
+                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);            //return userService.login(kakaoLoginInfo);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            kakaoService.saveOrUpdateUser(kakaoUserInfo);
+            String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
+            try {
+                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            // return userService.login(kakaoLoginInfo);
+        }
+        return null;
     }
 }

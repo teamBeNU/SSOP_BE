@@ -1,12 +1,16 @@
 package SSOP.ssop.service;
 
+import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.KakaoUser;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.utils.DateUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class KakaoService {
@@ -33,6 +37,14 @@ public class KakaoService {
 
         user.setUser_birth(userBirth);
 
-        userRepository.save(user);
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+
+        if (existingUser.isPresent()) {
+            throw new CustomException(HttpStatus.CREATED, "해당 이메일은 이미 등록되어 있습니다.");
+        } else {
+            user.setRole("USER");
+            userRepository.save(user);
+            throw new CustomException(HttpStatus.OK, "회원가입이 완료되었습니다.");
+        }
     }
 }
