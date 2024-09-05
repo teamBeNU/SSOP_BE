@@ -111,12 +111,6 @@ public class KakaoController {
 
         kakaoService.saveOrUpdateUser(kakaoUserInfo);
 
-        return "카카오 로그인 성공\n" +
-                "아이디 " + kakaoUserInfo.getId() +
-                "이름 " + kakaoUserInfo.getName() +
-                "이메일 " + kakaoUserInfo.getEmail() +
-                "폰 " + kakaoUserInfo.getPhone_number() +
-                "생년 " + kakaoUserInfo.getBirthyear() +
-                "월일 " + kakaoUserInfo.getBirthday();
+        return "index.html";
     }
 }

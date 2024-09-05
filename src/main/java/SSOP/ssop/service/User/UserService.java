@@ -45,6 +45,7 @@ public class UserService {
             // 비밀번호를 암호화
             String encryptedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassword);
+            user.setRole("USER");
             userRepository.save(user);
             return Collections.singletonMap("message", "회원가입이 완료되었습니다.");
         }

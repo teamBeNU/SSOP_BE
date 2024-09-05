@@ -24,15 +24,98 @@
 </nav>
 
 <div class="container">
-    <h5> Dashboard </h5>
+    <h4> Login Test </h4>
+    <hr>
+    <h5 id="loginStatus">로그인 전</h5>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+        </div>
+        <button id="loginButton" style="display: none;" type="submit" class="btn btn-default">Login</button>
+    </form>
+    <button id="logoutButton" style="display: none;" onclick="logout()" type="button" class="btn btn-default">Logout</button>
 
-    <h3> 카카오 로그인 테스트 </h3>
     <a href="https://kauth.kakao.com/oauth/authorize?client_id=54ea848013311a0a7dedb02fe2f9e004&redirect_uri=http://localhost:8080/login/kakao&response_type=code">
-        <img src="/image/kakao_login_button.png" />
+        <img style="padding-top: 10px"  src="/image/kakao_login_button.png" />
     </a>
+
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const token = localStorage.getItem('token');
+        toggleLoginLogoutButton(!!token);
 
+        // Add event listener for the form submit
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Perform the login fetch
+            fetch('/api/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            })
+                .then(response => {
+                    // Check if the response is ok (status code 200-299)
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // Convert response to JSON
+                })
+                .then(data => {
+                    if (data.token) {
+                        // Store the token in localStorage and update buttons
+                        localStorage.setItem('token', data.token);
+                        toggleLoginLogoutButton(true);
+                    } else if (data.message) {
+                        alert(data.message); // Show error message from the backend
+                    } else {
+                        alert("Unexpected response from the server");
+                    }
+                })
+                .catch(error => {
+                    // Catch and log any errors
+                    console.error('There was an error during the login process:', error);
+                    alert("Login failed: " + error.message);
+                });
+        });
+    });
+
+    function toggleLoginLogoutButton(isLoggedIn) {
+        const loginForm = document.getElementById('loginForm');
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const loginStatus = document.getElementById('loginStatus');
+
+        if (isLoggedIn) {
+            loginForm.style.display = 'none';  // Hide the login form
+            loginButton.style.display = 'none';  // Hide the login button
+            logoutButton.style.display = 'block';  // Show the logout button
+            loginStatus.innerText = '로그인 후';
+        } else {
+            loginForm.style.display = 'block';  // Show the login form
+            loginButton.style.display = 'block';  // Show the login button
+            logoutButton.style.display = 'none';  // Hide the logout button
+            loginStatus.innerText = '로그인 전';
+        }
+    }
+
+    function logout() {
+        localStorage.removeItem('token');
+        toggleLoginLogoutButton(false);
+    }
+
+</script>
 </body>
 </html>
 
