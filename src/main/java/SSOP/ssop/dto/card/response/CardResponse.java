@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -12,6 +14,8 @@ public class CardResponse {
 
     private Long userId;
     private Long cardId;
+
+    private LocalDateTime time;
 
     private String card_template;  // student or worker
     private String card_cover;
@@ -36,9 +40,10 @@ public class CardResponse {
 
     private String memo;
 
-    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard) {
+    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard, LocalDateTime time) {
         this.userId = card.getUserId();
         this.cardId = card.getCardId();
+        this.time = time;
         this.card_template = card.getCard_template();
         this.card_cover = card.getCard_cover();
 

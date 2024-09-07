@@ -15,6 +15,7 @@ import SSOP.ssop.repository.Card.CardWorkerRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 @Component
@@ -31,7 +32,7 @@ public class CardUtils {
         this.cardFanRepository = cardFanRepository;
     }
 
-    public CardResponse createCardResponse(Card card, boolean isNotMyCard) {
+    public CardResponse createCardResponse(Card card, boolean isNotMyCard, LocalDateTime time) {
         CardStudent cardStudent = null;
         CardWorker cardWorker = null;
         CardFan cardFan = null;
@@ -52,7 +53,7 @@ public class CardUtils {
                 cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
                 break;
         }
-        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard);
+        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, time);
     }
 
     // null값 확인

@@ -195,7 +195,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, false));
+            responses.add(cardUtils.createCardResponse(card, false, null));
         }
 
         return responses;
@@ -207,7 +207,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-        responses.add(cardUtils.createCardResponse(card, false));
+            responses.add(cardUtils.createCardResponse(card, false, card.getCreatedAt()));
         }
 
         return responses;
@@ -231,7 +231,8 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, true));
+            LocalDateTime savedAt = savedCardList.get(card.getCardId());
+            responses.add(cardUtils.createCardResponse(card, true, savedAt));
         }
 
         return responses;
@@ -241,7 +242,7 @@ public class CardService {
     public CardResponse getCard(long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-        return cardUtils.createCardResponse(card, false);
+        return cardUtils.createCardResponse(card, false, card.getCreatedAt());
     }
 
     // 카드 수정
