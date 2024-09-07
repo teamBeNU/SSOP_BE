@@ -15,15 +15,15 @@ public class LinkShare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long card_id;
+    private Long cardId;
     private String link;
     private LocalDateTime expiryTime;
 
     public LinkShare() {}
 
     // 생성자
-    public LinkShare(Long card_id, String link, LocalDateTime expiryTime) {
-        this.card_id = card_id;
+    public LinkShare(Long cardId, String link, LocalDateTime expiryTime) {
+        this.cardId = cardId;
         this.link = link;
         this.expiryTime = expiryTime;
     }
