@@ -22,11 +22,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // Spring Data JPA 의존성 추가
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'software.amazon.awssdk:s3:2.27.21'	// AWS S3 (AWS SDK for Java v2)
 	implementation 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor('org.projectlombok:lombok:1.18.24')
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java:8.0.32'
 	implementation 'com.auth0:java-jwt:4.2.1' // JWT
+
 }
 
 tasks.named('test') {
