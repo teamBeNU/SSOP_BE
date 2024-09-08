@@ -1,5 +1,6 @@
 package SSOP.ssop.domain.card;
 
+import SSOP.ssop.domain.MySp.MySp;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -79,6 +80,11 @@ public class Card {
 
     @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private CardWorker cardWorker;
+
+    // MySp와의 다대일 관계 추가
+    @ManyToOne
+    @JoinColumn(name = "groupId")
+    private MySp mySp;  // 카드가 속한 그룹
 
     public Card() {}
 

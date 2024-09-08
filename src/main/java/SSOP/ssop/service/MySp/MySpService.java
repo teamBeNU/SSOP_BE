@@ -2,13 +2,16 @@ package SSOP.ssop.service.MySp;
 
 import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.User;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
+import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,9 +25,13 @@ public class MySpService {
     @Autowired
     private UserRepository userRepository;
 
-    public MySpService(MySpRepository mySpRepository, UserRepository userRepository) {
+    @Autowired
+    private CardRepository cardRepository;
+
+    public MySpService(MySpRepository mySpRepository, UserRepository userRepository, CardRepository cardRepository) {
         this.mySpRepository = mySpRepository;
         this.userRepository = userRepository;
+        this.cardRepository = cardRepository;
     }
 
     // 마이스페이스 그룹 생성
@@ -49,7 +56,7 @@ public class MySpService {
         // 3. 각 그룹의 멤버 수를 계산하고, 그룹 정보를 응답 객체로 변환
         List<MySpGroupResponse> groupResponses = mySpGroups.stream()
                 .map(mySpGroup -> new MySpGroupResponse(
-                        mySpGroup.getGroup_id(),
+                        mySpGroup.getGroupId(),
                         mySpGroup.getGroup_name(),
                         // 해당 그룹의 멤버 수 계산 (코드 작성 예정)
                         mySpGroup.getCreatedAt()
@@ -83,5 +90,51 @@ public class MySpService {
         } else {
             throw new IllegalArgumentException("해당 그룹을 찾을 수 없습니다.");
         }
+    }
+
+    // 마이스페이스 그룹 카드 추가
+    public MySpGroupResponse addCardsToGroup(Long userId, Long groupId, List<Long> cardIds) {
+        // 그룹이 존재하는지 확인
+        MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
+
+        // 추가된 카드들의 ID를 저장할 리스트
+        List<Long> addedCardIds = new ArrayList<>();
+
+        // 각 카드에 대해 처리
+        for (Long cardId : cardIds) {
+            // 카드가 존재하는지 확인
+            Card card = cardRepository.findById(cardId)
+                    .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
+
+            // 자신의 카드인지 확인 (자신의 카드는 추가 불가)
+            if (card.getUserId().equals(userId)) {  // card.getOwnerId() 대신 card.getUserId()로 변경
+                throw new IllegalArgumentException("본인의 카드는 추가할 수 없습니다.");
+            }
+
+            // 카드가 이미 그룹에 추가되어 있는지 확인
+            if (group.getCards().contains(card)) {
+                // 예외 발생 또는 메시지 반환
+                throw new IllegalArgumentException("이미 추가된 카드입니다: 카드 ID " + cardId);
+            }
+
+            // 그룹에 카드 추가
+            group.addCard(card);
+            addedCardIds.add(card.getCardId());
+        }
+
+        // 그룹 정보 저장
+        mySpRepository.save(group);
+
+        // 성공 응답 반환
+        // 9. 그룹 정보와 추가된 카드 정보를 포함한 응답 반환
+        return new MySpGroupResponse(
+                group.getGroupId(),        // 그룹 ID
+                group.getGroup_name(),      // 그룹 이름
+                group.getCreatedAt(),       // 그룹 생성 날짜
+                200,                        // 응답 코드
+                "카드가 그룹에 성공적으로 추가되었습니다.",  // 메시지
+                addedCardIds                // 추가된 카드 ID 리스트
+        );
     }
 }

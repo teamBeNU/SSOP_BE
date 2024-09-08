@@ -1,12 +1,15 @@
 package SSOP.ssop.domain.MySp;
 
 import SSOP.ssop.domain.User;
+import SSOP.ssop.domain.card.Card;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -14,12 +17,12 @@ import java.time.LocalDateTime;
 public class MySp {
 
     @Id
-    @Column(name = "group_id")
+    @Column(name = "groupId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long group_id;
+    private Long groupId;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(nullable = false, name = "userId")
     private User user;
 
     @Column(nullable = false, name = "group_name")
@@ -29,10 +32,21 @@ public class MySp {
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    // 카드 리스트 조회 메서드
+    // 그룹에 속한 카드 리스트
+    @Getter
+    @OneToMany(mappedBy = "mySp", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
+
     public MySp() {}
 
     public MySp(User user, String group_name) {
         this.user = user;
         this.group_name = group_name;
+    }
+
+    // 카드 추가 메서드
+    public void addCard(Card card) {
+        this.cards.add(card);
     }
 }

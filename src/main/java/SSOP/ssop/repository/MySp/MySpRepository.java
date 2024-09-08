@@ -16,6 +16,6 @@ public interface MySpRepository extends JpaRepository<MySp, Long> {
     List<MySp> findByUserId(@Param("userId") long userId);
 
     // 특정 유저의 그룹을 찾는 쿼리 메서드
-    @Query("SELECT m FROM MySp m WHERE m.group_id = :groupId AND m.user.userId = :userId")
+    @Query("SELECT m FROM MySp m WHERE m.groupId = :groupId AND m.user.userId = :userId")
     Optional<MySp> findByGroupIdAndUserId(@Param("groupId") Long groupId, @Param("userId") Long userId);
 }

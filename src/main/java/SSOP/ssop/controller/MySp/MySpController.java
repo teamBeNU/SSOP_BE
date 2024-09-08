@@ -1,8 +1,11 @@
 package SSOP.ssop.controller.MySp;
 
 import SSOP.ssop.domain.MySp.MySp;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
+import SSOP.ssop.repository.Card.CardRepository;
+import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.MySp.MySpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +64,7 @@ public class MySpController {
 
     // 마이스페이스 그룹 삭제
     @DeleteMapping
-    public ResponseEntity<Map<String, Object>> deleteGroup(@Login Long userId, @RequestParam Long group_id) {
+    public ResponseEntity<Map<String, Object>> deleteGroup(@Login Long userId, @RequestParam Long groupId) {
         try {
             // 토큰 검증 - 유효하지 않은 경우 401 Unauthorized 반환
             if (userId == null) {
@@ -69,7 +73,7 @@ public class MySpController {
             }
 
             // 그룹 삭제 시도
-            boolean isDeleted = mySpService.deleteMyspGroup(userId, group_id);
+            boolean isDeleted = mySpService.deleteMyspGroup(userId, groupId);
 
             // 삭제 성공 여부에 따라 응답 처리
             if (isDeleted) {
@@ -88,7 +92,7 @@ public class MySpController {
     // 마이스페이스 그룹명 변경
     @PatchMapping
     public ResponseEntity<?> updateGroupName(@Login Long userId,
-                                             @RequestParam Long group_id,
+                                             @RequestParam Long groupId,
                                              @RequestBody Map<String, String> request) {
         try {
             if (userId == null) {
@@ -102,9 +106,9 @@ public class MySpController {
                         .body(Map.of("message", "그룹명을 입력해 주세요."));
             }
 
-            MySp updatedGroup = mySpService.updateGroupName(userId, group_id, newGroupName);
+            MySp updatedGroup = mySpService.updateGroupName(userId, groupId, newGroupName);
             return ResponseEntity.ok(Map.of(
-                    "group_id", updatedGroup.getGroup_id(),
+                    "group_id", updatedGroup.getGroupId(),
                     "group_name", updatedGroup.getGroup_name()
             ));
         } catch (IllegalArgumentException e) {
@@ -113,6 +117,44 @@ public class MySpController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "그룹명 변경에 실패했습니다."));
+        }
+    }
+
+    // 마이스페이스 그룹 카드 추가
+    @PostMapping
+    public ResponseEntity<?> addCardsToGroup(
+            @Login Long userId,
+            @RequestParam Long groupId,
+            @RequestBody Map<String, List<Long>> request) {
+
+        try {
+            // 1. 토큰 유효성 확인
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("code", 401, "message", "유효한 토큰이 없습니다."));
+            }
+
+            // 2. 카드 ID 리스트가 존재하는지 확인
+            List<Long> cardIds = request.get("cardId");
+            if (cardIds == null || cardIds.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("code", 400, "message", "추가할 카드 ID가 필요합니다."));
+            }
+
+            // 3. 서비스 호출하여 카드 추가 처리
+            MySpGroupResponse response = mySpService.addCardsToGroup(userId, groupId, cardIds);
+
+            // 4. 성공 응답
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            // 5. 잘못된 요청에 대한 예외 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("code", 400, "message", e.getMessage()));
+        } catch (Exception e) {
+            // 6. 서버 오류에 대한 예외 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("code", 500, "message", "카드를 그룹에 추가하는 중 오류가 발생했습니다."));
         }
     }
 }
