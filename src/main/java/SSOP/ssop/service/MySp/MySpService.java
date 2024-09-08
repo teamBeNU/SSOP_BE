@@ -147,11 +147,11 @@ public class MySpService {
 
     // 그룹별 상세 조회
     public MySpDetailResponse getGroupDetails(Long userId, Long groupId) {
-        // 1. 그룹 존재 및 소유 여부 확인
+        // 그룹 존재 및 소유 여부 확인
         MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
 
-        // 2. 그룹에 속한 카드 정보 조회
+        // 그룹에 속한 카드 정보 조회
         List<CardResponse> members = group.getCards().stream()
                 .map(card -> {
                     CardStudent cardStudent = cardRepository.findCardStudentByCardId(card.getCardId());
@@ -162,7 +162,7 @@ public class MySpService {
                 })
                 .collect(Collectors.toList());
 
-        // 3. 그룹 상세 정보와 멤버 카드 정보 반환
+        // 그룹 상세 정보와 멤버 카드 정보 반환
         return new MySpDetailResponse(
                 group.getGroupId(),
                 group.getGroup_name(),
@@ -170,15 +170,5 @@ public class MySpService {
                 group.getCreatedAt(),
                 members
         );
-    }
-
-    // 나이 계산 메서드 (선택 사항)
-    private int calculateAgeFromBirth(String birthDate) {
-        if (birthDate == null || birthDate.isEmpty()) {
-            return 0;  // 생년월일 정보가 없으면 0 반환
-        }
-        // LocalDate.now() 기준으로 나이 계산
-        LocalDate birth = LocalDate.parse(birthDate);
-        return Period.between(birth, LocalDate.now()).getYears();
     }
 }
