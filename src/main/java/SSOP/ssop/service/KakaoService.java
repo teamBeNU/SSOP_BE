@@ -44,7 +44,6 @@ public class KakaoService {
         } else {
             user.setRole("USER");
             userRepository.save(user);
-            throw new CustomException(HttpStatus.OK, "회원가입이 완료되었습니다.");
         }
     }
 }

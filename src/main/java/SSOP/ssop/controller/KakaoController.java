@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -125,7 +124,7 @@ public class KakaoController {
         if (existingUser.isPresent()) {
             String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
             try {
-                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);            //return userService.login(kakaoLoginInfo);
+                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -137,7 +136,6 @@ public class KakaoController {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            // return userService.login(kakaoLoginInfo);
         }
         return null;
     }
