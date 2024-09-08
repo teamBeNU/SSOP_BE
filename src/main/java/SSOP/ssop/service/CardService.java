@@ -52,7 +52,7 @@ public class CardService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private String PROFILE_IMG_DIR = "profile/";
+    private String CARD_IMG_DIR = "card/";
 
     @Autowired
     public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository, CardFanRepository cardFanRepository, CardUtils cardUtils) {
@@ -149,7 +149,7 @@ public class CardService {
     private String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
         UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
         String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
-        String filePath = PROFILE_IMG_DIR + userId + "/" + fileName;   // 저장할 파일 경로
+        String filePath = CARD_IMG_DIR + userId + "/" + fileName;   // 저장할 파일 경로
 
         File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File 변환 실패"));
