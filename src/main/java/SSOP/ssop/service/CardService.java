@@ -145,31 +145,31 @@ public class CardService {
     private String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
         UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
         String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        String filePath = PROFILE_IMG_DIR + userId + "/" + fileName;   // 저장할 파일 경로
 
         File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 
         // S3에 파일 업로드
-        String fileUrl = uploadFileToS3(fileName, uploadFile, userId);
+        String fileUrl = uploadFileToS3(filePath, uploadFile);
 
         // 임시로 생성한 로컬 파일 삭제
-        // uploadFile.delete();
         removeFile(uploadFile);
 
         return fileUrl;
     }
 
     // S3로 파일 업로드
-    private String uploadFileToS3(String fileName, File uploadFile, Long userId) {
+    private String uploadFileToS3(String filePath, File uploadFile) {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
-                .key(PROFILE_IMG_DIR + userId + "/" + fileName)   // S3 내 디렉토리 및 파일 이름 설정
+                .key(filePath)   // S3 내 디렉토리 및 파일 이름 설정
                 .build();
 
         s3Client.putObject(putObjectRequest, RequestBody.fromFile(uploadFile));     // S3 업로드
 
         // 파일이 업로드된 S3의 URL 반환
-        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(PROFILE_IMG_DIR + fileName)).toExternalForm();
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
     }
 
     // 임시로 생성한 로컬 파일 삭제
@@ -347,6 +347,10 @@ public class CardService {
     public void deleteCard(long cardId, long userId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        // AWS S3 파일 삭제
+        // card의 profile_image_url 가져오기
+        //
 
         String template = card.getCard_template();
 
