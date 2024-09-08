@@ -1,12 +1,17 @@
 package SSOP.ssop.service.User;
 
 import SSOP.ssop.config.JwtProvider;
+import SSOP.ssop.domain.TeamSp.Member;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.domain.card.CardSaveDetails;
 import SSOP.ssop.dto.User.LoginDto;
 import SSOP.ssop.dto.User.UserDto;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.Card.CardRepository;
+import SSOP.ssop.repository.TeamSp.MemberRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -29,13 +33,17 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CardRepository cardRepository;
+    private final MemberRepository memberRepository;
+    private final TeamSpMemberRepository teamSpMemberRepository;
 
     // 생성자 주입
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, CardRepository cardRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, CardRepository cardRepository, MemberRepository memberRepository, TeamSpMemberRepository teamSpMemberRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.cardRepository = cardRepository;
+        this.memberRepository = memberRepository;
+        this.teamSpMemberRepository = teamSpMemberRepository;
     }
 
     // 회원가입
@@ -168,23 +176,45 @@ public class UserService {
     }
 
     // 카드 저장
-    public CardSaveResponse addCardToSavedList(Long userId, Long cardId) {
+    public CardSaveResponse addCardToSavedList(Long userId, Long cardId, boolean isTeamSp) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
 
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드 아이디입니다 : " + cardId));
+        String source = isTeamSp ?(memberRepository.findById(cardId).isPresent() ? "MEMBER" : "TEAMSP") : "CARD";
 
-        if(card.getUserId() == userId) {
-            throw new IllegalArgumentException("본인 카드입니다.");
+        // 일대일 교환 카드 저장
+        if(!isTeamSp) {
+            Card card = cardRepository.findById(cardId)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카드 아이디입니다 : " + cardId));
+
+            if (card.getUserId() == userId) {
+                throw new IllegalArgumentException("본인 카드입니다.");
+            }
+        }
+        // 팀스페이스에서 카드저장
+        else {
+            // 지정 템플릿인 경우
+            if(memberRepository.findById(cardId).isPresent()){
+                Optional<Member> card = memberRepository.findById(cardId);
+                if (card.get().getTeamSpMember().getUserId() == userId) {
+                    throw new IllegalArgumentException("본인 카드입니다.");
+                }
+            }
+            // 기존 카드인 경우
+            else if (teamSpMemberRepository.findById(cardId).isPresent()){
+                Optional<TeamSpMember> card = teamSpMemberRepository.findById(cardId);
+                if(card.get().getUserId() == userId) {
+                    throw new IllegalArgumentException("본인 카드입니다.");
+                }
+            }
         }
 
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
-        if(savedCardList.containsKey(cardId)) {
+        if (savedCardList.containsKey(cardId)) {
             return new CardSaveResponse(false, "이미 저장된 카드입니다");
         } else {
-            savedCardList.put(cardId, LocalDateTime.now());
+            savedCardList.put(cardId, new CardSaveDetails(source, LocalDateTime.now()));
             userRepository.save(user);
             return new CardSaveResponse(true, "카드가 저장되었습니다");
         }
@@ -196,7 +226,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
 
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
         if (savedCardList.remove(cardId) != null) {
             userRepository.save(user);
