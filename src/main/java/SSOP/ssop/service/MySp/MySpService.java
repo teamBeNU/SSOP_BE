@@ -8,6 +8,7 @@ import SSOP.ssop.domain.card.CardStudent;
 import SSOP.ssop.domain.card.CardWorker;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
 import SSOP.ssop.dto.MySp.response.MySpDetailResponse;
+import SSOP.ssop.dto.MySp.response.MySpGroupAddResponse;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardRepository;
@@ -16,8 +17,6 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -100,7 +99,7 @@ public class MySpService {
     }
 
     // 마이스페이스 그룹 카드 추가
-    public MySpGroupResponse addCardsToGroup(Long userId, Long groupId, List<Long> cardIds) {
+    public MySpGroupAddResponse addCardsToGroup(Long userId, Long groupId, List<Long> cardIds) {
         // 그룹이 존재하는지 확인
         MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
@@ -135,7 +134,7 @@ public class MySpService {
 
         // 성공 응답 반환
         // 그룹 정보와 추가된 카드 정보를 포함한 응답 반환
-        return new MySpGroupResponse(
+        return new MySpGroupAddResponse(
                 group.getGroupId(),        // 그룹 ID
                 group.getGroup_name(),      // 그룹 이름
                 group.getCreatedAt(),       // 그룹 생성 날짜

@@ -4,6 +4,7 @@ import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
 import SSOP.ssop.dto.MySp.response.MySpDetailResponse;
+import SSOP.ssop.dto.MySp.response.MySpGroupAddResponse;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.MySp.MySpRepository;
@@ -130,23 +131,23 @@ public class MySpController {
             @RequestBody Map<String, List<Long>> request) {
 
         try {
-            // 1. 토큰 유효성 확인
+            // 토큰 유효성 확인
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("code", 401, "message", "유효한 토큰이 없습니다."));
             }
 
-            // 2. 카드 ID 리스트가 존재하는지 확인
+            // 카드 ID 리스트가 존재하는지 확인
             List<Long> cardIds = request.get("cardId");
             if (cardIds == null || cardIds.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("code", 400, "message", "추가할 카드 ID가 필요합니다."));
             }
 
-            // 3. 서비스 호출하여 카드 추가 처리
-            MySpGroupResponse response = mySpService.addCardsToGroup(userId, groupId, cardIds);
+            // 서비스 호출하여 카드 추가 처리
+            MySpGroupAddResponse response = mySpService.addCardsToGroup(userId, groupId, cardIds);
 
-            // 4. 성공 응답
+            // 성공 응답
             return ResponseEntity.ok(response);
 
         } catch (IllegalArgumentException e) {
