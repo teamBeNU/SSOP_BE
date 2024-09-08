@@ -9,17 +9,26 @@ import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.*;
 import SSOP.ssop.utils.CardUtils;
 import SSOP.ssop.repository.Card.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Slf4j
 public class CardService {
 
     @Autowired
@@ -32,6 +41,14 @@ public class CardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private String PROFILE_IMG_DIR = "profile/";
 
     @Autowired
     public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository, CardFanRepository cardFanRepository, CardUtils cardUtils) {
@@ -49,10 +66,9 @@ public class CardService {
         try {
             String profileImageUrl = null;
             if (file != null && !file.isEmpty()) {
-                profileImageUrl = saveImage(file);
+                profileImageUrl = uploadImage(file, user_id);
             }
 
-            //Card card;
             Card card = createCard(request, user_id, profileImageUrl);
 
             switch (request.getCardEssential().getCard_template()) {
@@ -102,7 +118,7 @@ public class CardService {
         return avatar;
     }
 
-    private String saveImage(MultipartFile file) throws Exception {
+/*    private String saveImage(MultipartFile file) throws Exception {
 
         String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
         String relativePath = "/src/main/resources/static/uploads/profiles/";    // 이미지 저장 경로 설정 (로컬 경로)
@@ -123,6 +139,55 @@ public class CardService {
 
         //return filePath;    // 저장된 파일 경로 리턴
         return "/uploads/profiles/" + fileName;
+    }*/
+
+    // 이미지 업로드 (ASW S3 업로드)
+    private String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
+        UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
+        String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+
+        File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
+                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
+
+        // S3에 파일 업로드
+        String fileUrl = uploadFileToS3(fileName, uploadFile, userId);
+
+        // 임시로 생성한 로컬 파일 삭제
+        // uploadFile.delete();
+        removeFile(uploadFile);
+
+        return fileUrl;
+    }
+
+    // S3로 파일 업로드
+    private String uploadFileToS3(String fileName, File uploadFile, Long userId) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(PROFILE_IMG_DIR + userId + "/" + fileName)   // S3 내 디렉토리 및 파일 이름 설정
+                .build();
+
+        s3Client.putObject(putObjectRequest, RequestBody.fromFile(uploadFile));     // S3 업로드
+
+        // 파일이 업로드된 S3의 URL 반환
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(PROFILE_IMG_DIR + fileName)).toExternalForm();
+    }
+
+    // 임시로 생성한 로컬 파일 삭제
+    private void removeFile(File file) {
+        if (file.delete()) {
+            log.info("File delete success: {}", file);
+            return;
+        }
+        log.info("File delete fail: {}", file);
+    }
+
+    // MultipartFile을 File로 변환
+    private Optional<File> convertMultipartFileToFile(MultipartFile file) throws IOException {
+        File convertFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());   // 운영체제의 임시 디렉토리 경로 가져옴(C:\Users\{사용자명}\AppData\Local\Temp\)
+        try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
+            fos.write(file.getBytes());
+        }
+        return Optional.of(convertFile);
     }
 
     private Card createCard(CardCreateRequest request, Long user_id, String profileImageUrl) {
