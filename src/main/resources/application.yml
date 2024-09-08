@@ -11,7 +11,7 @@ spring:
   jpa :
     hibernate:
       #스프링 시작 시 DB에 있는 테이블을 어떻게 처리할 지
-      ddl-auto: validate
+      ddl-auto: update
       #ddl-auto 속성 종류
         #create : 시작 시 기존 테이블 삭제 후 생성
         #creae-drop : 종료 시 테이블 삭제

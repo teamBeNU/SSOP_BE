@@ -1,4 +1,4 @@
-package SSOP.ssop.repository;
+package SSOP.ssop.repository.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +14,4 @@ public interface TeamSpRepository extends JpaRepository<TeamSp, Long> {
 
     // inviteCode 팀스페이스 조회
     Optional<TeamSp> findByInviteCode(int inviteCode);
-
-//    Optional<TeamSp> findByTeamName(String team_name);
-
 }

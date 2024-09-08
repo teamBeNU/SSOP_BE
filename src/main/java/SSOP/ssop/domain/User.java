@@ -2,6 +2,7 @@ package SSOP.ssop.domain;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.card.CardSaveDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,8 +10,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -21,9 +23,9 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonProperty("user_id")
     private Long userId;
 
+    @JsonProperty("user_name")
     private String role; // "ADMIN" or "USER"
 
     private String user_name;
@@ -34,7 +36,7 @@ public class User {
     private String social_type;
 
     @ElementCollection
-    private List<String> saved_card_list;
+    private Map<Long, CardSaveDetails> saved_card_list = new HashMap<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TeamSpMember> teamSpMembers = new HashSet<>();
@@ -68,7 +70,7 @@ public class User {
         this.password = password;
     }
 
-    public void deleteSavedList(long card_id) { saved_card_list.remove(card_id); }
+    public void deleteSavedList(long cardId) { saved_card_list.remove(cardId); }
 
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));

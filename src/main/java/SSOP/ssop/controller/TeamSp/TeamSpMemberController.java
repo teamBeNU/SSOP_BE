@@ -1,6 +1,7 @@
 package SSOP.ssop.controller.TeamSp;
 
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.SubmitCardRequest;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
@@ -29,7 +30,7 @@ public class TeamSpMemberController {
     @PostMapping("/submit-card")
     public ResponseEntity<?> submitCard(@RequestParam Long teamId, @RequestBody SubmitCardRequest submitCardRequest, @Login Long userId) {
         try {
-            Long cardId = submitCardRequest.getCard_id();
+            Long cardId = submitCardRequest.getCardId();
             teamSpMemberService.SubmitCard(teamId, cardId, userId);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(Map.of("message", "카드 ID " + cardId + "이(가) 제출되었습니다."));
@@ -54,9 +55,9 @@ public class TeamSpMemberController {
         }
     }
 
-    // 특정 팀스페이스 참여 정보 조회 (team_id를 쿼리 파라미터로)
+    // 특정 팀스페이스 참여 정보 조회
     @GetMapping("/member")
-    public ResponseEntity<?> getTeamMemberById(@RequestParam("team_id") Long teamId) {
+    public ResponseEntity<?> getTeamMemberById(@RequestParam("teamId") Long teamId) {
         Optional<TeamSpMemberDto> teamSpMemberDto = teamSpMemberService.getTeamMemberById(teamId);
 
         if (teamSpMemberDto.isPresent()) {
@@ -80,6 +81,30 @@ public class TeamSpMemberController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "팀스페이스 정보를 조회하는 도중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    // 최신순 정렬
+    @GetMapping("/sort/recent")
+    public ResponseEntity<?> getMembersByTeamIdSortedByRecent(@RequestParam Long teamId) {
+        try {
+            List<TeamSpMemSortedDto> teamSpMemSortedDto = teamSpMemberService.findByTeamSpIdSortedByRecent(teamId);
+            return ResponseEntity.ok(teamSpMemSortedDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "팀스페이스 멤버를 최신순으로 정렬하는 도중 오류가 발생했습니다: " + e.getMessage()));
+        }
+    }
+
+    // 이름순 정렬
+    @GetMapping("/sort/name")
+    public ResponseEntity<?> getMembersByTeamIdSortedByUsername(@RequestParam Long teamId) {
+        try {
+            List<TeamSpMemSortedDto> teamSpMemSortedDto = teamSpMemberService.findByTeamSpIdSortedByUsername(teamId);
+            return ResponseEntity.ok(teamSpMemSortedDto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "팀스페이스 멤버를 이름순으로 정렬하는 도중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 }

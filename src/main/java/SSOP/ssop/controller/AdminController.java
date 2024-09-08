@@ -2,7 +2,7 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.repository.CardRepository;
+import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
