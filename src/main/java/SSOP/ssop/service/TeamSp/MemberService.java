@@ -5,22 +5,39 @@ import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.dto.TeamSp.*;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MemberService {
 
     private MemberRepository memberRepository;
     private TeamSpMemberRepository teamSpMemberRepository;
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private String TEAMSP_IMG_DIR = "teamsp/";
 
     @Autowired
     public MemberService(MemberRepository memberRepository, TeamSpMemberRepository teamSpMemberRepository) {
@@ -41,7 +58,7 @@ public class MemberService {
 
         String profileImageUrl = null;
         if (file != null && !file.isEmpty()) {
-            profileImageUrl = saveImage(file, teamId);
+            profileImageUrl = uploadImage(file, teamId, userId);
         }
 
         Member member = new Member();
@@ -64,7 +81,7 @@ public class MemberService {
         }
     }
 
-    private String saveImage(MultipartFile file, Long teamId) throws Exception {
+/*    private String saveImage(MultipartFile file, Long teamId) throws Exception {
 
         String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
         String relativePath = "/src/main/resources/static/uploads/teamSp/";    // 이미지 저장 경로 설정 (로컬 경로)
@@ -83,6 +100,55 @@ public class MemberService {
         file.transferTo(saveFile);  // 파일 저장
 
         return "/uploads/teamSp/" + teamId + "/" + fileName;
+    }*/
+
+    // 이미지 업로드 (ASW S3 업로드)
+    private String uploadImage(MultipartFile multipartFile, Long teamId, Long userId) throws IOException {
+        UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
+        String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        String filePath = TEAMSP_IMG_DIR + teamId + "/" + userId + "_" + fileName;   // 저장할 파일 경로
+
+        File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
+                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File 변환 실패"));
+
+        // S3에 파일 업로드
+        String fileUrl = uploadFileToS3(filePath, uploadFile);
+
+        // 임시로 생성한 로컬 파일 삭제
+        removeFile(uploadFile);
+
+        return fileUrl;
+    }
+
+    // S3로 파일 업로드
+    private String uploadFileToS3(String filePath, File uploadFile) {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(filePath)   // S3 내 디렉토리 및 파일 이름 설정
+                .build();
+
+        s3Client.putObject(putObjectRequest, RequestBody.fromFile(uploadFile));     // S3 업로드
+
+        // 파일이 업로드된 S3의 URL 반환
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
+    }
+
+    // 임시로 생성한 로컬 파일 삭제
+    private void removeFile(File file) {
+        if (file.delete()) {
+            log.info("임시 로컬 파일 삭제 성공: {}", file);
+            return;
+        }
+        log.info("임시 로컬 파일 삭제 실패: {}", file);
+    }
+
+    // MultipartFile을 File로 변환
+    private Optional<File> convertMultipartFileToFile(MultipartFile file) throws IOException {
+        File convertFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());   // 운영체제의 임시 디렉토리 경로 가져옴(C:\Users\{사용자명}\AppData\Local\Temp\)
+        try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
+            fos.write(file.getBytes());
+        }
+        return Optional.of(convertFile);
     }
 
     private void setMemberRequest(Member member, MemberRequest memberRequest) {
