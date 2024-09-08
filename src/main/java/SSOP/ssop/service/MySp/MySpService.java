@@ -3,14 +3,21 @@ package SSOP.ssop.service.MySp;
 import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.domain.card.CardFan;
+import SSOP.ssop.domain.card.CardStudent;
+import SSOP.ssop.domain.card.CardWorker;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
+import SSOP.ssop.dto.MySp.response.MySpDetailResponse;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
+import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -127,7 +134,7 @@ public class MySpService {
         mySpRepository.save(group);
 
         // 성공 응답 반환
-        // 9. 그룹 정보와 추가된 카드 정보를 포함한 응답 반환
+        // 그룹 정보와 추가된 카드 정보를 포함한 응답 반환
         return new MySpGroupResponse(
                 group.getGroupId(),        // 그룹 ID
                 group.getGroup_name(),      // 그룹 이름
@@ -136,5 +143,42 @@ public class MySpService {
                 "카드가 그룹에 성공적으로 추가되었습니다.",  // 메시지
                 addedCardIds                // 추가된 카드 ID 리스트
         );
+    }
+
+    // 그룹별 상세 조회
+    public MySpDetailResponse getGroupDetails(Long userId, Long groupId) {
+        // 1. 그룹 존재 및 소유 여부 확인
+        MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
+
+        // 2. 그룹에 속한 카드 정보 조회
+        List<CardResponse> members = group.getCards().stream()
+                .map(card -> {
+                    CardStudent cardStudent = cardRepository.findCardStudentByCardId(card.getCardId());
+                    CardWorker cardWorker = cardRepository.findCardWorkerByCardId(card.getCardId());
+                    CardFan cardFan = cardRepository.findCardFanByCardId(card.getCardId());
+
+                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true);  // CardResponse 객체 생성
+                })
+                .collect(Collectors.toList());
+
+        // 3. 그룹 상세 정보와 멤버 카드 정보 반환
+        return new MySpDetailResponse(
+                group.getGroupId(),
+                group.getGroup_name(),
+                members.size(),   // 멤버 수
+                group.getCreatedAt(),
+                members
+        );
+    }
+
+    // 나이 계산 메서드 (선택 사항)
+    private int calculateAgeFromBirth(String birthDate) {
+        if (birthDate == null || birthDate.isEmpty()) {
+            return 0;  // 생년월일 정보가 없으면 0 반환
+        }
+        // LocalDate.now() 기준으로 나이 계산
+        LocalDate birth = LocalDate.parse(birthDate);
+        return Period.between(birth, LocalDate.now()).getYears();
     }
 }

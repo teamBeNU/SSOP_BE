@@ -3,6 +3,7 @@ package SSOP.ssop.controller.MySp;
 import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.MySp.request.MySpGroupCreateRequest;
+import SSOP.ssop.dto.MySp.response.MySpDetailResponse;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.MySp.MySpRepository;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/mysp")
@@ -155,6 +157,39 @@ public class MySpController {
             // 6. 서버 오류에 대한 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("code", 500, "message", "카드를 그룹에 추가하는 중 오류가 발생했습니다."));
+        }
+    }
+
+    // 그룹별 상세 정보 조회
+    @GetMapping
+    public ResponseEntity<?> getGroupDetails(
+            @RequestParam Long groupId,
+            @Login Long userId) {
+
+        try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("error", "Invalid or missing token"));
+            }
+
+            // 그룹 상세 정보 조회
+            MySpDetailResponse response = mySpService.getGroupDetails(userId, groupId);
+
+            // 성공적으로 조회된 경우
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            // 그룹 미존재 또는 권한 부족 시 처리
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (NoSuchElementException e) {
+            // 잘못된 그룹 ID일 경우 처리
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Group not found"));
+        } catch (Exception e) {
+            // 그 외 예상치 못한 오류 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "An unexpected error occurred"));
         }
     }
 }

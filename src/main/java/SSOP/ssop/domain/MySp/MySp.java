@@ -48,5 +48,6 @@ public class MySp {
     // 카드 추가 메서드
     public void addCard(Card card) {
         this.cards.add(card);
+        card.setMySp(this);
     }
 }
