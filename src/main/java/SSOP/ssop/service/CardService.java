@@ -18,12 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -148,7 +152,7 @@ public class CardService {
         String filePath = PROFILE_IMG_DIR + userId + "/" + fileName;   // 저장할 파일 경로
 
         File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
-                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
+                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File 변환 실패"));
 
         // S3에 파일 업로드
         String fileUrl = uploadFileToS3(filePath, uploadFile);
@@ -175,10 +179,10 @@ public class CardService {
     // 임시로 생성한 로컬 파일 삭제
     private void removeFile(File file) {
         if (file.delete()) {
-            log.info("File delete success: {}", file);
+            log.info("임시 로컬 파일 삭제 성공: {}", file);
             return;
         }
-        log.info("File delete fail: {}", file);
+        log.info("임시 로컬 파일 삭제 실패: {}", file);
     }
 
     // MultipartFile을 File로 변환
@@ -344,14 +348,15 @@ public class CardService {
 
     // 카드 삭제
     @Transactional
-    public void deleteCard(long cardId, long userId) {
+    public void deleteCard(long cardId, long userId) throws URISyntaxException {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
         // AWS S3 파일 삭제
-        // card의 profile_image_url 가져오기
-        //
+        String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
+        deleteImage(imageUrl);
 
+        // 카드 삭제
         String template = card.getCard_template();
 
         cardUtils.deleteIfExists(template, "student", cardStudentRepository, cardId);
@@ -359,6 +364,27 @@ public class CardService {
         cardUtils.deleteIfExists(template, "fan", cardFanRepository, cardId);
 
         cardRepository.delete(card);
+    }
+
+    // AWS S3 파일 삭제
+    private void deleteImage(String imageUrl) throws URISyntaxException {
+        try {
+            // Url에서 S3 키 추출
+            URI uri = new URI(imageUrl);
+            String fileKey = uri.getPath().substring(1);  // 경로의 첫 번째 '/' 제거
+
+            // S3에서 객체 삭제
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+
+            log.error("이미지 삭제 성공");
+        } catch (S3Exception e) {
+            log.error("이미지 삭제 실패: {}", e.getMessage());
+        }
     }
 
     // 상대 카드 메모 작성
