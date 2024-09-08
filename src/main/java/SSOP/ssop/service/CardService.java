@@ -218,7 +218,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
 
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
         if (savedCardList == null || savedCardList.isEmpty()) {
             return Collections.emptyList(); // 저장한 카드가 없는 경우
@@ -231,7 +231,8 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            LocalDateTime savedAt = savedCardList.get(card.getCardId());
+            CardSaveDetails details = savedCardList.get(card.getCardId());
+            LocalDateTime savedAt = (details != null) ? details.getSavedTime() : null;
             responses.add(cardUtils.createCardResponse(card, true, savedAt));
         }
 
@@ -302,7 +303,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
         if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {
