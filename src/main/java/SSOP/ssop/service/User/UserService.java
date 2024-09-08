@@ -3,6 +3,7 @@ package SSOP.ssop.service.User;
 import SSOP.ssop.config.JwtProvider;
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.KakaoUser;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.domain.card.CardSaveDetails;
@@ -55,6 +56,7 @@ public class UserService {
             // 비밀번호를 암호화
             String encryptedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encryptedPassword);
+            user.setRole("USER");
             userRepository.save(user);
             return Collections.singletonMap("message", "회원가입이 완료되었습니다.");
         }
@@ -65,6 +67,12 @@ public class UserService {
         User user = userRepository.findByEmail(loginDto.getEmail()).orElse(null);
 
         if (user != null) {
+            // 카카오 로그인인 경우
+            if(user.getSocial_type() != null && user.getSocial_type().equals("kakao")){
+                String jwtToken = jwtProvider.generateJwtToken(user.getUserId(), user.getEmail(), user.getUser_name());
+                return Collections.singletonMap("token", jwtToken);
+            }
+
             // 비밀번호 비교
             boolean passwordMatches = passwordEncoder.matches(loginDto.getPassword(), user.getPassword());
 
@@ -125,7 +133,6 @@ public class UserService {
 
         return ResponseEntity.ok().body(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
     }
-
 
     // 유저 전화번호 수정
     public ResponseEntity<?> updatePhone(UserDto userDto) {

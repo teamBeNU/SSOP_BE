@@ -18,6 +18,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
+@Table(name = "user")
 public class User {
 
     @Id
@@ -25,6 +26,8 @@ public class User {
     private Long userId;
 
     @JsonProperty("user_name")
+    private String role; // "ADMIN" or "USER"
+
     private String user_name;
     private String email;
     private String password;
