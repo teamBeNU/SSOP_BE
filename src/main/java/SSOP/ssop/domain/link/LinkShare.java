@@ -1,13 +1,17 @@
 package SSOP.ssop.domain.link;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class LinkShare {
 
@@ -15,17 +19,13 @@ public class LinkShare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long card_id;
-    private String link;
-    private LocalDateTime expiryTime;
+    private String token;  // 고유 링크 토큰
+    private Long cardId;   // 공유된 카드 ID
+    private LocalDateTime expiryTime;  // 만료 시간
 
-    // 기본 생성자
-    public LinkShare() {}
-
-    // 생성자
-    public LinkShare(Long card_id, String link, LocalDateTime expiryTime) {
-        this.card_id = card_id;
-        this.link = link;
+    public LinkShare(String token, Long cardId, LocalDateTime expiryTime) {
+        this.token = token;
+        this.cardId = cardId;
         this.expiryTime = expiryTime;
     }
 }

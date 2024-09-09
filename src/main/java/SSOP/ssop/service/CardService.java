@@ -6,6 +6,8 @@ import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.CardShareResponse;
+import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.*;
 import SSOP.ssop.utils.CardUtils;
 import SSOP.ssop.repository.Card.*;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CardService {
@@ -318,5 +321,44 @@ public class CardService {
         } else {
             throw new CustomException(HttpStatus.UNAUTHORIZED, "저장한 카드가 아닙니다.");
         }
+    }
+
+    // 카드 공유 처리
+    public CardShareResponse shareCard(Long userId, Long cardId, Long recipientId) throws IllegalArgumentException {
+        // 카드 조회
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
+
+        // 카드 소유자가 아닌 경우 예외 처리
+        if (card.getUser().getUserId() != userId) {
+            throw new IllegalArgumentException("본인의 카드만 공유할 수 있습니다.");
+        }
+
+        // 수신자 조회
+        User recipient = userRepository.findById(recipientId)
+                .orElseThrow(() -> new IllegalArgumentException("수신자를 찾을 수 없습니다."));
+
+        // 카드 수신자 설정 및 상태 업데이트
+        card.setRecipient(recipient);
+        card.setStatus("요청 중...");
+
+        // 변경된 카드 저장
+        cardRepository.save(card);
+
+        return new CardShareResponse(cardId, recipientId, card.getStatus());
+    }
+
+    // 모든 공유된 카드의 상태 조회
+    public List<CardShareStatusResponse> getAllCardShareStatus(Long userId) {
+        // 로그인된 사용자가 공유한 모든 카드 조회
+        List<Card> cards = cardRepository.findAllByUser_UserId(userId);
+
+        // 카드 리스트를 공유 상태 응답 리스트로 변환
+        return cards.stream()
+                .map(card -> new CardShareStatusResponse(
+                        card.getCardId(),
+                        card.getRecipient().getUserId(),
+                        card.getStatus()))
+                .collect(Collectors.toList());
     }
 }

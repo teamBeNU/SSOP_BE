@@ -1,5 +1,7 @@
 package SSOP.ssop.domain.card;
 
+import SSOP.ssop.domain.MySp.MySp;
+import SSOP.ssop.domain.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,16 @@ public class Card {
 
     @Column(nullable = false)
     private Long userId;
+
+    // 카드 소유자 (카드를 보낸 사람), userId와 관계 설정
+    @ManyToOne
+    @JoinColumn(name = "userId", insertable = false, updatable = false)
+    private User user;  // 외래 키는 userId와 연결되지만, 중복 입력되지 않도록 함
+
+    // 카드 수신자 (카드를 받은 사람)
+    @ManyToOne
+    @JoinColumn(name = "recipientId")
+    private User recipient;
 
     // 공통 필수
     @Column(nullable = false, length = 20)
@@ -79,6 +91,14 @@ public class Card {
 
     @OneToOne(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
     private CardWorker cardWorker;
+
+    // MySp와의 다대일 관계 추가
+    @ManyToOne
+    @JoinColumn(name = "groupId")
+    private MySp mySp;  // 카드가 속한 그룹
+
+    @Column(nullable = false)
+    private String status;  // 카드 상태 ("요청 중...", "공유 완료됨")
 
     public Card() {}
 

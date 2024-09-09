@@ -23,7 +23,7 @@ public class CardFan {
     private String card_fan_genre;      // 덕질장르
 
     @Column(name = "card_fan_first")
-    private String card_fan_first;      // 최애 차애 입덕계기
+    private String card_fan_first;      // 최애
 
     @Column(name = "card_fan_second")
     private String card_fan_second;     // 차애

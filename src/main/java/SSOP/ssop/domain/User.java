@@ -2,6 +2,7 @@ package SSOP.ssop.domain;
 
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.domain.card.CardSaveDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -40,6 +41,14 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TeamSpMember> teamSpMembers = new HashSet<>();
+
+    // 사용자가 소유한 카드 목록 (카드를 보낸 목록)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Card> sentCards = new HashSet<>();
+
+    // 사용자가 수신한 카드 목록 (카드를 받은 목록)
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Card> receivedCards = new HashSet<>();
 
     // 의문.. @NoArgsConstructor 정의했지만 이 코드가 있어야 오류가 안난다고요?
     public User(){};
