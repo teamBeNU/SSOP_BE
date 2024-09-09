@@ -198,7 +198,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, false));
+            responses.add(cardUtils.createCardResponse(card, false, null));
         }
 
         return responses;
@@ -210,44 +210,43 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-        responses.add(cardUtils.createCardResponse(card, false));
+            responses.add(cardUtils.createCardResponse(card, false, card.getCreatedAt()));
         }
 
         return responses;
     }
 
     // 상대 카드 목록 조회
-//    public List<CardResponse> getSavedCards(long userId) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
-//
-//        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
-//
-//        if (savedCardList == null || savedCardList.isEmpty()) {
-//            return Collections.emptyList(); // 저장한 카드가 없는 경우
-//        }
+    public List<CardResponse> getSavedCards(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
 
-//        List<Long> savedCardListAsLongs = savedCardList.stream()
-//                .map(Long::valueOf)
-//                .collect(Collectors.toList());
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
-//        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
+        if (savedCardList == null || savedCardList.isEmpty()) {
+            return Collections.emptyList(); // 저장한 카드가 없는 경우
+        }
 
-//        List<CardResponse> responses = new ArrayList<>();
+        List<Long> savedCardListAsLongs = new ArrayList<>(savedCardList.keySet());
 
-//        for (Card card : cards) {
-//            responses.add(cardUtils.createCardResponse(card, true));
-//        }
+        List<Card> cards = cardRepository.findAllById(savedCardListAsLongs);
 
-//        return responses;
+        List<CardResponse> responses = new ArrayList<>();
 
-//    }
+        for (Card card : cards) {
+            CardSaveDetails details = savedCardList.get(card.getCardId());
+            LocalDateTime savedAt = (details != null) ? details.getSavedTime() : null;
+            responses.add(cardUtils.createCardResponse(card, true, savedAt));
+        }
+
+        return responses;
+    }
 
     // 특정 카드 상세 조회
     public CardResponse getCard(long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-        return cardUtils.createCardResponse(card, false);
+        return cardUtils.createCardResponse(card, false, card.getCreatedAt());
     }
 
     // 카드 수정
@@ -307,7 +306,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
 
         if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {
