@@ -2,10 +2,13 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardShareRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.MemoRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
+import SSOP.ssop.dto.card.response.CardShareResponse;
+import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
@@ -124,5 +127,50 @@ public class CardController {
     @PostMapping("/memo")
     public void writeMemo(@RequestParam long cardId, @Login Long userId, @RequestBody MemoRequest memo) {
         cardService.writeMemo(cardId, userId, memo.getMemo());
+    }
+
+    // 카드 공유 요청
+    @PostMapping("/share")
+    public ResponseEntity<Map<String, Object>> shareCard(@RequestBody CardShareRequest request, @Login Long userId) {
+        try {
+            // 카드 공유 서비스 호출
+            CardShareResponse response = cardService.shareCard(userId, request.getCardId(), request.getRecipientId());
+
+            // 성공적으로 카드 공유 시 응답
+            return ResponseEntity.ok(Map.of(
+                    "cardId", response.getCardId(),
+                    "recipientId", response.getRecipientId(),
+                    "message", "카드가 성공적으로 전송되었습니다.",
+                    "status", response.getStatus()
+            ));
+        } catch (IllegalArgumentException e) {
+            // 카드 ID나 수신자 ID가 잘못된 경우
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        } catch (CustomException e) {
+            // 인증되지 않은 사용자 토큰일 경우
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효하지 않은 토큰입니다."));
+        } catch (Exception e) {
+            // 서버 내부 오류
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "서버 오류가 발생했습니다."));
+        }
+    }
+
+    // 카드 공유 상태
+    @GetMapping("/share/status/all")
+    public ResponseEntity<List<CardShareStatusResponse>> getAllCardShareStatus(@Login Long userId) {
+        try {
+            // 서비스 호출하여 모든 공유 상태 조회
+            List<CardShareStatusResponse> statuses = cardService.getAllCardShareStatus(userId);
+            return ResponseEntity.ok(statuses);  // 성공 시 200 OK와 함께 공유 상태 목록 반환
+        } catch (CustomException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
 }

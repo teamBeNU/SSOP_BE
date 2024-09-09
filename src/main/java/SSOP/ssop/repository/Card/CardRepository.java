@@ -21,4 +21,13 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     @Query("SELECT cf FROM CardFan cf WHERE cf.card.cardId = :cardId")
     CardFan findCardFanByCardId(@Param("cardId") Long cardId);
+
+    // 특정 사용자가 수신한 카드 목록 조회
+    List<Card> findAllByRecipient_UserId(Long userId);
+
+    // 특정 사용자가 소유한 모든 카드 조회
+    List<Card> findAllByUser_UserId(Long userId);
+
+    // 특정 상태에 따른 수신자가 있는 카드 목록 조회
+    List<Card> findAllByRecipient_UserIdAndStatus(Long userId, String status);
 }
