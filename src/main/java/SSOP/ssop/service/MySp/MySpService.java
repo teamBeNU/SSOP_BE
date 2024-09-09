@@ -17,6 +17,7 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -156,8 +157,9 @@ public class MySpService {
                     CardStudent cardStudent = cardRepository.findCardStudentByCardId(card.getCardId());
                     CardWorker cardWorker = cardRepository.findCardWorkerByCardId(card.getCardId());
                     CardFan cardFan = cardRepository.findCardFanByCardId(card.getCardId());
+                    LocalDateTime createdAt = card.getCreatedAt();  // 카드 생성 시간
 
-                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true);  // CardResponse 객체 생성
+                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, createdAt);  // CardResponse 객체 생성
                 })
                 .collect(Collectors.toList());
 

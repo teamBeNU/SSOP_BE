@@ -69,11 +69,12 @@ public class LinkShareService {
         CardStudent cardStudent = cardRepository.findCardStudentByCardId(card.getCardId());
         CardWorker cardWorker = cardRepository.findCardWorkerByCardId(card.getCardId());
         CardFan cardFan = cardRepository.findCardFanByCardId(card.getCardId());
+        LocalDateTime createdAt = card.getCreatedAt();  // 카드 생성 시간
 
         // 현재 로그인된 사용자 ID와 카드 소유자 ID 비교
         boolean isNotMyCard = !card.getUserId().equals(card.getUserId());
 
         // CardResponse 객체 생성 및 반환
-        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard);
+        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, createdAt);
     }
 }
