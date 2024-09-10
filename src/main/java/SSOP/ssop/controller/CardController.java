@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,6 @@ public class CardController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("code", 400, "message", "카드 생성 실패"));
             }
-
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("code", 500, "message", "서버 오류 발생"));
         }
@@ -100,9 +100,14 @@ public class CardController {
 
     // 카드 수정 (내카드)
     @PatchMapping("/edit")
-    public void updateCard(@Login Long userID, @RequestParam long cardId, @RequestBody CardUpdateRequest request) {
+    public void updateCard(
+            @Login Long userID,
+            @RequestParam long cardId,
+            @RequestPart(name = "card") CardUpdateRequest request,
+            @RequestPart(name = "image", required = false) MultipartFile file
+    ) throws URISyntaxException, IOException {
         request.setCard_id(cardId);
-        cardService.updateCard(request);
+        cardService.updateCard(request, file);
         throw new CustomException(HttpStatus.OK, "카드가 수정되었습니다.");
     }
 

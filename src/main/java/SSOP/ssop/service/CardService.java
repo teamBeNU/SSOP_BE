@@ -6,9 +6,9 @@ import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.repository.*;
-import SSOP.ssop.utils.CardUtils;
 import SSOP.ssop.repository.Card.*;
+import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.utils.CardUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
@@ -121,29 +120,6 @@ public class CardService {
         avatar.setBgColor(avatarRequest.getBgColor());
         return avatar;
     }
-
-/*    private String saveImage(MultipartFile file) throws Exception {
-
-        String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
-        String relativePath = "/src/main/resources/static/uploads/profiles/";    // 이미지 저장 경로 설정 (로컬 경로)
-        String uploadDir = projectRootPath + relativePath;
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
-        }
-
-        UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
-        String fileName = uuid + "_" + file.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
-        // String filePath = uploadDir + fileName;    // 저장할 파일 경로 설정
-
-        // 파일 저장
-        File saveFile = new File(directory, fileName);
-        file.transferTo(saveFile);  // 파일 저장
-
-        //return filePath;    // 저장된 파일 경로 리턴
-        return "/uploads/profiles/" + fileName;
-    }*/
 
     // 이미지 업로드 (ASW S3 업로드)
     private String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
@@ -317,17 +293,30 @@ public class CardService {
     }
 
     // 카드 수정
-    public void updateCard(CardUpdateRequest request) {
+    public void updateCard(CardUpdateRequest request, MultipartFile file) throws URISyntaxException, IOException {
         Card card = cardRepository.findById(request.getCard_id())
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
+        // 이미지가 존재할 때만 수정
+        if (file != null && !file.isEmpty()) {
+            // AWS S3 이미지 삭제
+            String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
+            deleteImage(imageUrl);
+
+            // AWS S3 이미지 업로드
+            String profileImageUrl = null;
+            profileImageUrl = uploadImage(file, card.getUserId());
+
+            // profile_image_url 필드 업데이트
+            cardUtils.updateFieldIfNotNull(profileImageUrl, card::setProfile_image_url);
+        }
+        
         // 공통 필드 업데이트
         cardUtils.updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
         cardUtils.updateFieldIfNotNull(request.getCard_introduction(), card::setCard_introduction);
         cardUtils.updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
         cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
         cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
-        cardUtils.updateFieldIfNotNull(request.getProfile_image_url(), card::setProfile_image_url);
         cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
         cardUtils.updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
         cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
