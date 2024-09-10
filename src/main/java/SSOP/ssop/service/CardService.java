@@ -8,9 +8,9 @@ import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
-import SSOP.ssop.repository.*;
-import SSOP.ssop.utils.CardUtils;
 import SSOP.ssop.repository.Card.*;
+import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -221,7 +221,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
 
-        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
         if (savedCardList == null || savedCardList.isEmpty()) {
             return Collections.emptyList(); // 저장한 카드가 없는 경우
@@ -234,8 +234,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            CardSaveDetails details = savedCardList.get(card.getCardId());
-            LocalDateTime savedAt = (details != null) ? details.getSavedTime() : null;
+            LocalDateTime savedAt = savedCardList.get(card.getCardId());
             responses.add(cardUtils.createCardResponse(card, true, savedAt));
         }
 
@@ -306,7 +305,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
         if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {

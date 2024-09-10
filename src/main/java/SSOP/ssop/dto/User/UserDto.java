@@ -1,14 +1,12 @@
 package SSOP.ssop.dto.User;
 
 import SSOP.ssop.domain.User;
-import SSOP.ssop.domain.card.CardSaveDetails;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -22,7 +20,7 @@ public class UserDto {
     private LocalDate user_birth;
     private String user_phone;
     private String social_type;
-    private Map<Long, CardSaveDetails> saved_card_list;
+    private Map<Long, LocalDateTime> saved_card_list;
 
     public UserDto() {
     }
