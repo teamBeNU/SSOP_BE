@@ -23,6 +23,23 @@ spring:
         format_sql: true #JPA 사용해 DB에 SQL날릴 때 SQL을 예쁘게 포맷팅할 지 결정
         show_sql: false #JPA 사용해 DB에 SQL날릴 때 SQL 보여줄 지 결정
         dialect: org.hibernate.dialect.MySQL8Dialect #한국어로 방언, 사투리란 뜻으로 알아서 db끼리 다른 sql 조금씩 수정
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client_id: ${kakao.client.id}
+            client-secret: ${kakao.client.secret}
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost.8080/login/kakao
+            client-name: Kakao
+            client-authentication-method: client_secret_post
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
   servlet:
     multipart:    # 파일 업로드 처리
       enabled: true   # multipart 업로드 기능 활성회(multipart/form-data 형식 요청 처리 가능)(파일 업로드 지원)

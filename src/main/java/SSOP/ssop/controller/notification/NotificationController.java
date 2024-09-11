@@ -3,10 +3,8 @@ package SSOP.ssop.controller.notification;
 import SSOP.ssop.domain.notification.Notification;
 import SSOP.ssop.dto.notification.NotificationDto;
 import SSOP.ssop.dto.notification.NotificationRequestDto;
-import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.service.Notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,7 +31,7 @@ public class NotificationController {
 
         // 응답 DTO 생성
         NotificationDto response = new NotificationDto(
-                notification.getNotification_id(),
+                notification.getNotificationId(),
                 notification.getTitle(),
                 notification.getCard_name(),
                 notification.isAccepted()
@@ -42,7 +40,7 @@ public class NotificationController {
         // 201 Created 응답 반환
         return new ResponseEntity<>(Map.of(
                 "message", "알림이 생성되었습니다.",
-                "notification_id", notification.getNotification_id()  // id -> notification_id로 변경
+                "notification_id", notification.getNotificationId()
         ), HttpStatus.CREATED);
     }
 
@@ -55,7 +53,7 @@ public class NotificationController {
         // 응답 DTO로 변환
         List<NotificationDto> response = notifications.stream()
                 .map(notification -> new NotificationDto(
-                        notification.getNotification_id(),
+                        notification.getNotificationId(),
                         notification.getTitle(),
                         notification.getCard_name(),
                         notification.isAccepted()
@@ -67,14 +65,14 @@ public class NotificationController {
     }
 
     // 알림 수락 API
-    @PostMapping("/{notification_id}/accept")
-    public ResponseEntity<?> acceptNotification(@PathVariable("notification_id") Long notificationId, Authentication authentication) {
+    @PostMapping("/{notificationId}/accept")
+    public ResponseEntity<?> acceptNotification(@PathVariable("notificationId") Long notificationId, Authentication authentication) {
         // 알림 수락 서비스 호출
         Notification notification = notificationService.acceptNotification(notificationId);
 
         // 응답 DTO 생성
         NotificationDto response = new NotificationDto(
-                notification.getNotification_id(),
+                notification.getNotificationId(),
                 notification.getTitle(),
                 notification.getCard_name(),
                 notification.isAccepted()
@@ -85,8 +83,8 @@ public class NotificationController {
     }
 
     // 알림 거절 API
-    @DeleteMapping("/{notification_id}/refuse")
-    public ResponseEntity<?> refuseNotification(@PathVariable("notification_id") Long notificationId, Authentication authentication) {
+    @DeleteMapping("/{notificationId}/refuse")
+    public ResponseEntity<?> refuseNotification(@PathVariable("notificationId") Long notificationId, Authentication authentication) {
         // 알림 거절 서비스 호출
         notificationService.refuseNotification(notificationId);
 
