@@ -11,20 +11,13 @@ import java.util.List;
 public class MySpGroupResponse {
     private Long groupId;
     private String group_name;
-    // private int memberCount;
+    private int memberCount;
     private LocalDateTime createdAt;
 
-
-    public MySpGroupResponse(Long groupId, String group_name, LocalDateTime createdAt) {
+    public MySpGroupResponse(Long groupId, String group_name, int memberCount, LocalDateTime createdAt) {
         this.groupId = groupId;
         this.group_name = group_name;
+        this.memberCount = memberCount;
         this.createdAt = createdAt;
     }
-
-//    public MySpGroupResponse(Long group_id, String group_name, int memberCount, LocalDateTime createdAt) {
-//        this.group_id = group_id;
-//        this.group_name = group_name;
-//        this.memberCount = memberCount;
-//        this.createdAt = createdAt;
-//    }
 }

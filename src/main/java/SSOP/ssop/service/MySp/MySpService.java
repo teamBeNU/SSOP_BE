@@ -52,21 +52,21 @@ public class MySpService {
 
     // 마이스페이스 그룹 목록 조회
     public List<MySpGroupResponse> getMyspGroup(Long userId) {
-        // 1. 사용자가 속한 그룹들 조회
+        // 사용자가 속한 그룹들 조회
         List<MySp> mySpGroups = mySpRepository.findByUserId(userId);
 
-        // 2. 해당 사용자가 속한 그룹이 없다면 예외 처리
+        // 해당 사용자가 속한 그룹이 없다면 예외 처리
         if (mySpGroups.isEmpty()) {
             throw new IllegalArgumentException(userId + " 번 user id가 존재하지 않습니다.");
         }
 
-        // 3. 각 그룹의 멤버 수를 계산하고, 그룹 정보를 응답 객체로 변환
+        // 그룹 정보를 응답 객체로 변환
         List<MySpGroupResponse> groupResponses = mySpGroups.stream()
                 .map(mySpGroup -> new MySpGroupResponse(
-                        mySpGroup.getGroupId(),
-                        mySpGroup.getGroup_name(),
-                        // 해당 그룹의 멤버 수 계산 (코드 작성 예정)
-                        mySpGroup.getCreatedAt()
+                        mySpGroup.getGroupId(),         // 그룹 id
+                        mySpGroup.getGroup_name(),      // 그룹 이름
+                        mySpGroup.getCards().size(),    // 그룹 카드 개수
+                        mySpGroup.getCreatedAt()        // 그룹 생성 날짜
                 ))
                 .collect(Collectors.toList());
 
