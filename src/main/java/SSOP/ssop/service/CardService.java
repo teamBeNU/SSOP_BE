@@ -370,7 +370,7 @@ public class CardService {
 
             s3Client.deleteObject(deleteObjectRequest);
 
-            log.error("이미지 삭제 성공");
+            log.info("이미지 삭제 성공");
         } catch (S3Exception e) {
             log.error("이미지 삭제 실패: {}", e.getMessage());
         }

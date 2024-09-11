@@ -13,19 +13,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
+@Service
 public class MemberService {
 
     private MemberRepository memberRepository;
@@ -80,27 +84,6 @@ public class MemberService {
             throw new IllegalArgumentException("이미 카드가 생성된 사용자입니다.");
         }
     }
-
-/*    private String saveImage(MultipartFile file, Long teamId) throws Exception {
-
-        String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
-        String relativePath = "/src/main/resources/static/uploads/teamSp/";    // 이미지 저장 경로 설정 (로컬 경로)
-        String uploadDir = projectRootPath + relativePath + teamId;
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
-        }
-
-        UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
-        String fileName = uuid + "_" + file.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
-
-        // 파일 저장
-        File saveFile = new File(directory, fileName);
-        file.transferTo(saveFile);  // 파일 저장
-
-        return "/uploads/teamSp/" + teamId + "/" + fileName;
-    }*/
 
     // 이미지 업로드 (ASW S3 업로드)
     private String uploadImage(MultipartFile multipartFile, Long teamId, Long userId) throws IOException {
@@ -222,5 +205,26 @@ public class MemberService {
     public List<MemberResponse> getMember(long teamId, long userId) {
         return memberRepository.findByTeamIdAndUserId(teamId, userId).stream()
                 .map(MemberResponse::new).collect(Collectors.toList());
+    }
+
+    // 이미지 삭제 (AWS S3 파일 삭제)
+    public void deleteImage(String imageUrl) throws URISyntaxException {
+        try {
+            // Url에서 S3 키 추출
+            URI uri = new URI(imageUrl);
+            String fileKey = uri.getPath().substring(1);  // 경로의 첫 번째 '/' 제거
+
+            // S3에서 객체 삭제
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+
+            log.info("이미지 삭제 성공");
+        } catch (S3Exception e) {
+            log.error("이미지 삭제 실패: {}", e.getMessage());
+        }
     }
 }

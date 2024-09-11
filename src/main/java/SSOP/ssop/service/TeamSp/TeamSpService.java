@@ -1,15 +1,20 @@
 package SSOP.ssop.service.TeamSp;
 
+import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
-import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
+import SSOP.ssop.domain.User;
+import SSOP.ssop.repository.TeamSp.MemberRepository;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
-import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class TeamSpService {
@@ -22,6 +27,12 @@ public class TeamSpService {
 
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private MemberService memberService;
 
     // 팀스페이스 생성
     public void saveTeamSp(TeamSp teamSp, Long hostId) {
@@ -98,6 +109,22 @@ public class TeamSpService {
         }
 
         if (teamSp.getHostId() == userId) {
+            // teamSpMember id를 가지고 member에 접근
+            List<Member> members = memberRepository.findByTeamId(teamId);
+
+            // member의 profile_image_url 지우기
+            for (Member member : members) {
+                // 현재 사용자의 이미지 삭제 (AWS S3 파일 삭제)
+                String imageUrl = member.getProfile_image_url();      // member의 profile_image_url 가져오기
+
+                // memberService의 deleteImage 메서드 호출
+                try {
+                    memberService.deleteImage(imageUrl);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException("이미지 삭제 중 오류 발생: " + e.getMessage());
+                }
+            }
+
             teamSpRepository.delete(teamSp);
         } else {
             // 참여자 처리
@@ -105,6 +132,18 @@ public class TeamSpService {
                     .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
             TeamSpMember currentUserMember = teamSpMemberRepository.findByTeamSpAndUser(teamSp, user)
                     .orElseThrow(() -> new IllegalArgumentException("현재 사용자가 팀스페이스의 참여자가 아닙니다."));
+
+            // 현재 사용자의 이미지 삭제 (AWS S3 파일 삭제)
+            Member mem = memberRepository.findByTeamSpMemberId(currentUserMember.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("현재 사용자의 프로필 이미지를 찾을 수 없습니다."));
+            String imageUrl = mem.getProfile_image_url();      // member의 profile_image_url 가져오기
+
+            // memberService의 deleteImage 메서드 호출
+            try {
+                memberService.deleteImage(imageUrl);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException("이미지 삭제 중 오류 발생: " + e.getMessage());
+            }
 
             // 현재 사용자를 팀스페이스에서 제거
             teamSp.removeMember(currentUserMember);
