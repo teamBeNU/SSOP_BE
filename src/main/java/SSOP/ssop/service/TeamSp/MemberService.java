@@ -20,6 +20,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -91,47 +92,24 @@ public class MemberService {
         String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
         String filePath = TEAMSP_IMG_DIR + teamId + "/" + userId + "_" + fileName;   // 저장할 파일 경로
 
-        File uploadFile = convertMultipartFileToFile(multipartFile)     // multipartFile을 file로 변환
-                .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File 변환 실패"));
-
         // S3에 파일 업로드
-        String fileUrl = uploadFileToS3(filePath, uploadFile);
-
-        // 임시로 생성한 로컬 파일 삭제
-        removeFile(uploadFile);
+        String fileUrl = uploadFileToS3(filePath, multipartFile.getInputStream());
 
         return fileUrl;
     }
 
     // S3로 파일 업로드
-    private String uploadFileToS3(String filePath, File uploadFile) {
+    private String uploadFileToS3(String filePath, InputStream inputStream) throws IOException {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(filePath)   // S3 내 디렉토리 및 파일 이름 설정
                 .build();
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromFile(uploadFile));     // S3 업로드
+        // S3 업로드
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
 
         // 파일이 업로드된 S3의 URL 반환
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
-    }
-
-    // 임시로 생성한 로컬 파일 삭제
-    private void removeFile(File file) {
-        if (file.delete()) {
-            log.info("임시 로컬 파일 삭제 성공: {}", file);
-            return;
-        }
-        log.info("임시 로컬 파일 삭제 실패: {}", file);
-    }
-
-    // MultipartFile을 File로 변환
-    private Optional<File> convertMultipartFileToFile(MultipartFile file) throws IOException {
-        File convertFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());   // 운영체제의 임시 디렉토리 경로 가져옴(C:\Users\{사용자명}\AppData\Local\Temp\)
-        try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
-            fos.write(file.getBytes());
-        }
-        return Optional.of(convertFile);
     }
 
     private void setMemberRequest(Member member, MemberRequest memberRequest) {
