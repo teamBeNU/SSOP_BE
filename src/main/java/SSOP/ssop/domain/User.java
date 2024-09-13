@@ -26,7 +26,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @JsonProperty("user_name")
     private String role; // "ADMIN" or "USER"
 
     private String user_name;

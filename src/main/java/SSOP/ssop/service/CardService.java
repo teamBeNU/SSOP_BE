@@ -8,21 +8,34 @@ import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
-import SSOP.ssop.repository.*;
-import SSOP.ssop.utils.CardUtils;
 import SSOP.ssop.repository.Card.*;
+import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.utils.CardUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CardService {
 
     @Autowired
@@ -35,6 +48,14 @@ public class CardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private String CARD_IMG_DIR = "card/";
 
     @Autowired
     public CardService(CardRepository cardRepository, AvatarRepository avatarRepository, CardStudentRepository cardStudentRepository, CardWorkerRepository cardWorkerRepository, CardFanRepository cardFanRepository, CardUtils cardUtils) {
@@ -52,10 +73,9 @@ public class CardService {
         try {
             String profileImageUrl = null;
             if (file != null && !file.isEmpty()) {
-                profileImageUrl = saveImage(file);
+                profileImageUrl = uploadImage(file, user_id);
             }
 
-            //Card card;
             Card card = createCard(request, user_id, profileImageUrl);
 
             switch (request.getCardEssential().getCard_template()) {
@@ -105,27 +125,30 @@ public class CardService {
         return avatar;
     }
 
-    private String saveImage(MultipartFile file) throws Exception {
-
-        String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
-        String relativePath = "/src/main/resources/static/uploads/profiles/";    // 이미지 저장 경로 설정 (로컬 경로)
-        String uploadDir = projectRootPath + relativePath;
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
-        }
-
+    // 이미지 업로드 (ASW S3 업로드)
+    private String uploadImage(MultipartFile multipartFile, Long userId) throws IOException {
         UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
-        String fileName = uuid + "_" + file.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
-        // String filePath = uploadDir + fileName;    // 저장할 파일 경로 설정
+        String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        String filePath = CARD_IMG_DIR + userId + "/" + fileName;   // 저장할 파일 경로
 
-        // 파일 저장
-        File saveFile = new File(directory, fileName);
-        file.transferTo(saveFile);  // 파일 저장
+        // S3에 파일 업로드
+        String fileUrl = uploadFileToS3(filePath, multipartFile.getInputStream());
 
-        //return filePath;    // 저장된 파일 경로 리턴
-        return "/uploads/profiles/" + fileName;
+        return fileUrl;
+    }
+
+    // S3로 파일 업로드
+    private String uploadFileToS3(String filePath, InputStream inputStream) throws IOException {   // File uploadFile
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(filePath)   // S3 내 디렉토리 및 파일 이름 설정
+                .build();
+
+        // S3 업로드
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
+
+        // 파일이 업로드된 S3의 URL 반환
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
     }
 
     private Card createCard(CardCreateRequest request, Long user_id, String profileImageUrl) {
@@ -250,9 +273,23 @@ public class CardService {
     }
 
     // 카드 수정
-    public void updateCard(CardUpdateRequest request) {
+    public void updateCard(CardUpdateRequest request, MultipartFile file) throws URISyntaxException, IOException {
         Card card = cardRepository.findById(request.getCard_id())
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        // 이미지가 존재할 때만 수정
+        if (file != null && !file.isEmpty()) {
+            // AWS S3 이미지 삭제
+            String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
+            deleteImage(imageUrl);
+
+            // AWS S3 이미지 업로드
+            String profileImageUrl = null;
+            profileImageUrl = uploadImage(file, card.getUserId());
+
+            // profile_image_url 필드 업데이트
+            cardUtils.updateFieldIfNotNull(profileImageUrl, card::setProfile_image_url);
+        }
 
         // 공통 필드 업데이트
         cardUtils.updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
@@ -260,7 +297,6 @@ public class CardService {
         cardUtils.updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
         cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
         cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
-        cardUtils.updateFieldIfNotNull(request.getProfile_image_url(), card::setProfile_image_url);
         cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
         cardUtils.updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
         cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
@@ -281,10 +317,15 @@ public class CardService {
 
     // 카드 삭제
     @Transactional
-    public void deleteCard(long cardId, long userId) {
+    public void deleteCard(long cardId, long userId) throws URISyntaxException {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
+        // AWS S3 파일 삭제
+        String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
+        deleteImage(imageUrl);
+
+        // 카드 삭제
         String template = card.getCard_template();
 
         cardUtils.deleteIfExists(template, "student", cardStudentRepository, cardId);
@@ -292,6 +333,27 @@ public class CardService {
         cardUtils.deleteIfExists(template, "fan", cardFanRepository, cardId);
 
         cardRepository.delete(card);
+    }
+
+    // AWS S3 파일 삭제
+    private void deleteImage(String imageUrl) throws URISyntaxException {
+        try {
+            // Url에서 S3 키 추출
+            URI uri = new URI(imageUrl);
+            String fileKey = uri.getPath().substring(1);  // 경로의 첫 번째 '/' 제거
+
+            // S3에서 객체 삭제
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+
+            log.info("이미지 삭제 성공");
+        } catch (S3Exception e) {
+            log.error("이미지 삭제 실패: {}", e.getMessage());
+        }
     }
 
     // 상대 카드 메모 작성

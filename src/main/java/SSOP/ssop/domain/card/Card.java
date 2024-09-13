@@ -97,7 +97,6 @@ public class Card {
     @JoinColumn(name = "groupId")
     private MySp mySp;  // 카드가 속한 그룹
 
-    @Column(nullable = false)
     private String status;  // 카드 상태 ("요청 중...", "공유 완료됨")
 
     public Card() {}
