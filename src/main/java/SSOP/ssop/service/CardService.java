@@ -24,8 +24,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -48,8 +46,6 @@ public class CardService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private TeamSpMemberRepository teamSpMemberRepository;
 
     @Autowired
     private S3Client s3Client;
