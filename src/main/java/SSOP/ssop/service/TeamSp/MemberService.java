@@ -5,22 +5,44 @@ import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.dto.TeamSp.*;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class MemberService {
 
     private MemberRepository memberRepository;
     private TeamSpMemberRepository teamSpMemberRepository;
+
+    @Autowired
+    private S3Client s3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    private String TEAMSP_IMG_DIR = "teamsp/";
 
     @Autowired
     public MemberService(MemberRepository memberRepository, TeamSpMemberRepository teamSpMemberRepository) {
@@ -41,7 +63,7 @@ public class MemberService {
 
         String profileImageUrl = null;
         if (file != null && !file.isEmpty()) {
-            profileImageUrl = saveImage(file, teamId);
+            profileImageUrl = uploadImage(file, teamId, userId);
         }
 
         Member member = new Member();
@@ -64,25 +86,30 @@ public class MemberService {
         }
     }
 
-    private String saveImage(MultipartFile file, Long teamId) throws Exception {
-
-        String projectRootPath = new File("").getAbsolutePath();    // 프로젝트 폴더의 절대 경로
-        String relativePath = "/src/main/resources/static/uploads/teamSp/";    // 이미지 저장 경로 설정 (로컬 경로)
-        String uploadDir = projectRootPath + relativePath + teamId;
-
-        File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs(); // 디렉토리가 존재하지 않으면 생성
-        }
-
+    // 이미지 업로드 (ASW S3 업로드)
+    private String uploadImage(MultipartFile multipartFile, Long teamId, Long userId) throws IOException {
         UUID uuid = UUID.randomUUID();  // 랜덤 uuid 값 생성
-        String fileName = uuid + "_" + file.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        String fileName = uuid + "_" + multipartFile.getOriginalFilename();  // 저장할 파일 이름(uuid_원본파일이름)
+        String filePath = TEAMSP_IMG_DIR + teamId + "/" + userId + "_" + fileName;   // 저장할 파일 경로
 
-        // 파일 저장
-        File saveFile = new File(directory, fileName);
-        file.transferTo(saveFile);  // 파일 저장
+        // S3에 파일 업로드
+        String fileUrl = uploadFileToS3(filePath, multipartFile.getInputStream());
 
-        return "/uploads/teamSp/" + teamId + "/" + fileName;
+        return fileUrl;
+    }
+
+    // S3로 파일 업로드
+    private String uploadFileToS3(String filePath, InputStream inputStream) throws IOException {
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(filePath)   // S3 내 디렉토리 및 파일 이름 설정
+                .build();
+
+        // S3 업로드
+        s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
+
+        // 파일이 업로드된 S3의 URL 반환
+        return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
     }
 
     private void setMemberRequest(Member member, MemberRequest memberRequest) {
@@ -156,5 +183,26 @@ public class MemberService {
     public List<MemberResponse> getMember(long teamId, long userId) {
         return memberRepository.findByTeamIdAndUserId(teamId, userId).stream()
                 .map(MemberResponse::new).collect(Collectors.toList());
+    }
+
+    // 이미지 삭제 (AWS S3 파일 삭제)
+    public void deleteImage(String imageUrl) throws URISyntaxException {
+        try {
+            // Url에서 S3 키 추출
+            URI uri = new URI(imageUrl);
+            String fileKey = uri.getPath().substring(1);  // 경로의 첫 번째 '/' 제거
+
+            // S3에서 객체 삭제
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileKey)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+
+            log.info("이미지 삭제 성공");
+        } catch (S3Exception e) {
+            log.error("이미지 삭제 실패: {}", e.getMessage());
+        }
     }
 }
