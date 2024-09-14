@@ -1,6 +1,7 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.controller.CustomException;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
@@ -9,6 +10,7 @@ import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.*;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.utils.CardUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class CardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TeamSpMemberRepository teamSpMemberRepository;
 
     @Autowired
     private S3Client s3Client;
@@ -317,6 +322,9 @@ public class CardService {
     public void deleteCard(long cardId, long userId) throws URISyntaxException {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
+
+        TeamSpMember teamSpMember = teamSpMemberRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("팀스페이스에 제출한 카드는 삭제할 수 없습니다."));
 
         // AWS S3 파일 삭제
         String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
