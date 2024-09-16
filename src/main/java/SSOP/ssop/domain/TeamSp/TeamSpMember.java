@@ -3,12 +3,20 @@ package SSOP.ssop.domain.TeamSp;
 import SSOP.ssop.domain.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class TeamSpMember {
 
@@ -35,53 +43,4 @@ public class TeamSpMember {
     @OneToMany(mappedBy = "teamSpMember", cascade = CascadeType.ALL, orphanRemoval = true)  // 이 라인을 추가
     private List<Member> members = new ArrayList<>();
 
-    // 기본 생성자
-    public TeamSpMember() {}
-
-    // 전체 필드를 초기화하는 생성자
-    public TeamSpMember(TeamSp teamSp, User user, Long cardId) {
-        this.teamSp = teamSp;
-        this.user = user;
-        this.cardId = cardId;
-    }
-
-    public Long getUserId() {
-        return user != null ? user.getUserId() : null;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public TeamSp getTeamSp() {
-        return teamSp;
-    }
-
-    public void setTeamSp(TeamSp teamSp) {
-        this.teamSp = teamSp;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Long getCardId() {
-        return cardId;
-    }
-
-    public void setCardId(Long cardId) {
-        this.cardId = cardId;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
