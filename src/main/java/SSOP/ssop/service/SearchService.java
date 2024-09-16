@@ -1,14 +1,17 @@
 package SSOP.ssop.service;
 
+import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.Search.MemberSearchDto;
 import SSOP.ssop.dto.Search.SearchDto;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.repository.Card.CardRepository;
+import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
@@ -32,6 +35,9 @@ public class SearchService {
     private CardRepository cardRepository;
 
     @Autowired
+    private MySpRepository mySpRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -40,7 +46,7 @@ public class SearchService {
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
 
-    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스 )
+    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스 + 내가 만든 그룹 )
     public SearchDto searchByKeyword(Long userId, String keyword) {
         // 유저가 참여 중인 팀스페이스 ID 목록 조회
         List<TeamSpByUserDto> teamSpaces = getTeamSpByUserId(userId);
@@ -50,10 +56,6 @@ public class SearchService {
 
         // 저장한 카드 ID 목록을 가져옴
         List<Long> savedCardIds = getSavedCardIds(userId);
-
-        System.out.println("Received keyword: " + keyword);
-        System.out.println("TeamSpIds: " + teamSpIds);
-        System.out.println("SavedCardIds: " + savedCardIds);
 
         // Card 테이블에서 검색 (저장한 카드 ID를 포함하여 검색)
         List<CardSearchDto> cardSearchDto = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
@@ -69,8 +71,11 @@ public class SearchService {
                 })
                 .collect(Collectors.toList());
 
+        // 사용자가 속한 그룹 목록 조회 및 그룹명 필터링
+        List<MySpGroupResponse> mySpGroupResponses = getMyspGroup(userId, keyword);
+
         // 통합된 검색 결과
-        return new SearchDto(cardSearchDto, memberSearchDto);
+        return new SearchDto(cardSearchDto, memberSearchDto, mySpGroupResponses);
     }
 
     // 저장한 카드 ID 목록을 가져오는 메서드
@@ -79,7 +84,6 @@ public class SearchService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
         return new ArrayList<>(user.getSaved_card_list().keySet());
     }
-
 
     // 유저가 참여 중인 팀스페이스 멤버 정보를 조회
     public List<TeamSpByUserDto> getTeamSpByUserId(Long userId) {
@@ -136,6 +140,32 @@ public class SearchService {
                             membersDetail // 멤버 리스트
                     );
                 })
+                .collect(Collectors.toList());
+    }
+
+    // 그룹명 검색
+    public List<MySpGroupResponse> getMyspGroup(Long userId, String keyword) {
+        // 사용자 속한 그룹들 조회
+        List<MySp> mySpGroups = mySpRepository.findByUserId(userId);
+
+        // 그룹명으로 필터링 (대소문자 구분 없이 검색할 수 있도록 toLowerCase 사용)
+        List<MySp> filteredGroups = mySpGroups.stream()
+                .filter(group -> group.getGroup_name().toLowerCase().contains(keyword.toLowerCase()))
+                .collect(Collectors.toList());
+
+        // 필터링된 그룹이 없으면 빈 리스트 반환
+        if (filteredGroups.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 응답 객체로 변환
+        return filteredGroups.stream()
+                .map(mySpGroup -> new MySpGroupResponse(
+                        mySpGroup.getGroupId(),
+                        mySpGroup.getGroup_name(),
+                        mySpGroup.getCards().size(),
+                        mySpGroup.getCreatedAt()
+                ))
                 .collect(Collectors.toList());
     }
 }
