@@ -35,7 +35,7 @@ public class MySp {
     // 카드 리스트 조회 메서드
     // 그룹에 속한 카드 리스트
     @Getter
-    @OneToMany(mappedBy = "mySp", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "mySp", cascade = CascadeType.PERSIST)
     private List<Card> cards = new ArrayList<>();
 
     public MySp() {}
