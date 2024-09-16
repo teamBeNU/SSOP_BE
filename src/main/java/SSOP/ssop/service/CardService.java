@@ -3,9 +3,11 @@ package SSOP.ssop.service;
 import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
+import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.CardSearchResponse;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.*;
@@ -422,5 +424,10 @@ public class CardService {
                         card.getRecipient().getUserId(),
                         card.getStatus()))
                 .collect(Collectors.toList());
+    }
+
+    // 카드 검색
+    public List<CardSearchResponse> searchCards(String keyword) {
+        return cardRepository.searchByKeyword(keyword);
     }
 }

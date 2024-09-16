@@ -1,14 +1,12 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
+import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardShareRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.request.MemoRequest;
-import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.dto.card.response.CardSaveResponse;
-import SSOP.ssop.dto.card.response.CardShareResponse;
-import SSOP.ssop.dto.card.response.CardShareStatusResponse;
+import SSOP.ssop.dto.card.response.*;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
@@ -24,6 +22,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/card")
@@ -178,5 +177,11 @@ public class CardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
+    }
+
+    // 카드 검색
+    @GetMapping("/search")
+    public List<CardSearchResponse> searchCards(@RequestParam("keyword") String keyword) {
+        return cardRepository.searchByKeyword(keyword);
     }
 }
