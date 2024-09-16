@@ -121,6 +121,7 @@ public class MemberService {
         if (essentialDto != null) {
             member.setCard_name(essentialDto.getCard_name());
             member.setCard_introduction(essentialDto.getCard_introduction());
+            member.setCard_template(essentialDto.getCard_template());
             member.setCard_cover(essentialDto.getCard_cover());
         }
 

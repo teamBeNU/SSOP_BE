@@ -18,7 +18,8 @@ public class TeamSpMemSortedDto {
     private Long cardId;
     private String card_name;
     private String card_birth;
-    private String card_status;
+    private String card_template;
+    private String card_introduction;
 //    @JsonIgnore
     private LocalDateTime createdAt;
 }

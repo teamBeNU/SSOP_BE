@@ -170,7 +170,8 @@ public class TeamSpMemberService {
                     Card card = null;
                     String card_name = "Unknown";
                     String card_birth = "Unknown";
-                    String card_status = "Unknown";
+                    String card_template = "Unknown";
+                    String card_introduction = "Unknown";
 
                     // 카드 ID가 유효한 경우
                     if (member.getCardId() != null && member.getCardId() != 0) {
@@ -183,13 +184,15 @@ public class TeamSpMemberService {
                             Member foundMember = optionalMember.get();
                             card_name = foundMember.getCard_name();
                             card_birth = foundMember.getCard_birth() != null ? foundMember.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
-                            card_status = foundMember.getCard_introduction();
+                            card_template = foundMember.getCard_template();
+                            card_introduction = foundMember.getCard_introduction();
                         }
                     }
                     if (card != null) {
                         card_name = card.getCard_name();
                         card_birth = card.getCard_birth() != null ? card.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
-                        card_status = card.getCard_template();
+                        card_template = card.getCard_template();
+                        card_introduction = card.getCard_introduction();
                     }
 
                     return new TeamSpMemSortedDto(
@@ -197,7 +200,8 @@ public class TeamSpMemberService {
                             card != null ? card.getCardId() : null,
                             card_name,
                             card_birth,
-                            card_status,
+                            card_template,
+                            card_introduction,
                             member.getCreatedAt()
                     );
                 })
@@ -214,7 +218,8 @@ public class TeamSpMemberService {
                     Card card = null;
                     String card_name = "Unknown";
                     String card_birth = "Unknown";
-                    String card_status = "Unknown";
+                    String card_template = "Unknown";
+                    String card_introduction = "Unknown";
 
                     // 카드 ID가 유효한 경우
                     if (member.getCardId() != null && member.getCardId() != 0) {
@@ -227,13 +232,15 @@ public class TeamSpMemberService {
                             Member foundMember = optionalMember.get();
                             card_name = foundMember.getCard_name();
                             card_birth = foundMember.getCard_birth() != null ? foundMember.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
-                            card_status = foundMember.getCard_introduction();
+                            card_template = foundMember.getCard_template();
+                            card_introduction = foundMember.getCard_introduction();
                         }
                     }
                     if (card != null) {
                         card_name = card.getCard_name();
                         card_birth = card.getCard_birth() != null ? card.getCard_birth().toString() : "Unknown"; // 카드 생일을 문자열로 변환
-                        card_status = card.getCard_template();
+                        card_template = card.getCard_template();
+                        card_introduction = card.getCard_introduction();
                     }
 
                     return new TeamSpMemSortedDto(
@@ -241,7 +248,8 @@ public class TeamSpMemberService {
                             card != null ? card.getCardId() : null,
                             card_name,
                             card_birth,
-                            card_status,
+                            card_template,
+                            card_introduction,
                             member.getCreatedAt()
                     );
                 })
