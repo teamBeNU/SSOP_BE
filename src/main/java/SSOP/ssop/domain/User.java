@@ -3,8 +3,6 @@ package SSOP.ssop.domain;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.domain.card.CardSaveDetails;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +32,7 @@ public class User {
     private String user_name;
     private String email;
     private String password;
-    private LocalDate user_birth;
+    private String user_birth;
     private String user_phone;
     private String social_type;
 
@@ -59,11 +57,7 @@ public class User {
         this.user_name = user_name;
         this.email = email;
         this.password = password;
-
-        // String 타입의 user_birth를 LocalDate로 변환
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        this.user_birth = LocalDate.parse(user_birth, formatter);
-
+        this.user_birth = user_birth;
         this.user_phone = user_phone;
         this.password = password;
         this.email = email;

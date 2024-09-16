@@ -17,7 +17,7 @@ public class UserDto {
     private String user_name;
     private String email;
     private String password;
-    private LocalDate user_birth;
+    private String user_birth;
     private String user_phone;
     private String social_type;
     private Map<Long, LocalDateTime> saved_card_list;
