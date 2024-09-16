@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
@@ -41,9 +39,8 @@ public class Member {
     private String profile_image_url;   // 이미지
 
     // 공통 선택
-
     @Column(name = "card_birth")
-    private LocalDate card_birth;   // 생년월일
+    private String card_birth;   // 생년월일
 
     @Column(name = "card_MBTI")
     private String card_MBTI;     // mbti

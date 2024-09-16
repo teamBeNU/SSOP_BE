@@ -31,7 +31,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 호스트 지정 카드 검색
     @Query("SELECT new SSOP.ssop.dto.Search.MemberSearchDto(" +
-            "m.cardId, m.card_name, m.card_introduction, m.card_template, m.card_cover) " +
+            "m.cardId, m.card_name, m.card_introduction, m.card_birth, m.card_template, m.card_cover) " +
             "FROM Member m " +
             "WHERE m.teamSpMember.teamSp.teamId IN :teamSpIds AND (" +
             "LOWER(m.card_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
