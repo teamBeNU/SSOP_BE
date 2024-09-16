@@ -1,10 +1,10 @@
-package SSOP.ssop.dto.card.request;
+package SSOP.ssop.dto.Search;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class SearchRequest {
+public class KeywordDto {
     private String keyword;
 }

@@ -3,14 +3,16 @@ package SSOP.ssop.service;
 import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.dto.card.response.CardSearchResponse;
+import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.*;
 import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.service.User.UserService;
 import SSOP.ssop.utils.CardUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -429,16 +431,4 @@ public class CardService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
         return new ArrayList<>(user.getSaved_card_list().keySet());
     }
-
-    // 카드 검색 메서드
-    public List<CardSearchResponse> searchCards(String keyword, Long userId) {
-        List<Long> savedCardIds = getSavedCardIds(userId);
-        List<CardSearchResponse> results = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
-
-        if (results.isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "검색한 단어에 대한 결과가 없습니다.");
-        }
-        return results;
-    }
-
 }

@@ -38,7 +38,7 @@ public class TeamSpMember {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "teamSpMember", cascade = CascadeType.ALL, orphanRemoval = true)  // 이 라인을 추가
+    @OneToMany(mappedBy = "teamSpMember", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Member> members = new ArrayList<>();
 
     // 전체 필드를 초기화하는 생성자

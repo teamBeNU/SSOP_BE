@@ -1,12 +1,14 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
+import SSOP.ssop.dto.Search.CardSearchDto;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.card.request.*;
 import SSOP.ssop.dto.card.response.*;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
+import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +21,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/card")
@@ -174,12 +175,5 @@ public class CardController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
-    }
-
-    // 카드 검색
-    @PostMapping("/search")
-    public List<CardSearchResponse> searchCards(@RequestBody SearchRequest searchRequest, @Login Long userId) {
-        String keyword = searchRequest.getKeyword();
-        return cardService.searchCards(keyword, userId);
     }
 }
