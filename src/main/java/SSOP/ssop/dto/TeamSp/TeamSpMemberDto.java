@@ -14,6 +14,7 @@ public class TeamSpMemberDto {
     private Long teamId;
     private String team_name;
     private String team_comment;
+    private FilterDto filter;
     private List<Long> userIds;
     private List<Long> cardIds;
     private List<MemberResponse> members;

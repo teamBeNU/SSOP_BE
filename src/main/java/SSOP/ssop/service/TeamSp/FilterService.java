@@ -74,4 +74,24 @@ public class FilterService {
                 .map(FilterDto::new)
                 .collect(Collectors.toList());
     }
+
+    // Template 목록 받아오기
+    public List<String> findDistinctCardTemplateByTeamId(Long teamId) {
+
+        // DB에서 유일한 MBTI 값 목록 가져오기
+        List<String> templateList = filterRepository.findDistinctCardTemplateByTeamId(teamId);
+
+        // MBTI 값이 없는 항목 제거
+        return templateList.stream()
+                .filter(template -> template != null && !template.trim().isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    // 템플릿별 멤버 필터링
+    public List<FilterDto> getMembersByTemplate(Long teamId, String template) {
+        List<Member> filter = filterRepository.findByCardTemplateAndTeamId(template, teamId);
+        return filter.stream()
+                .map(FilterDto::new)
+                .collect(Collectors.toList());
+    }
 }

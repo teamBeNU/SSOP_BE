@@ -4,10 +4,7 @@ import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.dto.TeamSp.MemberResponse;
-import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
-import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
-import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
+import SSOP.ssop.dto.TeamSp.*;
 import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
@@ -38,6 +35,7 @@ public class TeamSpMemberService {
 
     @Autowired
     private CardService cardService;
+    private FilterService filterService;
 
     // 기존 카드 제출
     public void SubmitCard(Long teamId, Long cardId, Long userId) {
@@ -89,10 +87,54 @@ public class TeamSpMemberService {
                         teamSp -> teamSp // 팀 객체 자체를 맵에 저장
                 ));
 
-        // 3. 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
+        // 3. 팀 ID와 필터 정보를 가져오기 위한 Map
+        Map<Long, FilterDto> filtersMap = new HashMap<>();
+        for (Long teamId : teamMembersMap.keySet()) {
+            // 해당 팀의 모든 TeamSpMember 객체 가져오기
+            List<TeamSpMember> teamSpMembers = members.stream()
+                    .filter(member -> member.getTeamSp().getTeamId().equals(teamId))
+                    .collect(Collectors.toList());
+
+            // 각 TeamSpMember 객체에서 Member 리스트를 가져와서 필터링합니다
+            List<Member> teamMembers = teamSpMembers.stream()
+                    .flatMap(teamSpMember -> teamSpMember.getMembers().stream())
+                    .collect(Collectors.toList());
+
+            // 필터 정보 생성
+            List<String> mbtiList = teamMembers.stream()
+                    .map(Member::getCard_MBTI)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            List<String> majorList = teamMembers.stream()
+                    .map(Member::getCard_student_major)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            List<String> roleList = teamMembers.stream()
+                    .map(Member::getCard_student_role)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            List<String> templateList = teamMembers.stream()
+                    .map(Member::getCard_template)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            filtersMap.put(teamId, new FilterDto(
+                    null, // 카드 ID는 여기에 필요하지 않으므로 null로 설정
+                    filterNull(mbtiList),
+                    filterNull(majorList),
+                    filterNull(roleList),
+                    filterNull(templateList)
+            ));
+        }
+            
+        // 4. 팀 ID와 사용자 ID 목록으로 TeamSpMemberDto 생성
         return teamMembersMap.entrySet().stream()
                 .map(entry -> {
                     TeamSp teamSp = teamSpMap.get(entry.getKey());
+                    FilterDto filterDto = filtersMap.get(entry.getKey()); // 필터 정보 추가
 
                     // 팀에 포함된 모든 사용자에 대해 카드 ID 목록을 가져옵니다
                     List<Long> cardIds = members.stream()
@@ -110,6 +152,7 @@ public class TeamSpMemberService {
                             Long.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
                             teamSp.getTeam_name(),           // 팀 이름
                             teamSp.getTeam_comment(),        // 팀 설명
+                            filterDto,
                             entry.getValue(),                // 사용자 ID 목록
                             cardIds,                         // 카드 ID 목록 (null 제외)
                             membersDetail                    // 멤버 카드 정보
@@ -145,6 +188,39 @@ public class TeamSpMemberService {
                 .distinct()  // 중복된 카드 ID를 제거
                 .collect(Collectors.toList());
 
+        // 팀스페이스 ID로 필터 정보를 생성
+        List<Member> teamMembers = members.stream()
+                .flatMap(teamSpMember -> teamSpMember.getMembers().stream())
+                .collect(Collectors.toList());
+
+        List<String> mbtiList = teamMembers.stream()
+                .map(Member::getCard_MBTI)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> majorList = teamMembers.stream()
+                .map(Member::getCard_student_major)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> roleList = teamMembers.stream()
+                .map(Member::getCard_student_role)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> templateList = teamMembers.stream()
+                .map(Member::getCard_template)
+                .distinct()
+                .collect(Collectors.toList());
+
+        FilterDto filterDto = new FilterDto(
+                null, // 카드 ID는 여기에 필요하지 않으므로 null로 설정
+                filterNull(mbtiList),
+                filterNull(majorList),
+                filterNull(roleList),
+                filterNull(templateList)
+        );
+
         // team id를 통해 MemberResponse 객체를 가져옴
         List<MemberResponse> membersDetail = memberRepository.findByTeamId(teamId).stream()
                 .map(MemberResponse::new).collect(Collectors.toList());
@@ -154,11 +230,19 @@ public class TeamSpMemberService {
                 Long.valueOf(teamId),
                 teamSp.getTeam_name(), // 팀 이름
                 teamSp.getTeam_comment(), // 팀 설명
+                filterDto,
                 userIds.isEmpty() ? Collections.emptyList() : userIds, // 사용자 ID 목록
                 cardIds, // 카드 ID 목록 (null 제외)
                 membersDetail       // 멤버 카드 정보
         );
         return Optional.of(teamSpMemberDto);
+    }
+
+    private List<String> filterNull(List<String> list) {
+        return list.stream()
+                .filter(Objects::nonNull)
+                .filter(item -> !item.isEmpty())
+                .collect(Collectors.toList());
     }
 
     // 팀스페이스 ID별 최신순 정렬
