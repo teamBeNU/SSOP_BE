@@ -5,7 +5,6 @@ import SSOP.ssop.dto.Search.SearchDto;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.SearchService;
-import SSOP.ssop.service.User.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,17 +29,21 @@ public class SearchController {
     public ResponseEntity<SearchDto> search(
             @Login Long userId,
             @RequestBody KeywordDto keywordDto) {
+        // 검색어 유효성 검사
+        if (keywordDto == null || keywordDto.getKeyword() == null || keywordDto.getKeyword().isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "검색어를 입력해 주세요.");
+        }
+
         String keyword = keywordDto.getKeyword();
 
-        // 사용자 저장 카드 ID 목록 가져오기
-        List<Long> savedCardIds = searchService.getSavedCardIds(userId);
-
-        // 검색 서비스 호출, 저장된 카드 ID 목록 함께 전달
+        // 카드, 멤버, 그룹명 통합 검색
         SearchDto searchDto = searchService.searchByKeyword(userId, keyword);
 
-        // 검색 결과가 비어있는 경우
-        if (searchDto.getCardSearchDto().isEmpty() && searchDto.getMemberSearchDto().isEmpty()) {
-            throw new CustomException(HttpStatus.NOT_FOUND, "해당 검색어에 맞는 카드를 찾을 수 없습니다.");
+        // 검색 결과가 비어 있는 경우 예외 처리
+        if (searchDto.getCardSearchDto().isEmpty() &&
+                searchDto.getMemberSearchDto().isEmpty() &&
+                searchDto.getMySpgroupResponse().isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "해당 검색어에 맞는 결과를 찾을 수 없습니다.");
         }
         return ResponseEntity.ok(searchDto);
     }
