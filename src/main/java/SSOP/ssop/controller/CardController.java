@@ -85,8 +85,8 @@ public class CardController {
 
     // 상대 카드 저장
     @PostMapping("/save")
-    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId, @RequestParam boolean isTeamSp) {
-        CardSaveResponse response = userService.addCardToSavedList(userId, cardId, isTeamSp);
+    public ResponseEntity<CardSaveResponse> addCardToSavedList(@Login Long userId, @RequestParam Long cardId) {
+        CardSaveResponse response = userService.addCardToSavedList(userId, cardId);
         return ResponseEntity.ok(response);
     }
 

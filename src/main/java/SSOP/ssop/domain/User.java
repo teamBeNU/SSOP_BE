@@ -3,13 +3,13 @@ package SSOP.ssop.domain;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.domain.card.CardSaveDetails;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class User {
     private String social_type;
 
     @ElementCollection
-    private Map<Long, CardSaveDetails> saved_card_list = new HashMap<>();
+    private Map<Long, LocalDateTime> saved_card_list = new HashMap<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TeamSpMember> teamSpMembers = new HashSet<>();
