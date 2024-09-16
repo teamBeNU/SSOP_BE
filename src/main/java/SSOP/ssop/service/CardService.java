@@ -3,7 +3,6 @@ package SSOP.ssop.service;
 import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
-import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
@@ -26,8 +25,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -426,8 +423,22 @@ public class CardService {
                 .collect(Collectors.toList());
     }
 
-    // 카드 검색
-    public List<CardSearchResponse> searchCards(String keyword) {
-        return cardRepository.searchByKeyword(keyword);
+    // 사용자의 저장된 카드 ID 목록을 가져오기
+    public List<Long> getSavedCardIds(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+        return new ArrayList<>(user.getSaved_card_list().keySet());
     }
+
+    // 카드 검색 메서드
+    public List<CardSearchResponse> searchCards(String keyword, Long userId) {
+        List<Long> savedCardIds = getSavedCardIds(userId);
+        List<CardSearchResponse> results = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
+
+        if (results.isEmpty()) {
+            throw new CustomException(HttpStatus.NOT_FOUND, "검색한 단어에 대한 결과가 없습니다.");
+        }
+        return results;
+    }
+
 }

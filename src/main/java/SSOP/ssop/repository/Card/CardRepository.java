@@ -38,7 +38,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             "c.cardId, c.card_name, c.card_introduction, c.card_birth, c.card_template, " +
             "c.card_cover) " +
             "FROM Card c " +
-            "WHERE " +
+            "WHERE c.cardId IN :savedCardIds AND (" +
             "LOWER(c.card_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.card_introduction) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.card_template) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
@@ -52,6 +52,7 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             "LOWER(c.card_movie) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.card_hobby) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.card_address) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "LOWER(c.memo) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<CardSearchResponse> searchByKeyword(@Param("keyword") String keyword);
+            "LOWER(c.memo) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<CardSearchResponse> searchByKeywordAndSavedCardIds(@Param("keyword") String keyword, @Param("savedCardIds") List<Long> savedCardIds);
+
 }

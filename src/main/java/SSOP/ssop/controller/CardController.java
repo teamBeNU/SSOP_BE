@@ -2,10 +2,7 @@ package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardShareRequest;
-import SSOP.ssop.dto.card.request.CardUpdateRequest;
-import SSOP.ssop.dto.card.request.MemoRequest;
+import SSOP.ssop.dto.card.request.*;
 import SSOP.ssop.dto.card.response.*;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
@@ -180,8 +177,9 @@ public class CardController {
     }
 
     // 카드 검색
-    @GetMapping("/search")
-    public List<CardSearchResponse> searchCards(@RequestParam("keyword") String keyword) {
-        return cardRepository.searchByKeyword(keyword);
+    @PostMapping("/search")
+    public List<CardSearchResponse> searchCards(@RequestBody SearchRequest searchRequest, @Login Long userId) {
+        String keyword = searchRequest.getKeyword();
+        return cardService.searchCards(keyword, userId);
     }
 }
