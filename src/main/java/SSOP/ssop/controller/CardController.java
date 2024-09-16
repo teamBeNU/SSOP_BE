@@ -1,17 +1,14 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.dto.card.request.CardCreateRequest;
-import SSOP.ssop.dto.card.request.CardShareRequest;
-import SSOP.ssop.dto.card.request.CardUpdateRequest;
-import SSOP.ssop.dto.card.request.MemoRequest;
-import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.dto.card.response.CardSaveResponse;
-import SSOP.ssop.dto.card.response.CardShareResponse;
-import SSOP.ssop.dto.card.response.CardShareStatusResponse;
+import SSOP.ssop.dto.Search.CardSearchDto;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
+import SSOP.ssop.dto.card.request.*;
+import SSOP.ssop.dto.card.response.*;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
+import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

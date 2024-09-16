@@ -32,4 +32,12 @@ public interface FilterRepository extends JpaRepository<Member, Long> {
     // 전공(major) 필터링
     @Query("SELECT m FROM Member m WHERE m.card_student_major = :major AND m.teamSpMember.teamSp.teamId = :teamId")
     List<Member> findByCardMajorAndTeamId(@Param("major") String major, @Param("teamId") Long teamId);
+
+    // 템플릿(template) 목록
+    @Query("SELECT DISTINCT m.card_template FROM Member m WHERE m.card_template IS NOT NULL AND m.teamSpMember.teamSp.teamId = :teamId")
+    List<String> findDistinctCardTemplateByTeamId(@Param("teamId") Long teamId);
+
+    // 템플릿(template) 필터링
+    @Query("SELECT m FROM Member m WHERE m.card_template = :major AND m.teamSpMember.teamSp.teamId = :teamId")
+    List<Member> findByCardTemplateAndTeamId(@Param("major") String template, @Param("teamId") Long teamId);
 }
