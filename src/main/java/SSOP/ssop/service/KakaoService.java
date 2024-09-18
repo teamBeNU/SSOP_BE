@@ -35,7 +35,10 @@ public class KakaoService {
         String birthday = kakaoUser.getBirthday();
         LocalDate userBirth = DateUtils.parseBirthdate(birthyear, birthday);
 
-        user.setUser_birth(userBirth);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String userBirthString = userBirth.format(formatter);
+
+        user.setUser_birth(userBirthString);
 
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
