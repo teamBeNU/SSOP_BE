@@ -77,4 +77,5 @@ public class User {
     public void enterTeamSp(TeamSp teamSp) {
         this.teamSpMembers.add(new TeamSpMember(teamSp, this, null));
     }
+
 }
