@@ -124,7 +124,7 @@ public class KakaoController {
         if (existingUser.isPresent()) {
             String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
             try {
-                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
+                response1.sendRedirect("http://43.202.52.64:8080/index.html?token=" + jwtToken);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -132,7 +132,7 @@ public class KakaoController {
             kakaoService.saveOrUpdateUser(kakaoUserInfo);
             String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
             try {
-                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
+                response1.sendRedirect("http://43.202.52.64:8080/index.html?token=" + jwtToken);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
