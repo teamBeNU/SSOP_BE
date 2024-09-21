@@ -70,7 +70,7 @@ public class CardResponse {
         this.cardEssential = new CardEssential(card.getCard_name(), card.getCard_introduction());
         this.cardOptional = new CardOptional(
                 card.getCard_birth(),
-                card.getCard_bSecrete(),
+                card.getCard_bSecret(),
                 card.getCard_tel(),
                 card.getCard_sns_insta(),
                 card.getCard_sns_x(),

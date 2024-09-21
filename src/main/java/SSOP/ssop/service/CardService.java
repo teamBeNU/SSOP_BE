@@ -24,8 +24,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -160,7 +158,7 @@ public class CardService {
                 null, // Avatar를 나중에 설정
                 profileImageUrl,    // 저장된 이미지 URL
                 request.getCardOptional().getCard_birth(),
-                request.getCardOptional().getCard_bSecrete(),
+                request.getCardOptional().getCard_bSecret(),
                 request.getCardOptional().getCard_tel(),
                 request.getCardOptional().getCard_sns_insta(),
                 request.getCardOptional().getCard_sns_x(),
@@ -298,7 +296,7 @@ public class CardService {
         cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
         cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
         cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
-        cardUtils.updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
+        cardUtils.updateFieldIfNotNull(request.getCard_bSecret(), card::setCard_bSecret);
         cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
         cardUtils.updateFieldIfNotNull(request.getCard_sns_insta(), card::setCard_sns_insta);
         cardUtils.updateFieldIfNotNull(request.getCard_sns_x(), card::setCard_sns_x);

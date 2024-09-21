@@ -17,7 +17,7 @@ public class CardUpdateRequest {
     private String profile_image_url;
 
     private String card_birth;
-    private Boolean card_bSecrete;
+    private Boolean card_bSecret;
     private String card_tel;
     private String card_sns_insta;
     private String card_sns_x;

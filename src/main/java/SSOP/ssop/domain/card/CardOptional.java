@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class CardOptional {
     private String card_birth;      // 생년월일
-    private Boolean card_bSecrete;  // 생년월일 비밀
+    private Boolean card_bSecret;  // 생년월일 비밀
     private String card_tel;        // 연락처
     private String card_sns_insta;  // sns: insta
     private String card_sns_x;      // sns: x
@@ -18,9 +18,9 @@ public class CardOptional {
     private String card_hobby;      // 취미
     private String card_address;    // 거주지
 
-    public CardOptional(String cardBirth, Boolean cardBSecrete, String cardTel, String cardSnsInsta, String cardSnsX, String cardEmail, String cardMbti, String cardMusic, String cardMusic1, String cardMovie, String cardHobby, String cardAddress) {
+    public CardOptional(String cardBirth, Boolean cardBSecret, String cardTel, String cardSnsInsta, String cardSnsX, String cardEmail, String cardMbti, String cardMusic, String cardMusic1, String cardMovie, String cardHobby, String cardAddress) {
         this.card_birth = cardBirth;
-        this.card_bSecrete = cardBSecrete;
+        this.card_bSecret = cardBSecret;
         this.card_tel = cardTel;
         this.card_sns_insta = cardSnsInsta;
         this.card_sns_x = cardSnsX;
