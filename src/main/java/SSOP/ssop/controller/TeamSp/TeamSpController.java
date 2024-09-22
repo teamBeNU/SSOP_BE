@@ -29,18 +29,19 @@ public class TeamSpController {
 
     // 팀스페이스 생성
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
+    public ResponseEntity<?> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
         try {
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("message", "유효한 토큰이 없습니다"));
             }
-            teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "팀스페이스 생성 완료"));
+
+            ResponseEntity<?> inviteCodeResponse = teamSpService.saveTeamSp(teamSp, userId);
+            return inviteCodeResponse;
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "팀스페이스 생성 실패"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "팀스페이스 생성 중 오류 발생"));
         }
     }
 
