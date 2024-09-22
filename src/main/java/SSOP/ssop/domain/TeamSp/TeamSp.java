@@ -38,6 +38,27 @@ public class TeamSp {
     @Column(name = "inviteCode")
     private int inviteCode;
 
+    @Column(name = "showAge")
+    private boolean showAge;      // 나이
+
+    @Column(name = "showBirth")
+    private boolean showBirth;    // 생년월일
+
+    @Column(name = "showMBTI")
+    private boolean showMBTI;     // mbti
+
+    @Column(name = "showTel")
+    private boolean showTel;      // 연락처
+
+    @Column(name = "showEmail")
+    private boolean showEmail;    // 이메일
+
+    @Column(name = "showInsta")
+    private boolean showInsta;    // 인스타
+
+    @Column(name = "showX")
+    private boolean showX;        // x(트위터)
+
     @Embedded
     private StudentOptional studentOptional;
 
@@ -47,13 +68,25 @@ public class TeamSp {
     @Embedded
     private FanOptional fanOptional;
 
-    @ElementCollection
-    @CollectionTable(name = "student_plus", joinColumns = @JoinColumn(name = "teamId"))
-    @Column(name = "student_plus")
-    private List<String> plus;
+    @Column(name = "showHobby")
+    private boolean showHobby;        // 취미
 
-    @Column(name = "student_card_cover")
-    private String cardCover;
+    @Column(name = "showMusic")
+    private boolean showMusic;       // 인생음악
+
+    @Column(name = "showMovie")
+    private boolean showMovie;      // 인생영화
+
+    @Column(name = "showAddress")
+    private boolean showAddress;   // 거주지
+
+    @ElementCollection
+    @CollectionTable(name = "plus", joinColumns = @JoinColumn(name = "team_id"))
+    @Column(name = "plus")
+    private List<String> plus;    // 자유 선택지
+
+    @Column(name = "showCover")
+    private String cover;         // 카드 커버 (자유/아바타/사진)
 
     @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
