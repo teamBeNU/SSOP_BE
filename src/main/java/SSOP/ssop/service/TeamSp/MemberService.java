@@ -127,6 +127,7 @@ public class MemberService {
         MemberOptionalDto optionalDto = memberRequest.getMemberOptional();
         if (optionalDto != null) {
             member.setCard_birth(optionalDto.getCard_birth());
+            member.setCard_bSecret(optionalDto.getCard_bSecret());
             member.setCard_MBTI(optionalDto.getCard_MBTI());
             member.setCard_tel(optionalDto.getCard_tel());
             member.setCard_email(optionalDto.getCard_email());
