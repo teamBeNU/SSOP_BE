@@ -21,12 +21,12 @@ import java.util.Optional;
 public class TeamSpMemberController {
 
     private final TeamSpMemberService teamSpMemberService;
-    private final SearchService searchService;
+//    private final SearchService searchService;
 
     @Autowired
     public TeamSpMemberController(TeamSpMemberService teamSpMemberService, SearchService searchService) {
         this.teamSpMemberService = teamSpMemberService;
-        this.searchService = searchService;
+//        this.searchService = searchService;
     }
 
     // 기존 카드 제출

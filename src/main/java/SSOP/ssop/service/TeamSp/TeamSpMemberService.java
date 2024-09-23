@@ -22,20 +22,19 @@ import java.util.stream.Collectors;
 public class TeamSpMemberService {
 
     @Autowired
-    private static TeamSpRepository teamSpRepository;
+    private TeamSpRepository teamSpRepository;
 
     @Autowired
-    private static TeamSpMemberRepository teamSpMemberRepository;
+    private TeamSpMemberRepository teamSpMemberRepository;
 
     @Autowired
-    private static MemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
     private CardRepository cardRepository;
 
     @Autowired
     private CardService cardService;
-    private FilterService filterService;
 
     // 기존 카드 제출
     public void SubmitCard(Long teamId, Long cardId, Long userId) {
