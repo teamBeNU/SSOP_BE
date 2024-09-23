@@ -81,7 +81,7 @@ public class TeamSp {
     private boolean showAddress;   // 거주지
 
     @ElementCollection
-    @CollectionTable(name = "plus", joinColumns = @JoinColumn(name = "team_id"))
+    @CollectionTable(name = "plus", joinColumns = @JoinColumn(name = "teamId"))
     @Column(name = "plus")
     private List<String> plus;    // 자유 선택지
 
