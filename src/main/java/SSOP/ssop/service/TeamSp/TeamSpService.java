@@ -4,7 +4,7 @@ import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.User.UserDto;
+import SSOP.ssop.dto.TeamSp.TeamSpInfoDto;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
@@ -62,8 +62,16 @@ public class TeamSpService {
         return inviteCode;
     }
 
+    // 초대코드 검색
+    public TeamSpInfoDto SearchInviteCode(int inviteCode, Long userId) {
+        TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
+
+        return new TeamSpInfoDto(teamSp);
+    }
+
     // 팀스페이스 입장
-    public void EnterTeamSp(int inviteCode, Long userId) {
+    public TeamSpInfoDto EnterTeamSp(int inviteCode, Long userId) {
         // 1. 팀스페이스 정보 가져오기
         TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
@@ -83,6 +91,9 @@ public class TeamSpService {
 
         // 5. 팀스페이스 멤버 저장
         teamSpMemberRepository.saveAll(user.getTeamSpMembers());
+
+        // 6. TeamSpInfoDto 결과 반환
+        return new TeamSpInfoDto(teamSp);
     }
 
     // 모든 팀스페이스 Entity 조회
