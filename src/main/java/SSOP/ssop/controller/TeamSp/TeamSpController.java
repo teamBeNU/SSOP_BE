@@ -1,16 +1,13 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.config.UserDetail;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.dto.TeamSp.EnterTeamSpDto;
+import SSOP.ssop.dto.TeamSp.TeamSpInfoDto;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.TeamSp.TeamSpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,33 +26,50 @@ public class TeamSpController {
 
     // 팀스페이스 생성
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
+    public ResponseEntity<?> saveTeamSp(@RequestBody TeamSp teamSp, @Login Long userId) {
         try {
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("message", "유효한 토큰이 없습니다"));
             }
-            teamSpService.saveTeamSp(teamSp, userId); // 호스트 ID와 함께 저장
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("message", "팀스페이스 생성 완료"));
+
+            ResponseEntity<?> inviteCodeResponse = teamSpService.saveTeamSp(teamSp, userId);
+            return inviteCodeResponse;
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("message", "팀스페이스 생성 실패"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "팀스페이스 생성 중 오류 발생"));
         }
     }
 
-    // 팀 스페이스 입장
-    @PostMapping("/enter")
-    public ResponseEntity<Map<String, String>> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
+    // 초대코드로 스페이스 검색
+    @GetMapping("/search")
+    public ResponseEntity<?> searchInviteCode(@RequestParam int inviteCode, @Login Long userId) {
         try {
             if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "유효한 토큰이 없습니다"));
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다."));
             }
-            teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
-            return ResponseEntity.ok(Map.of("message", "팀스페이스에 성공적으로 입장하였습니다."));
+            TeamSpInfoDto teamSpInfoDto = teamSpService.SearchInviteCode(inviteCode, userId);
+            return ResponseEntity.ok(teamSpInfoDto); // 응답 반환
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
+        }
+    }
+    // 팀 스페이스 입장
+    @PostMapping("/enter")
+    public ResponseEntity<?> enterTeamSp(@RequestBody EnterTeamSpDto enterTeamSpDto, @Login Long userId) {
+        try {
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(Map.of("message", "유효한 토큰이 없습니다."));
+            }
+            TeamSpInfoDto teamSpInfoDto = teamSpService.EnterTeamSp(enterTeamSpDto.getInviteCode(), userId);
+            return ResponseEntity.ok(teamSpInfoDto); // 응답 반환
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
         }
     }
 

@@ -4,6 +4,8 @@ public class MemberOptionalDto {
 
     private String card_birth;  // 생년월일
 
+    private Boolean card_bSecret;      // 생년월일 비밀
+
     private String card_MBTI;     // mbti
 
     private String card_tel;     // 연락처
@@ -28,8 +30,9 @@ public class MemberOptionalDto {
     private String card_free_A4;
     private String card_free_A5;
 
-    public MemberOptionalDto(String card_birth, String card_MBTI, String card_tel, String card_email, String card_insta, String card_x, String card_hobby, String card_music, String card_movie, String card_address, String card_free_A1, String card_free_A2, String card_free_A3, String card_free_A4, String card_free_A5) {
+    public MemberOptionalDto(String card_birth, Boolean card_bSecret, String card_MBTI, String card_tel, String card_email, String card_insta, String card_x, String card_hobby, String card_music, String card_movie, String card_address, String card_free_A1, String card_free_A2, String card_free_A3, String card_free_A4, String card_free_A5) {
         this.card_birth = card_birth;
+        this.card_bSecret = card_bSecret;
         this.card_MBTI = card_MBTI;
         this.card_tel = card_tel;
         this.card_email = card_email;
@@ -48,6 +51,10 @@ public class MemberOptionalDto {
 
     public String getCard_birth() {
         return card_birth;
+    }
+
+    public Boolean getCard_bSecret() {
+        return card_bSecret;
     }
 
     public String getCard_MBTI() {

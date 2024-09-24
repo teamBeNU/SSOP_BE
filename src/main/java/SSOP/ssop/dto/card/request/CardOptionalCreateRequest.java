@@ -8,6 +8,7 @@ import lombok.Setter;
 public class CardOptionalCreateRequest {
 
     private String card_birth;      // 생년월일
+    private Boolean card_bSecret;      // 생년월일 비밀
     private String card_tel;    // 연락처
     private String card_sns_insta;  // sns: insta
     private String card_sns_x;      // sns: x
