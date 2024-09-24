@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class NotificationService {
 
         // 알림 객체 생성 및 저장, 생성 시간 추가
         Notification notification = new Notification(title, card_name, user);
-        notification.setCreatedAt(new Date()); // 현재 시간을 설정
+        notification.setCreatedAt(LocalDateTime.now()); // 현재 시간을 설정
         return notificationRepository.save(notification);
     }
 
@@ -39,7 +40,6 @@ public class NotificationService {
     // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<Notification> getNotificationsForUser(Long userId) {
-        // 사용자의 7일이 지나지 않은 알림을 조회
         return notificationRepository.findRecentNotificationsByUserId(userId);
     }
 
@@ -60,5 +60,13 @@ public class NotificationService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 알림을 찾을 수 없습니다."));
 
         notificationRepository.delete(notification);  // 알림 삭제
+    }
+
+    // 7일 지난 알림을 삭제하는 스케줄러
+    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+    @Transactional
+    public void deleteOldNotifications() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(7);  // 7일 전 시간 계산
+        notificationRepository.deleteNotificationsOlderThan(cutoffDate);  // 7일 지난 알림 삭제
     }
 }
