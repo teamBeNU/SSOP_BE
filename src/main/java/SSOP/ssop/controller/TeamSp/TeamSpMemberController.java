@@ -1,10 +1,8 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.SubmitCardRequest;
 import SSOP.ssop.security.annotation.Login;
-import SSOP.ssop.service.SearchService;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
