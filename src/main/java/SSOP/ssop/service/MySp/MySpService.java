@@ -75,23 +75,13 @@ public class MySpService {
 
     // 마이스페이스 그룹 삭제
     public boolean deleteMyspGroup(Long userId, Long groupId) {
-        // 그룹을 찾고, 사용자와 그룹의 연관성을 확인
         Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
 
         if (groupOptional.isPresent()) {
-            MySp group = groupOptional.get();
-
-            // 그룹과 카드 관계 끊기
-            for (Card card : group.getCards()) {
-                card.setMySp(null);  // 카드에서 그룹과의 관계만 끊음
-                cardRepository.save(card);  // 카드 상태 저장
-            }
-
-            // 그룹 삭제
-            mySpRepository.delete(group);
-            return true;
+            mySpRepository.delete(groupOptional.get());  // 그룹 삭제
+            return true;  // 삭제 성공
         } else {
-            return false;
+            return false; // 그룹을 찾지 못했거나 권한이 없는 경우
         }
     }
 
