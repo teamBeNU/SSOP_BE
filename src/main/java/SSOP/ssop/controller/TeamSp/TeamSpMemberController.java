@@ -1,10 +1,8 @@
 package SSOP.ssop.controller.TeamSp;
 
-import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.SubmitCardRequest;
 import SSOP.ssop.security.annotation.Login;
-import SSOP.ssop.service.SearchService;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +19,10 @@ import java.util.Optional;
 public class TeamSpMemberController {
 
     private final TeamSpMemberService teamSpMemberService;
-    private final SearchService searchService;
 
     @Autowired
-    public TeamSpMemberController(TeamSpMemberService teamSpMemberService, SearchService searchService) {
+    public TeamSpMemberController(TeamSpMemberService teamSpMemberService) {
         this.teamSpMemberService = teamSpMemberService;
-        this.searchService = searchService;
     }
 
     // 기존 카드 제출

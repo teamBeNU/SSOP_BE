@@ -4,15 +4,19 @@ import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
+import SSOP.ssop.dto.TeamSp.TeamSpInfoDto;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -35,13 +39,16 @@ public class TeamSpService {
     private MemberService memberService;
 
     // 팀스페이스 생성
-    public void saveTeamSp(TeamSp teamSp, Long hostId) {
+    public ResponseEntity<?> saveTeamSp(TeamSp teamSp, Long hostId) {
         teamSp.setHostId(hostId); // 호스트 ID 저장
         teamSp.setInviteCode(createInviteCode()); // 초대코드 자동 생성
-        teamSpRepository.save(teamSp);
+        TeamSp savedTeamSp = teamSpRepository.save(teamSp);
 
-        // 2. 팀스페이스 생성 후 호스트를 자동으로 팀스페이스에 입장시킴
-        EnterTeamSp(teamSp.getInviteCode(), hostId);
+        // 팀스페이스 생성 후 호스트를 자동으로 팀스페이스에 입장시킴
+        EnterTeamSp(savedTeamSp.getInviteCode(), hostId);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("inviteCode", savedTeamSp.getInviteCode()));
     }
 
     // 랜덤 코드 생성
@@ -55,8 +62,16 @@ public class TeamSpService {
         return inviteCode;
     }
 
+    // 초대코드 검색
+    public TeamSpInfoDto SearchInviteCode(int inviteCode, Long userId) {
+        TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
+
+        return new TeamSpInfoDto(teamSp);
+    }
+
     // 팀스페이스 입장
-    public void EnterTeamSp(int inviteCode, Long userId) {
+    public TeamSpInfoDto EnterTeamSp(int inviteCode, Long userId) {
         // 1. 팀스페이스 정보 가져오기
         TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
@@ -76,6 +91,9 @@ public class TeamSpService {
 
         // 5. 팀스페이스 멤버 저장
         teamSpMemberRepository.saveAll(user.getTeamSpMembers());
+
+        // 6. TeamSpInfoDto 결과 반환
+        return new TeamSpInfoDto(teamSp);
     }
 
     // 모든 팀스페이스 Entity 조회
