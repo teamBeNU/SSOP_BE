@@ -34,13 +34,15 @@ public class NotificationController {
                 notification.getNotificationId(),
                 notification.getTitle(),
                 notification.getCard_name(),
-                notification.isAccepted()
+                notification.isAccepted(),
+                notification.getCreatedAt()
         );
 
         // 201 Created 응답 반환
         return new ResponseEntity<>(Map.of(
                 "message", "알림이 생성되었습니다.",
-                "notification_id", notification.getNotificationId()
+                "notification_id", notification.getNotificationId(),
+                "created_at", notification.getCreatedAt()
         ), HttpStatus.CREATED);
     }
 
@@ -56,7 +58,8 @@ public class NotificationController {
                         notification.getNotificationId(),
                         notification.getTitle(),
                         notification.getCard_name(),
-                        notification.isAccepted()
+                        notification.isAccepted(),
+                        notification.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
 
@@ -75,7 +78,8 @@ public class NotificationController {
                 notification.getNotificationId(),
                 notification.getTitle(),
                 notification.getCard_name(),
-                notification.isAccepted()
+                notification.isAccepted(),
+                notification.getCreatedAt()
         );
 
         // 200 OK 응답 반환
