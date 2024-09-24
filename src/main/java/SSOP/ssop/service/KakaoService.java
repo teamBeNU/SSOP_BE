@@ -7,6 +7,7 @@ import SSOP.ssop.repository.UserRepository;
 import SSOP.ssop.utils.DateUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -35,7 +36,10 @@ public class KakaoService {
         String birthday = kakaoUser.getBirthday();
         LocalDate userBirth = DateUtils.parseBirthdate(birthyear, birthday);
 
-        user.setUser_birth(userBirth);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String userBirthString = userBirth.format(formatter);
+
+        user.setUser_birth(userBirthString);
 
         Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
 
