@@ -18,6 +18,7 @@ public class MemberResponse {
         this.memberEssential = new MemberEssentialDto(
                 member.getCard_name(),
                 member.getCard_introduction(),
+                member.getCard_template(),
                 member.getCard_cover(),
                 member.getProfile_image_url()
         );

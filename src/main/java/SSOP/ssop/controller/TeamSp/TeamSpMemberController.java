@@ -4,6 +4,7 @@ import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.TeamSp.TeamSpMemSortedDto;
 import SSOP.ssop.dto.card.request.SubmitCardRequest;
 import SSOP.ssop.security.annotation.Login;
+import SSOP.ssop.service.SearchService;
 import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.dto.TeamSp.TeamSpMemberDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,12 @@ import java.util.Optional;
 public class TeamSpMemberController {
 
     private final TeamSpMemberService teamSpMemberService;
+    private final SearchService searchService;
 
     @Autowired
-    public TeamSpMemberController(TeamSpMemberService teamSpMemberService) {
+    public TeamSpMemberController(TeamSpMemberService teamSpMemberService, SearchService searchService) {
         this.teamSpMemberService = teamSpMemberService;
+        this.searchService = searchService;
     }
 
     // 기존 카드 제출
@@ -65,22 +68,6 @@ public class TeamSpMemberController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("message", "존재하지 않는 팀스페이스입니다."));
-        }
-    }
-
-    // 유저별 참여 중인 팀스페이스 정보 조회
-    @GetMapping("user")
-    public ResponseEntity<?> getTeamSpByUserId(@RequestParam("userId") Long userId) {
-        try {
-            List<TeamSpByUserDto> teamSpByUserDto = teamSpMemberService.getTeamSpByUserId(userId);
-
-            if (teamSpByUserDto.isEmpty()) {
-                return ResponseEntity.noContent().build(); // 참여 중인 팀스페이스가 없는 경우
-            }
-            return ResponseEntity.ok(teamSpByUserDto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("message", "팀스페이스 정보를 조회하는 도중 오류가 발생했습니다: " + e.getMessage()));
         }
     }
 

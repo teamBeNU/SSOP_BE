@@ -1,7 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: "jdbc:h2:mem:ssop;MODE=MYSQL;NON_KEYWORDS=USER"
+    username: "sa"
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+jwt:
+  header: Authorization
+  secret: c3d1LWRpZ2l0YWxtZWRpYS0yMDI0LXNzb3AtYmFja2VuZC1zcHJpbmctYm9vdC1qd3Qtc2VjcmV0LWtleS10b2tlbi1zc29w
+  # swu-digital-media-2024-ssop ~~~ 인코딩한 비밀 키랑 연동 > HS512 알고리즘 사용 > 64byte
+  token-validity-in-seconds: 86400    # 초, 24시간
+---
 server:
   port: 8080
-
 spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: "jdbc:mysql://localhost/ssop"
     username: "root"

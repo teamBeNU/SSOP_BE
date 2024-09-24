@@ -1,15 +1,20 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.controller.CustomException;
+import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
+import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.*;
+import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.service.User.UserService;
 import SSOP.ssop.utils.CardUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +51,9 @@ public class CardService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TeamSpMemberRepository teamSpMemberRepository;
 
     @Autowired
     private S3Client s3Client;
@@ -242,7 +250,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저아이디입니다 : " + userId));
 
-        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
         if (savedCardList == null || savedCardList.isEmpty()) {
             return Collections.emptyList(); // 저장한 카드가 없는 경우
@@ -255,8 +263,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            CardSaveDetails details = savedCardList.get(card.getCardId());
-            LocalDateTime savedAt = (details != null) ? details.getSavedTime() : null;
+            LocalDateTime savedAt = savedCardList.get(card.getCardId());
             responses.add(cardUtils.createCardResponse(card, true, savedAt));
         }
 
@@ -319,6 +326,9 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
+        TeamSpMember teamSpMember = teamSpMemberRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("팀스페이스에 제출한 카드는 삭제할 수 없습니다."));
+
         // AWS S3 파일 삭제
         String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
         deleteImage(imageUrl);
@@ -366,7 +376,7 @@ public class CardService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(HttpStatus.NOT_FOUND, "유저가 존재하지 않습니다"));
 
-        Map<Long, CardSaveDetails> savedCardList = user.getSaved_card_list();
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
         if (savedCardList.containsKey(cardId)) {
             if(card.getMemo() == null) {
@@ -420,5 +430,12 @@ public class CardService {
                         card.getRecipient().getUserId(),
                         card.getStatus()))
                 .collect(Collectors.toList());
+    }
+
+    // 사용자의 저장된 카드 ID 목록을 가져오기
+    public List<Long> getSavedCardIds(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+        return new ArrayList<>(user.getSaved_card_list().keySet());
     }
 }

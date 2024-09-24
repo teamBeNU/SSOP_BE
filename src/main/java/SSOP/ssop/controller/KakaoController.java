@@ -63,7 +63,7 @@ public class KakaoController {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", kakaoClientId);
-        params.add("redirect_uri", "http://localhost:8080/login/kakao/callback");
+        params.add("redirect_uri", "http://43.202.52.64:8080/login/kakao/callback");
         params.add("code", code);
 
         // Http Header와 Body를 하나의 오브젝트에 담기
@@ -124,7 +124,7 @@ public class KakaoController {
         if (existingUser.isPresent()) {
             String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
             try {
-                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
+                response1.sendRedirect("http://43.202.52.64:8080/index.html?token=" + jwtToken);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -132,7 +132,7 @@ public class KakaoController {
             kakaoService.saveOrUpdateUser(kakaoUserInfo);
             String jwtToken = userService.login(kakaoLoginInfo).get("token").toString();
             try {
-                response1.sendRedirect("http://localhost:8080/index.html?token=" + jwtToken);
+                response1.sendRedirect("http://43.202.52.64:8080/index.html?token=" + jwtToken);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

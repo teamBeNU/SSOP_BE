@@ -2,9 +2,18 @@ package SSOP.ssop.domain.TeamSp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class TeamSp {
 
     @Id
@@ -49,24 +58,6 @@ public class TeamSp {
     @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<TeamSpMember> members;
-
-    // 기본 생성자
-    protected TeamSp() {}
-
-    // 전체 필드를 초기화하는 생성자
-    public TeamSp(String team_name, String team_comment, Boolean isTemplate, String template,
-                  StudentOptional studentOptional, WorkerOptional workerOptional, FanOptional fanOptional,
-                  List<String> plus, String cardCover) {
-        this.team_name = team_name;
-        this.team_comment = team_comment;
-        this.isTemplate = isTemplate;
-        this.template = template;
-        this.studentOptional = studentOptional;
-        this.workerOptional = workerOptional;
-        this.fanOptional = fanOptional;
-        this.plus = plus;
-        this.cardCover = cardCover;
-    }
 
     // Template 값에 따라 변수 반환
     public StudentOptional getStudentOptional() {
@@ -137,86 +128,5 @@ public class TeamSp {
     public void removeMember(TeamSpMember member) {
         this.members.remove(member);
         member.setTeamSp(null); // 참조를 제거
-    }
-
-    // Getters and Setters
-    public Long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Long teamId) {
-        this.teamId = teamId;
-    }
-
-    public Long getHostId() {
-        return hostId;
-    }
-
-    public void setHostId(Long hostId) {
-        this.hostId = hostId;
-    }
-
-    public String getTeam_name() {
-        return team_name;
-    }
-
-    public void setTeam_name(String team_name) {
-        this.team_name = team_name;
-    }
-
-    public String getTeam_comment() {
-        return team_comment;
-    }
-
-    public void setTeam_comment(String team_comment) {
-        this.team_comment = team_comment;
-    }
-
-    public Boolean getIsTemplate() {
-        return isTemplate;
-    }
-
-    public void setIsTemplate(Boolean isTemplate) {
-        this.isTemplate = isTemplate;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public int getInviteCode() {
-        return inviteCode;
-    }
-
-    public void setInviteCode(int inviteCode) {
-        this.inviteCode = inviteCode;
-    }
-
-    public List<TeamSpMember> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<TeamSpMember> members) {
-        this.members = members;
-    }
-
-    public List<String> getPlus() {
-        return plus;
-    }
-
-    public void setPlus(List<String> plus) {
-        this.plus = plus;
-    }
-
-    public String getCardCover() {
-        return cardCover;
-    }
-
-    public void setCardCover(String cardCover) {
-        this.cardCover = cardCover;
     }
 }

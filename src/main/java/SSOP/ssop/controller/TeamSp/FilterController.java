@@ -53,4 +53,16 @@ public class FilterController {
     public List<FilterDto> getMembersByMajor(@RequestParam Long teamId, @RequestParam String major) {
         return filterService.getMembersByMajor(teamId, major);
     }
+
+    // 팀 ID에 한정된 템플릿(template) 목록
+    @GetMapping("/list/template")
+    public List<String> getTemplateFilters(@RequestParam Long teamId) {
+        return filterService.findDistinctCardTemplateByTeamId(teamId);
+    }
+
+    // 팀 ID와 전공(major)에 한정된 멤버 필터링
+    @GetMapping("/template")
+    public List<FilterDto> getMembersByTemplate(@RequestParam Long teamId, @RequestParam String template) {
+        return filterService.getMembersByTemplate(teamId, template);
+    }
 }
