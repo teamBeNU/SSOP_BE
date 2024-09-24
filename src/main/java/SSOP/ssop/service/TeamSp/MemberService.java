@@ -17,15 +17,12 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -128,6 +125,7 @@ public class MemberService {
         MemberOptionalDto optionalDto = memberRequest.getMemberOptional();
         if (optionalDto != null) {
             member.setCard_birth(optionalDto.getCard_birth());
+            member.setCard_bSecret(optionalDto.getCard_bSecret());
             member.setCard_MBTI(optionalDto.getCard_MBTI());
             member.setCard_tel(optionalDto.getCard_tel());
             member.setCard_email(optionalDto.getCard_email());

@@ -57,6 +57,8 @@ public class Card {
     // 공통 선택
     private String card_birth;      // 생년월일
 
+    private Boolean card_bSecret;      // 생년월일 비밀
+
     private String card_tel;    // 연락처
 
     private String card_sns_insta;  // sns: insta
@@ -100,7 +102,7 @@ public class Card {
     public Card() {}
 
     @Builder
-    public Card(String card_name, String card_introduction, String card_template, String card_cover, Avatar avatar, String profile_image_url, String card_birth, String card_tel, String card_sns_insta, String card_sns_x, String card_email, String card_MBTI, String card_music, String card_movie, String card_hobby, String card_address) {
+    public Card(String card_name, String card_introduction, String card_template, String card_cover, Avatar avatar, String profile_image_url, String card_birth, Boolean card_bSecret, String card_tel, String card_sns_insta, String card_sns_x, String card_email, String card_MBTI, String card_music, String card_movie, String card_hobby, String card_address) {
         if (card_name == null || card_name.isBlank() ||
                 card_introduction == null || card_introduction.isBlank() ||
                 card_template == null || card_cover == null || profile_image_url == null) {
@@ -113,6 +115,7 @@ public class Card {
         this.avatar = avatar;
         this.profile_image_url = profile_image_url;
         this.card_birth = card_birth;
+        this.card_bSecret = card_bSecret;
         this.card_tel = card_tel;
         this.card_sns_insta = card_sns_insta;
         this.card_sns_x = card_sns_x;

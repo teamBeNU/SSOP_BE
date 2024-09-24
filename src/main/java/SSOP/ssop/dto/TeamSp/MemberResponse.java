@@ -25,6 +25,7 @@ public class MemberResponse {
 
         this.memberOptional = new MemberOptionalDto(
                 member.getCard_birth(),
+                member.getCard_bSecret(),
                 member.getCard_MBTI(),
                 member.getCard_tel(),
                 member.getCard_email(),
