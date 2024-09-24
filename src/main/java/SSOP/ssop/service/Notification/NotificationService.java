@@ -5,11 +5,13 @@ import SSOP.ssop.domain.notification.Notification;
 import SSOP.ssop.repository.Notification.NotificationRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,16 +29,18 @@ public class NotificationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        // 알림 객체 생성 및 저장
+        // 알림 객체 생성 및 저장, 생성 시간 추가
         Notification notification = new Notification(title, card_name, user);
+        notification.setCreatedAt(new Date()); // 현재 시간을 설정
         return notificationRepository.save(notification);
     }
+
 
     // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<Notification> getNotificationsForUser(Long userId) {
-        // 사용자의 모든 알림을 조회
-        return notificationRepository.findByUserId(userId);
+        // 사용자의 7일이 지나지 않은 알림을 조회
+        return notificationRepository.findRecentNotificationsByUserId(userId);
     }
 
     // 알림 수락
@@ -57,6 +61,4 @@ public class NotificationService {
 
         notificationRepository.delete(notification);  // 알림 삭제
     }
-
-
 }
