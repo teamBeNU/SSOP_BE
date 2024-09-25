@@ -5,11 +5,14 @@ import SSOP.ssop.domain.notification.Notification;
 import SSOP.ssop.repository.Notification.NotificationRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -27,16 +30,17 @@ public class NotificationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        // 알림 객체 생성 및 저장
+        // 알림 객체 생성 및 저장, 생성 시간 추가
         Notification notification = new Notification(title, card_name, user);
+        notification.setCreatedAt(LocalDateTime.now()); // 현재 시간을 설정
         return notificationRepository.save(notification);
     }
+
 
     // 알림 목록 조회
     @Transactional(readOnly = true)
     public List<Notification> getNotificationsForUser(Long userId) {
-        // 사용자의 모든 알림을 조회
-        return notificationRepository.findByUserId(userId);
+        return notificationRepository.findRecentNotificationsByUserId(userId);
     }
 
     // 알림 수락
@@ -58,5 +62,11 @@ public class NotificationService {
         notificationRepository.delete(notification);  // 알림 삭제
     }
 
-
+    // 7일 지난 알림을 삭제하는 스케줄러
+    @Scheduled(cron = "0 0 0 * * ?")  // 매일 자정에 실행
+    @Transactional
+    public void deleteOldNotifications() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(7);  // 7일 전 시간 계산
+        notificationRepository.deleteNotificationsOlderThan(cutoffDate);  // 7일 지난 알림 삭제
+    }
 }

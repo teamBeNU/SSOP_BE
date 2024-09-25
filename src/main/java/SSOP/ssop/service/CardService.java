@@ -4,17 +4,14 @@ import SSOP.ssop.controller.CustomException;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
-import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.dto.card.request.CardCreateRequest;
 import SSOP.ssop.dto.card.request.CardUpdateRequest;
 import SSOP.ssop.dto.card.response.CardResponse;
-import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.card.response.CardShareResponse;
 import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.*;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.UserRepository;
-import SSOP.ssop.service.User.UserService;
 import SSOP.ssop.utils.CardUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +163,7 @@ public class CardService {
                 null, // Avatar를 나중에 설정
                 profileImageUrl,    // 저장된 이미지 URL
                 request.getCardOptional().getCard_birth(),
-                request.getCardOptional().getCard_bSecrete(),
+                request.getCardOptional().getCard_bSecret(),
                 request.getCardOptional().getCard_tel(),
                 request.getCardOptional().getCard_sns_insta(),
                 request.getCardOptional().getCard_sns_x(),
@@ -303,7 +300,7 @@ public class CardService {
         cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
         cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
         cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
-        cardUtils.updateFieldIfNotNull(request.getCard_bSecrete(), card::setCard_bSecrete);
+        cardUtils.updateFieldIfNotNull(request.getCard_bSecret(), card::setCard_bSecret);
         cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
         cardUtils.updateFieldIfNotNull(request.getCard_sns_insta(), card::setCard_sns_insta);
         cardUtils.updateFieldIfNotNull(request.getCard_sns_x(), card::setCard_sns_x);
