@@ -41,25 +41,25 @@ public class TeamSp {
     private int inviteCode;
 
     @Column(name = "showAge")
-    private boolean showAge;      // 나이
+    private Boolean showAge;      // 나이
 
     @Column(name = "showBirth")
-    private boolean showBirth;    // 생년월일
+    private Boolean showBirth;    // 생년월일
 
     @Column(name = "showMBTI")
-    private boolean showMBTI;     // mbti
+    private Boolean showMBTI;     // mbti
 
     @Column(name = "showTel")
-    private boolean showTel;      // 연락처
+    private Boolean showTel;      // 연락처
 
     @Column(name = "showEmail")
-    private boolean showEmail;    // 이메일
+    private Boolean showEmail;    // 이메일
 
     @Column(name = "showInsta")
-    private boolean showInsta;    // 인스타
+    private Boolean showInsta;    // 인스타
 
     @Column(name = "showX")
-    private boolean showX;        // x(트위터)
+    private Boolean showX;        // x(트위터)
 
     @Embedded
     private StudentOptional studentOptional;
@@ -71,16 +71,16 @@ public class TeamSp {
     private FanOptional fanOptional;
 
     @Column(name = "showHobby")
-    private boolean showHobby;        // 취미
+    private Boolean showHobby;        // 취미
 
     @Column(name = "showMusic")
-    private boolean showMusic;       // 인생음악
+    private Boolean showMusic;       // 인생음악
 
     @Column(name = "showMovie")
-    private boolean showMovie;      // 인생영화
+    private Boolean showMovie;      // 인생영화
 
     @Column(name = "showAddress")
-    private boolean showAddress;   // 거주지
+    private Boolean showAddress;   // 거주지
 
     @ElementCollection
     @CollectionTable(name = "plus", joinColumns = @JoinColumn(name = "teamId"))
