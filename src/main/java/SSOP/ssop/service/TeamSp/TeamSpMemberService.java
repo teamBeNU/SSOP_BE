@@ -12,6 +12,7 @@ import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class TeamSpMemberService {
     private CardService cardService;
 
     // 기존 카드 제출
+    @Transactional
     public void SubmitCard(Long teamId, Long cardId, Long userId) {
         // 1. 팀스페이스 멤버 조회
         TeamSpMember teamSpMember = teamSpMemberRepository.findByTeamSpIdAndUserId(teamId, userId)

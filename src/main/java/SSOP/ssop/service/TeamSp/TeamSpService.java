@@ -10,6 +10,7 @@ import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,7 @@ public class TeamSpService {
     private MemberService memberService;
 
     // 팀스페이스 생성
+    @Transactional
     public ResponseEntity<?> saveTeamSp(TeamSp teamSp, Long hostId) {
         teamSp.setHostId(hostId); // 호스트 ID 저장
         teamSp.setInviteCode(createInviteCode()); // 초대코드 자동 생성
@@ -71,6 +73,7 @@ public class TeamSpService {
     }
 
     // 팀스페이스 입장
+    @Transactional
     public TeamSpInfoDto EnterTeamSp(int inviteCode, Long userId) {
         // 1. 팀스페이스 정보 가져오기
         TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
@@ -107,6 +110,7 @@ public class TeamSpService {
     }
 
     // 팀스페이스 이름 수정
+    @Transactional
     public TeamSp updateTeamSp(Long id, TeamSp teamSp, Long userId) {
         TeamSp existingTeamSp = teamSpRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("팀스페이스를 찾을 수 없습니다."));
@@ -120,6 +124,7 @@ public class TeamSpService {
     }
 
     // 팀스페이스 삭제(호스트), 퇴장(참여자)
+    @Transactional
     public void deleteTeamSp(Long teamId, Long userId) {
         TeamSp teamSp = getTeamById(teamId);
         if (teamSp == null) {
