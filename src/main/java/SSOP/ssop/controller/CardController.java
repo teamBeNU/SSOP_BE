@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -113,17 +114,50 @@ public class CardController {
 
     // 카드 삭제 (내카드 & 상대카드)
     @DeleteMapping("/delete")
-    public void deleteCard(@RequestParam long cardId, @Login Long userId) throws URISyntaxException {
-        Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다."));
+    public void deleteCard(@RequestParam List<Long> cardIds, @Login Long userId) throws URISyntaxException {
+        List<Long> deletedCards = new ArrayList<>();
+        List<Long> failedCards = new ArrayList<>();
 
-        if (card.getUserId().equals(userId)) {
-            cardService.deleteCard(cardId, userId);
-            throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
-        } else {
-            userService.deleteSavedCard(userId, cardId);
-            throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
+//        for (Long cardId : cardIds) {
+//            Card card = cardRepository.findById(cardId)
+//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다. ID: " + cardId));
+//
+//            if (card.getUserId().equals(userId)) {
+//                cardService.deleteCard(cardId, userId);
+//                throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
+//            } else {
+//                userService.deleteSavedCard(userId, cardIds);
+//                throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
+//            }
+//        }
+
+        for (Long cardId : cardIds) {
+            try {
+                Card card = cardRepository.findById(cardId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다. ID: " + cardId));
+
+                if (card.getUserId().equals(userId)) {
+                    cardService.deleteCard(cardId, userId);
+                    deletedCards.add(cardId);
+                } else {
+                    userService.deleteSavedCard(userId, List.of(cardId));
+                    deletedCards.add(cardId);
+                }
+            } catch (Exception e) {
+                failedCards.add(cardId);
+                System.err.println("Failed to delete card ID: " + cardId + " - " + e.getMessage());
+            }
         }
+
+        if (!deletedCards.isEmpty()) {
+            System.out.println("카드를 삭제하였습니다. \n cardId : " + deletedCards);
+        }
+        if (!failedCards.isEmpty()) {
+            throw new CustomException(HttpStatus.BAD_REQUEST, "카드 삭제에 실패했습니다. \n cardId: " + failedCards);
+        }
+
+        // If you want to return a success message
+        throw new CustomException(HttpStatus.OK, "카드를 삭제하였습니다.");
     }
 
     // 상대 카드 메모

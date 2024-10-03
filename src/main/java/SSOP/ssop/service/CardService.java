@@ -323,8 +323,10 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
-        TeamSpMember teamSpMember = teamSpMemberRepository.findById(cardId)
-                .orElseThrow(() -> new IllegalArgumentException("팀스페이스에 제출한 카드는 삭제할 수 없습니다."));
+        boolean isCardInTeamSpace = teamSpMemberRepository.existsById(cardId); // Adjust your method if necessary
+        if (isCardInTeamSpace) {
+            throw new IllegalArgumentException("팀스페이스에 제출한 카드는 삭제할 수 없습니다. 카드아이디: " + cardId);
+        }
 
         // AWS S3 파일 삭제
         String imageUrl = card.getProfile_image_url();      // card의 profile_image_url 가져오기
