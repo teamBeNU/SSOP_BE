@@ -1,7 +1,6 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.controller.CustomException;
-import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.*;
 import SSOP.ssop.dto.card.request.CardCreateRequest;

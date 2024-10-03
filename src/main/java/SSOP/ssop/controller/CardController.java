@@ -1,14 +1,17 @@
 package SSOP.ssop.controller;
 
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.dto.Search.CardSearchDto;
-import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
-import SSOP.ssop.dto.card.request.*;
-import SSOP.ssop.dto.card.response.*;
+import SSOP.ssop.dto.card.request.CardCreateRequest;
+import SSOP.ssop.dto.card.request.CardShareRequest;
+import SSOP.ssop.dto.card.request.CardUpdateRequest;
+import SSOP.ssop.dto.card.request.MemoRequest;
+import SSOP.ssop.dto.card.response.CardResponse;
+import SSOP.ssop.dto.card.response.CardSaveResponse;
+import SSOP.ssop.dto.card.response.CardShareResponse;
+import SSOP.ssop.dto.card.response.CardShareStatusResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.security.annotation.Login;
 import SSOP.ssop.service.CardService;
-import SSOP.ssop.service.TeamSp.TeamSpMemberService;
 import SSOP.ssop.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -118,19 +121,6 @@ public class CardController {
         List<Long> deletedCards = new ArrayList<>();
         List<Long> failedCards = new ArrayList<>();
 
-//        for (Long cardId : cardIds) {
-//            Card card = cardRepository.findById(cardId)
-//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "카드가 존재하지 않습니다. ID: " + cardId));
-//
-//            if (card.getUserId().equals(userId)) {
-//                cardService.deleteCard(cardId, userId);
-//                throw new CustomException(HttpStatus.OK, "내 카드를 삭제하였습니다.");
-//            } else {
-//                userService.deleteSavedCard(userId, cardIds);
-//                throw new CustomException(HttpStatus.OK, "저장한 카드를 삭제했습니다.");
-//            }
-//        }
-
         for (Long cardId : cardIds) {
             try {
                 Card card = cardRepository.findById(cardId)
@@ -149,14 +139,10 @@ public class CardController {
             }
         }
 
-        if (!deletedCards.isEmpty()) {
-            System.out.println("카드를 삭제하였습니다. \n cardId : " + deletedCards);
-        }
         if (!failedCards.isEmpty()) {
             throw new CustomException(HttpStatus.BAD_REQUEST, "카드 삭제에 실패했습니다. \n cardId: " + failedCards);
         }
 
-        // If you want to return a success message
         throw new CustomException(HttpStatus.OK, "카드를 삭제하였습니다.");
     }
 
