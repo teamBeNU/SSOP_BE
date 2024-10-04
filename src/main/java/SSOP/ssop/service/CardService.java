@@ -78,34 +78,45 @@ public class CardService {
                 profileImageUrl = uploadImage(file, user_id);
             }
 
-            Card card = createCard(request, user_id, profileImageUrl);
+            String cardTemplate = request.getCardEssential().getCard_template();
 
-            switch (request.getCardEssential().getCard_template()) {
-                case "student":
-                    saveStudentCard(card, request);
-                    break;
-                case "worker":
-                    saveWorkerCard(card, request);
-                    break;
-                case "fan":
-                    saveFanCard(card, request);
-                    break;
-                case "free":
-                    saveStudentCard(card, request);
-                    saveWorkerCard(card, request);
-                    saveFanCard(card, request);
-                    break;
-                default:
-                    throw new IllegalArgumentException("템플릿 없음");
-            }
+            if ("student".equals(cardTemplate) || "studentSchool".equals(cardTemplate) ||
+                    "studentUniv".equals(cardTemplate) || "worker".equals(cardTemplate) ||
+                    "fan".equals(cardTemplate) || "free".equals(cardTemplate)) {
 
-            // Avatar 설정 및 저장
-            if ("avatar".equals(request.getCardEssential().getCard_cover()) && request.getAvatar() != null) {
-                Avatar avatar = saveAvatar(request.getAvatar());
-                avatar.setCard(card); // Avatar와 Card 연결
-                avatarRepository.save(avatar);
-                card.setAvatar(avatar); // Card에 Avatar 설정
-                cardRepository.save(card); // 변경된 Card 저장
+                Card card = createCard(request, user_id, profileImageUrl);
+
+                switch (cardTemplate) {
+                    case "student":
+                    case "studentSchool":           // 초,중,고등학생
+                    case "studentUniv":             // 대학(원)생
+                        saveStudentCard(card, request);
+                        break;
+                    case "worker":
+                        saveWorkerCard(card, request);
+                        break;
+                    case "fan":
+                        saveFanCard(card, request);
+                        break;
+                    case "free":
+                        saveStudentCard(card, request);
+                        saveWorkerCard(card, request);
+                        saveFanCard(card, request);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("템플릿이 존재하지 않습니다.");
+                }
+
+                // Avatar 설정 및 저장
+                if ("avatar".equals(request.getCardEssential().getCard_cover()) && request.getAvatar() != null) {
+                    Avatar avatar = saveAvatar(request.getAvatar());
+                    avatar.setCard(card); // Avatar와 Card 연결
+                    avatarRepository.save(avatar);
+                    card.setAvatar(avatar); // Card에 Avatar 설정
+                    cardRepository.save(card); // 변경된 Card 저장
+                }
+            } else {
+                throw new IllegalArgumentException("존재하지 않은 카드 템플릿입니다: " + cardTemplate);
             }
 
             return true;
@@ -115,6 +126,7 @@ public class CardService {
         }
     }
 
+    // 생성 - 아바타
     private Avatar saveAvatar(Avatar avatarRequest) {
         Avatar avatar = new Avatar();
         avatar.setFace(avatarRequest.getFace());
@@ -153,6 +165,7 @@ public class CardService {
         return s3Client.utilities().getUrl(builder -> builder.bucket(bucket).key(filePath)).toExternalForm();
     }
 
+    // 생성 - 카드
     private Card createCard(CardCreateRequest request, Long user_id, String profileImageUrl) {
         Card card = new Card(
                 request.getCardEssential().getCard_name(),
@@ -178,6 +191,7 @@ public class CardService {
         return card;
     }
 
+    // 생성 - 학생
     private void saveStudentCard(Card card, CardCreateRequest request) {
         CardStudent cardStudent = new CardStudent(
                 request.getStudent().getCard_student_school(),
@@ -190,9 +204,9 @@ public class CardService {
         );
         cardStudent.setCard(card);  // Card 객체를 CardStudent에 설정
         cardStudentRepository.save(cardStudent); // 카드 저장
-        //return card;
     }
 
+    // 생성 - 직장인
     private void saveWorkerCard(Card card, CardCreateRequest request) {
         CardWorker cardWorker = new CardWorker(
                 request.getWorker().getCard_worker_company(),
@@ -202,9 +216,9 @@ public class CardService {
         );
         cardWorker.setCard(card);  // Card 객체를 CardStudent에 설정
         cardWorkerRepository.save(cardWorker); // 카드 저장
-        //return card;
     }
 
+    // 생성 - 팬
     private void saveFanCard(Card card, CardCreateRequest request) {
         CardFan cardFan = new CardFan(
                 request.getFan().getCard_fan_genre(),
@@ -214,7 +228,6 @@ public class CardService {
         );
         cardFan.setCard(card);  // Card 객체를 CardStudent에 설정
         cardFanRepository.save(cardFan); // 카드 저장
-        //return card;
     }
 
     // 모든 카드 조회
