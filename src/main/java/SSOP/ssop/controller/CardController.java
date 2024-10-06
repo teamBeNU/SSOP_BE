@@ -41,6 +41,7 @@ public class CardController {
         this.cardRepository = cardRepository;
     }
 
+    // 카드 생성
     @PostMapping("/create")
     public ResponseEntity<?> saveCard(
             @Login Long userId,
