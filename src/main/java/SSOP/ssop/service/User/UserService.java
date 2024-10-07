@@ -99,11 +99,15 @@ public class UserService {
 
     // JWT 토큰 디코드 후 사용자 조회 메서드
     public Optional<User> getUserByToken(String token) {
-        // JWT에서 userId 추출
-        Long userId = jwtProvider.getUserIdFromToken(token);
+        try {
+            // JWT에서 userId 추출
+            Long userId = jwtProvider.getUserIdFromToken(token);
 
-        // userId로 사용자 조회
-        return userRepository.findByUserId(userId);
+            // userId로 사용자 조회
+            return userRepository.findByUserId(userId);
+        } catch (Exception e) {
+            return Optional.empty(); // 예외 발생 시 비어있는 Optional 반환
+        }
     }
 
     // 기존 비밀번호 검증

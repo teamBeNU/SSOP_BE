@@ -55,12 +55,14 @@ public class UserController {
             Optional<User> userOptional = userService.getUserByToken(token);
 
             if (userOptional.isPresent()) {
-                return ResponseEntity.ok(userOptional.get());
+                // UserDto 객체로 변환하여 반환
+                UserDto userDto = new UserDto(userOptional.get());
+                return ResponseEntity.ok(userDto);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
             }
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
         }
     }
 
