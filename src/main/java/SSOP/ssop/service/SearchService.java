@@ -134,6 +134,7 @@ public class SearchService {
 
                     return new TeamSpByUserDto(
                             teamId,
+                            teamSp.getHostId(),
                             teamSp.getTeam_name(),
                             teamSp.getTeam_comment(),
                             cardId,  // 단일 카드 ID

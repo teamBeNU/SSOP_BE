@@ -13,6 +13,7 @@ import java.util.List;
 @Setter
 public class TeamSpByUserDto {
     private Long teamId;
+    private Long hostId;
     private String team_name;
     private String team_comment;
     private Long cardId;
