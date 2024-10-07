@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/user")
@@ -45,6 +46,22 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getUser(@RequestParam("userId") Long userId) {
         return userService.getUser(userId);
+    }
+
+    // 토큰으로 유저 정보 출력
+    @GetMapping("/token")
+    public ResponseEntity<?> getUserByToken(@RequestParam("token") String token) {
+        try {
+            Optional<User> userOptional = userService.getUserByToken(token);
+
+            if (userOptional.isPresent()) {
+                return ResponseEntity.ok(userOptional.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
     // 기존 비밀번호 검증
