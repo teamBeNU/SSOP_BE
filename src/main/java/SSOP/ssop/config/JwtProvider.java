@@ -7,6 +7,7 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -77,5 +78,19 @@ public class JwtProvider {
 
         // 현재 시간이 만료시간의 이전
         return LocalDateTime.now().isBefore(localTimeExpired);
+    }
+
+    // 토큰으로 검색
+    public Long getUserIdFromToken(String token) {
+        try {
+            // 토큰에서 userId 클레임 추출
+            return JWT.require(getSign())
+                    .build()
+                    .verify(token)
+                    .getClaim("userId")
+                    .asLong();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
     }
 }

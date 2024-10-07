@@ -87,8 +87,8 @@ public class TeamSp {
     @Column(name = "plus")
     private List<String> plus;    // 자유 선택지
 
-    @Column(name = "showCover")
-    private String cover;         // 카드 커버 (자유/아바타/사진)
+    @Column(name = "cardCover")
+    private String cardCover;         // 카드 커버 (자유/아바타/사진)
 
     @OneToMany(mappedBy = "teamSp", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
