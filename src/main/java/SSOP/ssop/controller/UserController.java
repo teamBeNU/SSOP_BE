@@ -44,26 +44,8 @@ public class UserController {
 
     // 특정 유저 정보 출력
     @GetMapping
-    public ResponseEntity<?> getUser(@RequestParam("userId") Long userId) {
+    public ResponseEntity<?> getUser(@Login Long userId) {
         return userService.getUser(userId);
-    }
-
-    // 토큰으로 유저 정보 출력
-    @GetMapping("/token")
-    public ResponseEntity<?> getUserByToken(@RequestParam("token") String token) {
-        try {
-            Optional<User> userOptional = userService.getUserByToken(token);
-
-            if (userOptional.isPresent()) {
-                // UserDto 객체로 변환하여 반환
-                UserDto userDto = new UserDto(userOptional.get());
-                return ResponseEntity.ok(userDto);
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("사용자를 찾을 수 없습니다.");
-            }
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", e.getMessage()));
-        }
     }
 
     // 기존 비밀번호 검증
