@@ -151,6 +151,7 @@ public class TeamSpMemberService {
 
                     return new TeamSpMemberDto(
                             Long.valueOf(entry.getKey()),  // 팀 ID를 문자열로 변환
+                            teamSp.getHostId(),              // 호스트 ID
                             teamSp.getTeam_name(),           // 팀 이름
                             teamSp.getTeam_comment(),        // 팀 설명
                             filterDto,
@@ -229,6 +230,7 @@ public class TeamSpMemberService {
         // DTO 객체 생성
         TeamSpMemberDto teamSpMemberDto = new TeamSpMemberDto(
                 Long.valueOf(teamId),
+                teamSp.getHostId(),    // 호스트 ID
                 teamSp.getTeam_name(), // 팀 이름
                 teamSp.getTeam_comment(), // 팀 설명
                 filterDto,

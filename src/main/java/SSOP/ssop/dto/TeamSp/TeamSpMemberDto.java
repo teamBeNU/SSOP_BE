@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TeamSpMemberDto {
     private Long teamId;
+    private Long hostId;
     private String team_name;
     private String team_comment;
     private FilterDto filter;
