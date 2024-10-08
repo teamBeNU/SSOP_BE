@@ -83,7 +83,9 @@ public class CardResponse {
                 card.getCard_address()
         );
 
-        if (card.getCard_template().equals("student")) {
+        if (card.getCard_template().equals("student") ||
+            card.getCard_template().equals("studentSchool") ||
+            card.getCard_template().equals("studentUniv")) {
             this.student = new CardStudentResponse(
                     cardStudent.getCard_student_school(),
                     cardStudent.getCard_student_grade(),

@@ -141,7 +141,7 @@ public class CardController {
         }
 
         if (!failedCards.isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "카드 삭제에 실패했습니다. \n cardId: " + failedCards);
+            throw new CustomException(HttpStatus.BAD_REQUEST, "카드 삭제에 실패했습니다. cardId: " + failedCards);
         }
 
         throw new CustomException(HttpStatus.OK, "카드를 삭제하였습니다.");
