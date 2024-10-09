@@ -335,7 +335,7 @@ public class CardService {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
 
-        boolean isCardInTeamSpace = teamSpMemberRepository.existsById(cardId); // Adjust your method if necessary
+        boolean isCardInTeamSpace = teamSpMemberRepository.existsById(cardId);
         if (isCardInTeamSpace) {
             throw new IllegalArgumentException("팀스페이스에 제출한 카드는 삭제할 수 없습니다. 카드아이디: " + cardId);
         }

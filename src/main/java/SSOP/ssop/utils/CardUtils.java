@@ -39,6 +39,8 @@ public class CardUtils {
 
         switch (card.getCard_template()) {
             case "student":
+            case "studentSchool":           // 초,중,고등학생
+            case "studentUniv":             // 대학(원)생
                 cardStudent = cardStudentRepository.findByCard_CardId(card.getCardId());
                 break;
             case "worker":
@@ -69,6 +71,8 @@ public class CardUtils {
 
         switch (card.getCard_template()) {
             case "student":
+            case "studentSchool":           // 초,중,고등학생
+            case "studentUniv":             // 대학(원)생
                 if (request.getStudent() != null) {
                     CardStudent cardStudent = cardStudentRepository.findByCard_CardId(cardId);
                     if (cardStudent != null) {
