@@ -1,6 +1,7 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.MySp.MySp;
+import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
@@ -61,14 +62,9 @@ public class SearchService {
         List<CardSearchDto> cardSearchDto = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
 
         // Member 테이블에서 검색
-        List<MemberSearchDto> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
+        List<Member> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
         List<MemberSearchDto> memberSearchDto = members.stream()
-                .map(member -> {
-                    MemberSearchDto dto = new MemberSearchDto();
-                    dto.setCardId(member.getCardId());
-                    dto.setCard_name(member.getCard_name());
-                    return dto;
-                })
+                .map(MemberSearchDto::new) // Member 객체를 사용하여 MemberSearchDto로 변환
                 .collect(Collectors.toList());
 
         // 사용자가 속한 그룹 목록 조회 및 그룹명 필터링
