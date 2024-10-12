@@ -1,7 +1,6 @@
 package SSOP.ssop.repository.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
-import SSOP.ssop.dto.Search.MemberSearchDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -30,8 +29,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByTeamIdAndUserId(@Param("teamId") long teamId, @Param("userId") long userId);
 
     // 호스트 지정 카드 검색
-    @Query("SELECT new SSOP.ssop.dto.Search.MemberSearchDto(" +
-            "m.cardId, m.card_name, m.card_introduction, m.card_birth, m.card_template, m.card_cover) " +
+    @Query("SELECT m " +
             "FROM Member m " +
             "WHERE m.teamSpMember.teamSp.teamId IN :teamSpIds AND (" +
             "LOWER(m.card_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
@@ -47,7 +45,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "LOWER(m.card_movie) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(m.card_hobby) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(m.card_address) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<MemberSearchDto> searchByKeywordAndTeamSpIds(
+    List<Member> searchByKeywordAndTeamSpIds(
             @Param("keyword") String keyword,
             @Param("teamSpIds") List<Long> teamSpIds);
 }

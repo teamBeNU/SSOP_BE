@@ -1,6 +1,7 @@
 package SSOP.ssop.service;
 
 import SSOP.ssop.domain.MySp.MySp;
+import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
@@ -61,14 +62,9 @@ public class SearchService {
         List<CardSearchDto> cardSearchDto = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
 
         // Member 테이블에서 검색
-        List<MemberSearchDto> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
+        List<Member> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
         List<MemberSearchDto> memberSearchDto = members.stream()
-                .map(member -> {
-                    MemberSearchDto dto = new MemberSearchDto();
-                    dto.setCardId(member.getCardId());
-                    dto.setCard_name(member.getCard_name());
-                    return dto;
-                })
+                .map(MemberSearchDto::new) // Member 객체를 사용하여 MemberSearchDto로 변환
                 .collect(Collectors.toList());
 
         // 사용자가 속한 그룹 목록 조회 및 그룹명 필터링
@@ -117,6 +113,13 @@ public class SearchService {
                         (existing, replacement) -> existing // 중복되는 경우 기존 값 유지
                 ));
 
+        // 각 팀스페이스의 멤버 수를 구하기 위해 전체 멤버 리스트를 가져옴
+        Map<Long, List<TeamSpMember>> totalMembersMap = teamSpRepository.findAll().stream()
+                .collect(Collectors.toMap(TeamSp::getTeamId, teamSp -> {
+                    // 각 팀스페이스의 모든 멤버 리스트 가져오기
+                    return teamSpMemberRepository.findByTeamSpId(teamSp.getTeamId());
+                }));
+
         // 팀스페이스와 해당 멤버 정보를 조합하여 TeamSpByUserDto 생성
         return teamSpMap.entrySet().stream()
                 .filter(entry -> teamMembersMap.containsKey(entry.getKey())) // 유저가 참여 중인 팀만 필터링
@@ -126,17 +129,25 @@ public class SearchService {
 
                     Long cardId = teamCardIdMap.getOrDefault(teamId, null); // 해당 팀의 카드 ID
 
-                    // 해당 팀스페이스에 속한 멤버 정보 조회
+                    // 해당 팀스페이스에 속한 모든 멤버 정보 조회
                     List<MemberResponse> membersDetail = teamMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
                             .flatMap(teamSpMember -> memberRepository.findByTeamSpMemberId(teamSpMember.getId()).stream())
                             .map(MemberResponse::new)
                             .collect(Collectors.toList());
 
+                    // 해당 팀의 총 멤버 수(userIds 사용)
+                    List<Long> userIds = totalMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
+                            .map(TeamSpMember::getUserId) // 각 팀스페이스의 멤버의 userId
+                            .collect(Collectors.toList());
+
+                    // TeamSpByUserDto 생성 시 userIds를 기반으로 memberCount 설정
                     return new TeamSpByUserDto(
                             teamId,
+                            teamSp.getHostId(),
                             teamSp.getTeam_name(),
                             teamSp.getTeam_comment(),
-                            cardId,  // 단일 카드 ID
+                            userIds.size(), // 참여 인원 수
+                            cardId, // 단일 카드 ID
                             membersDetail // 멤버 리스트
                     );
                 })

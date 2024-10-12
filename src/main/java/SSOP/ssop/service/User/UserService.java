@@ -87,23 +87,20 @@ public class UserService {
 
     // 특정 유저 정보 출력
     public ResponseEntity<?> getUser(Long userId) {
-        Optional<User> user = userRepository.findByUserId(userId);
-        if (user.isPresent()) {
-            // UserDto 객체를 직접 반환
-            return ResponseEntity.ok(new UserDto(user.get()));
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "유효한 사용자 ID가 없습니다."));
+        }
+
+        Optional<User> userOptional = userRepository.findByUserId(userId);
+        if (userOptional.isPresent()) {
+            // UserDto 객체로 변환하여 반환
+            UserDto userDto = new UserDto(userOptional.get());
+            return ResponseEntity.ok(userDto);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("message", "존재하지 않는 사용자입니다."));
         }
-    }
-
-    // JWT 토큰 디코드 후 사용자 조회 메서드
-    public Optional<User> getUserByToken(String token) {
-        // JWT에서 userId 추출
-        Long userId = jwtProvider.getUserIdFromToken(token);
-
-        // userId로 사용자 조회
-        return userRepository.findByUserId(userId);
     }
 
     // 기존 비밀번호 검증
