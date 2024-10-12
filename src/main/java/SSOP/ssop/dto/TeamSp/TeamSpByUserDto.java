@@ -7,8 +7,8 @@ import lombok.Setter;
 
 import java.util.List;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class TeamSpByUserDto {
@@ -16,6 +16,7 @@ public class TeamSpByUserDto {
     private Long hostId;
     private String team_name;
     private String team_comment;
+    private int memberCount; // 참여 인원 수
     private Long cardId;
     private List<MemberResponse> members;
 }

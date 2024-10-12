@@ -31,10 +31,10 @@ public class SearchController {
             @RequestBody KeywordDto keywordDto) {
         // 검색어 유효성 검사
         if (keywordDto == null || keywordDto.getKeyword() == null || keywordDto.getKeyword().isEmpty()) {
-            throw new CustomException(HttpStatus.BAD_REQUEST, "검색어를 입력해 주세요.");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "검색어를 입력해 주세요."); // 유효하지 않은 검색어
         }
 
-        String keyword = keywordDto.getKeyword();
+        String keyword = keywordDto.getKeyword().trim(); // 검색어 공백 제거
 
         // 카드, 멤버, 그룹명 통합 검색
         SearchDto searchDto = searchService.searchByKeyword(userId, keyword);
@@ -45,7 +45,8 @@ public class SearchController {
                 searchDto.getMySpgroupResponse().isEmpty()) {
             throw new CustomException(HttpStatus.NOT_FOUND, "해당 검색어에 맞는 결과를 찾을 수 없습니다.");
         }
-        return ResponseEntity.ok(searchDto);
+
+        return ResponseEntity.ok(searchDto); // 검색 결과 반환
     }
 
     // 유저별 참여 중인 팀스페이스 정보 조회

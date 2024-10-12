@@ -13,31 +13,28 @@ public interface FilterRepository extends JpaRepository<Member, Long> {
     @Query("SELECT DISTINCT m.card_MBTI FROM Member m WHERE m.card_MBTI IS NOT NULL AND m.teamSpMember.teamSp.teamId = :teamId")
     List<String> findDistinctCardMBTIByTeamId(@Param("teamId") Long teamId);
 
-    // MBTI 필터링
-    @Query("SELECT m FROM Member m WHERE m.card_MBTI = :mbti AND m.teamSpMember.teamSp.teamId = :teamId")
-    List<Member> findByCardMBTIAndTeamId(@Param("mbti") String mbti, @Param("teamId") Long teamId);
-
     // 역할(role) 목록
     @Query("SELECT DISTINCT m.card_student_role FROM Member m WHERE m.card_student_role IS NOT NULL AND m.teamSpMember.teamSp.teamId = :teamId")
     List<String> findDistinctCardRoleByTeamId(@Param("teamId") Long teamId);
-
-    // 역할(role) 필터링
-    @Query("SELECT m FROM Member m WHERE m.card_student_role = :role AND m.teamSpMember.teamSp.teamId = :teamId")
-    List<Member> findByCardRoleAndTeamId(@Param("role") String role, @Param("teamId") Long teamId);
 
     // 전공(major) 목록
     @Query("SELECT DISTINCT m.card_student_major FROM Member m WHERE m.card_student_major IS NOT NULL AND m.teamSpMember.teamSp.teamId = :teamId")
     List<String> findDistinctCardMajorByTeamId(@Param("teamId") Long teamId);
 
-    // 전공(major) 필터링
-    @Query("SELECT m FROM Member m WHERE m.card_student_major = :major AND m.teamSpMember.teamSp.teamId = :teamId")
-    List<Member> findByCardMajorAndTeamId(@Param("major") String major, @Param("teamId") Long teamId);
-
     // 템플릿(template) 목록
     @Query("SELECT DISTINCT m.card_template FROM Member m WHERE m.card_template IS NOT NULL AND m.teamSpMember.teamSp.teamId = :teamId")
     List<String> findDistinctCardTemplateByTeamId(@Param("teamId") Long teamId);
 
-    // 템플릿(template) 필터링
-    @Query("SELECT m FROM Member m WHERE m.card_template = :major AND m.teamSpMember.teamSp.teamId = :teamId")
-    List<Member> findByCardTemplateAndTeamId(@Param("major") String template, @Param("teamId") Long teamId);
+    // 모든 조건에 대해 한번에 필터링 요청
+    @Query("SELECT m FROM Member m WHERE m.teamSpMember.teamSp.teamId = :teamId " +
+            "AND (:mbti IS NULL OR m.card_MBTI IN :mbti) " +
+            "AND (:role IS NULL OR m.card_student_role IN :role) " +
+            "AND (:major IS NULL OR m.card_student_major IN :major) " +
+            "AND (:template IS NULL OR m.card_template IN :template)")
+    List<Member> findAllByFilters(
+            @Param("teamId") Long teamId,
+            @Param("mbti") List<String> mbti,
+            @Param("role") List<String> role,
+            @Param("major") List<String> major,
+            @Param("template") List<String> template);
 }
