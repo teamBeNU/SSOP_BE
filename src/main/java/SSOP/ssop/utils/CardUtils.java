@@ -32,7 +32,7 @@ public class CardUtils {
         this.cardFanRepository = cardFanRepository;
     }
 
-    public CardResponse createCardResponse(Card card, boolean isNotMyCard, LocalDateTime time) {
+    public CardResponse createCardResponse(Card card, boolean isNotMyCard, LocalDateTime savedAt, LocalDateTime modifiedAt) {
         CardStudent cardStudent = null;
         CardWorker cardWorker = null;
         CardFan cardFan = null;
@@ -55,7 +55,7 @@ public class CardUtils {
                 cardFan = cardFanRepository.findByCard_CardId(card.getCardId());
                 break;
         }
-        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, time);
+        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, savedAt, modifiedAt);
     }
 
     // null값 확인
