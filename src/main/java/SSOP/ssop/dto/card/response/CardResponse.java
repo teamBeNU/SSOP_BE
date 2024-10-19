@@ -15,7 +15,8 @@ public class CardResponse {
     private Long userId;
     private Long cardId;
 
-    private LocalDateTime time;
+    private LocalDateTime savedAt;
+    private LocalDateTime updatedAt;
 
     private String card_template;  // student or worker
     private String card_cover;
@@ -40,10 +41,11 @@ public class CardResponse {
 
     private String memo;
 
-    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard, LocalDateTime time) {
+    public CardResponse(Card card, CardStudent cardStudent, CardWorker cardWorker, CardFan cardFan, boolean isNotMyCard, LocalDateTime savedAt, LocalDateTime modifiedAt) {
         this.userId = card.getUserId();
         this.cardId = card.getCardId();
-        this.time = time;
+        this.savedAt = savedAt;
+        this.updatedAt = modifiedAt;
         this.card_template = card.getCard_template();
         this.card_cover = card.getCard_cover();
 
