@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -236,7 +237,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, false, null));
+            responses.add(cardUtils.createCardResponse(card, false, null, null));
         }
 
         return responses;
@@ -248,7 +249,7 @@ public class CardService {
         List<CardResponse> responses = new ArrayList<>();
 
         for (Card card : cards) {
-            responses.add(cardUtils.createCardResponse(card, false, card.getCreatedAt()));
+            responses.add(cardUtils.createCardResponse(card, false, card.getCreatedAt(), null));
         }
 
         return responses;
@@ -273,7 +274,9 @@ public class CardService {
 
         for (Card card : cards) {
             LocalDateTime savedAt = savedCardList.get(card.getCardId());
-            responses.add(cardUtils.createCardResponse(card, true, savedAt));
+            LocalDateTime modifiedAt = card.getCreatedAt();
+
+            responses.add(cardUtils.createCardResponse(card, true, savedAt, modifiedAt));
         }
 
         return responses;
@@ -283,7 +286,7 @@ public class CardService {
     public CardResponse getCard(long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("카드가 존재하지 않습니다."));
-        return cardUtils.createCardResponse(card, false, card.getCreatedAt());
+        return cardUtils.createCardResponse(card, false, card.getCreatedAt(), null);
     }
 
     // 카드 수정

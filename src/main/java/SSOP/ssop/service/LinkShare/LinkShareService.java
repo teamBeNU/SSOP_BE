@@ -75,6 +75,6 @@ public class LinkShareService {
         boolean isNotMyCard = !card.getUserId().equals(card.getUserId());
 
         // CardResponse 객체 생성 및 반환
-        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, createdAt);
+        return new CardResponse(card, cardStudent, cardWorker, cardFan, isNotMyCard, createdAt, null);
     }
 }
