@@ -13,7 +13,10 @@ import java.util.Optional;
 
 @Repository
 public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long> {
-    
+
+    // 팀별 참여 인원
+    long countByTeamSp(TeamSp teamSp);
+
     // 팀스페이스 입장
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :teamSpId AND t.user.userId = :userId")
     Optional<TeamSpMember> findByTeamSpIdAndUserId(@Param("teamSpId") Long teamSpId, @Param("userId") Long userId);
