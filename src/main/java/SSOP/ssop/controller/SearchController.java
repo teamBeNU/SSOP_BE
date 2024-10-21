@@ -36,13 +36,12 @@ public class SearchController {
 
         String keyword = keywordDto.getKeyword().trim(); // 검색어 공백 제거
 
-        // 카드, 멤버, 그룹명 통합 검색
+        // 카드, 멤버 통합 검색
         SearchDto searchDto = searchService.searchByKeyword(userId, keyword);
 
         // 검색 결과가 비어 있는 경우 예외 처리
         if (searchDto.getCardSearchDto().isEmpty() &&
-                searchDto.getMemberSearchDto().isEmpty() &&
-                searchDto.getMySpgroupResponse().isEmpty()) {
+                searchDto.getMemberSearchDto().isEmpty()) {
             throw new CustomException(HttpStatus.NOT_FOUND, "해당 검색어에 맞는 결과를 찾을 수 없습니다.");
         }
 
