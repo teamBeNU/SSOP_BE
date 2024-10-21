@@ -67,11 +67,8 @@ public class SearchService {
                 .map(MemberSearchDto::new) // Member 객체를 사용하여 MemberSearchDto로 변환
                 .collect(Collectors.toList());
 
-        // 사용자가 속한 그룹 목록 조회 및 그룹명 필터링
-        List<MySpGroupResponse> mySpGroupResponses = getMyspGroup(userId, keyword);
-
         // 통합된 검색 결과
-        return new SearchDto(cardSearchDto, memberSearchDto, mySpGroupResponses);
+        return new SearchDto(cardSearchDto, memberSearchDto);
     }
 
     // 저장한 카드 ID 목록을 가져오는 메서드
@@ -151,32 +148,6 @@ public class SearchService {
                             membersDetail // 멤버 리스트
                     );
                 })
-                .collect(Collectors.toList());
-    }
-
-    // 그룹명 검색
-    public List<MySpGroupResponse> getMyspGroup(Long userId, String keyword) {
-        // 사용자 속한 그룹들 조회
-        List<MySp> mySpGroups = mySpRepository.findByUserId(userId);
-
-        // 그룹명으로 필터링 (대소문자 구분 없이 검색할 수 있도록 toLowerCase 사용)
-        List<MySp> filteredGroups = mySpGroups.stream()
-                .filter(group -> group.getGroup_name().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
-
-        // 필터링된 그룹이 없으면 빈 리스트 반환
-        if (filteredGroups.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 응답 객체로 변환
-        return filteredGroups.stream()
-                .map(mySpGroup -> new MySpGroupResponse(
-                        mySpGroup.getGroupId(),
-                        mySpGroup.getGroup_name(),
-                        mySpGroup.getCards().size(),
-                        mySpGroup.getCreatedAt()
-                ))
                 .collect(Collectors.toList());
     }
 }
