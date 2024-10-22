@@ -14,8 +14,9 @@ import java.util.Optional;
 @Repository
 public interface TeamSpMemberRepository extends JpaRepository<TeamSpMember, Long> {
 
-    // 팀별 참여 인원
-    long countByTeamSp(TeamSp teamSp);
+    // 팀별 참여 인원 -> 카드 제출한 사람
+    @Query("SELECT COUNT(t) FROM TeamSpMember t WHERE t.teamSp.teamId = :teamId AND t.cardId IS NOT NULL")
+    long countByTeamIdAndCardIdNotNull(@Param("teamId") Long teamId);
 
     // 팀스페이스 입장
     @Query("SELECT t FROM TeamSpMember t WHERE t.teamSp.teamId = :teamSpId AND t.user.userId = :userId")

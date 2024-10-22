@@ -21,10 +21,7 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -159,9 +156,10 @@ public class SearchService {
                             .map(MemberResponse::new)
                             .collect(Collectors.toList());
 
-                    // 해당 팀의 총 멤버 수(userIds 사용)
-                    List<Long> userIds = totalMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
-                            .map(TeamSpMember::getUserId) // 각 팀스페이스의 멤버의 userId
+                    // 해당 팀의 총 멤버 수(cardIds 사용)
+                    List<Long> cardIds = totalMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
+                            .map(TeamSpMember::getCardId) // 각 팀스페이스의 멤버의 cardId
+                            .filter(Objects::nonNull) // null 값 제거
                             .collect(Collectors.toList());
 
                     // TeamSpByUserDto 생성 시 userIds를 기반으로 memberCount 설정
@@ -170,7 +168,7 @@ public class SearchService {
                             teamSp.getHostId(),
                             teamSp.getTeam_name(),
                             teamSp.getTeam_comment(),
-                            userIds.size(), // 참여 인원 수
+                            cardIds.size(), // 참여 인원 수
                             cardId, // 단일 카드 ID
                             membersDetail // 멤버 리스트
                     );

@@ -69,7 +69,7 @@ public class TeamSpService {
         TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
 
-        long memberCount = teamSpMemberRepository.countByTeamSp(teamSp);
+        long memberCount = teamSpMemberRepository.countByTeamIdAndCardIdNotNull(teamSp.getTeamId());
 
         return new TeamSpInfoDto(teamSp, memberCount);
     }
@@ -98,7 +98,7 @@ public class TeamSpService {
         teamSpMemberRepository.saveAll(user.getTeamSpMembers());
 
         // +) 팀별 참여 인원
-        long memberCount = teamSpMemberRepository.countByTeamSp(teamSp);
+        long memberCount = teamSpMemberRepository.countByTeamIdAndCardIdNotNull(teamSp.getTeamId());
 
         // 6. TeamSpInfoDto 결과 반환
         return new TeamSpInfoDto(teamSp, memberCount);

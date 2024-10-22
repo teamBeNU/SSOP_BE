@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,8 +37,11 @@ public class TeamSpMemberDto {
         this.team_comment = team_comment;
         this.filter = filter;
         this.userIds = userIds != null ? userIds : Collections.emptyList();
-        this.memberCount = this.userIds.size();
+        this.memberCount = (int) this.cardIds.stream()
+                .filter(Objects::nonNull) // null 값 제외
+                .count();
         this.cardIds = cardIds != null ? cardIds : Collections.emptyList();
         this.members = members != null ? members : Collections.emptyList();
     }
+
 }

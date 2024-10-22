@@ -14,7 +14,6 @@ public class FilterMemberDto {
     private String card_birth;
     private String template;
     private String profile_image_url;
-//    private String avatar;
 
     public FilterMemberDto(Member member) {
         this.teamId = member.getTeamSpMember().getTeamSp().getTeamId();
@@ -24,6 +23,5 @@ public class FilterMemberDto {
         this.card_birth = member.getCard_birth();
         this.template = member.getCard_template();
         this.profile_image_url = member.getProfile_image_url();
-//        this.avatar = member.
     }
 }
