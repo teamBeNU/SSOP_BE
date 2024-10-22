@@ -158,7 +158,7 @@ public class MySpService {
                     CardFan cardFan = cardRepository.findCardFanByCardId(card.getCardId());
                     LocalDateTime createdAt = card.getCreatedAt();  // 카드 생성 시간
 
-                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, createdAt);  // CardResponse 객체 생성
+                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, createdAt, null);  // CardResponse 객체 생성
                 })
                 .collect(Collectors.toList());
 
