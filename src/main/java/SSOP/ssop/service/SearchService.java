@@ -1,19 +1,16 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
-import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.Search.MemberSearchDto;
 import SSOP.ssop.dto.Search.SearchDto;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.repository.Card.CardRepository;
-import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
