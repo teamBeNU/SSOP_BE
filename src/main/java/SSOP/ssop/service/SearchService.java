@@ -5,6 +5,7 @@ import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
 import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.Search.MemberSearchDto;
@@ -36,9 +37,6 @@ public class SearchService {
     private CardRepository cardRepository;
 
     @Autowired
-    private MySpRepository mySpRepository;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -47,7 +45,7 @@ public class SearchService {
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
 
-    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스 + 내가 만든 그룹 )
+    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스( 기존카드 / 호스트지정 카드) )
     public SearchDto searchByKeyword(Long userId, String keyword) {
         // 유저가 참여 중인 팀스페이스 ID 목록 조회
         List<TeamSpByUserDto> teamSpaces = getTeamSpByUserId(userId);
@@ -58,8 +56,29 @@ public class SearchService {
         // 저장한 카드 ID 목록을 가져옴
         List<Long> savedCardIds = getSavedCardIds(userId);
 
-        // Card 테이블에서 검색 (저장한 카드 ID를 포함하여 검색)
-        List<CardSearchDto> cardSearchDto = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
+        // 저장한 카드 ID -> Card 테이블에서 검색
+        List<Card> savedCards = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
+        List<CardSearchDto> savedCardSearchDto = savedCards.stream()
+                .map(card -> new CardSearchDto(
+                        card.getCardId(),
+                        card.getCard_name(),
+                        card.getCard_introduction(),
+                        card.getCard_birth(),
+                        card.getCard_template(),
+                        card.getProfile_image_url()))
+                .collect(Collectors.toList());
+
+        // TeamSpMember에서 cardId가 0보다 클 때, Card테이블에서 그 cardID 데이터 검색
+        List<Card> teamSpCards = cardRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
+        List<CardSearchDto> teamSpCardSearchDto = teamSpCards.stream()
+                .map(card -> new CardSearchDto(
+                        card.getCardId(),
+                        card.getCard_name(),
+                        card.getCard_introduction(),
+                        card.getCard_birth(),
+                        card.getCard_template(),
+                        card.getProfile_image_url()))
+                .collect(Collectors.toList());
 
         // Member 테이블에서 검색
         List<Member> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
@@ -68,7 +87,15 @@ public class SearchService {
                 .collect(Collectors.toList());
 
         // 통합된 검색 결과
-        return new SearchDto(cardSearchDto, memberSearchDto);
+        SearchDto searchDto = new SearchDto();
+        searchDto.setSavedCardSearchDto(savedCardSearchDto);
+
+        // teamSpSearchDto에 카드와 멤버 정보를 묶어 추가
+        List<Object> teamSpDataEntry = searchDto.getTeamSpSearchDto();
+        teamSpDataEntry.addAll(teamSpCardSearchDto); // 카드 데이터 추가
+        teamSpDataEntry.addAll(memberSearchDto);     // 멤버 데이터 추가
+
+        return searchDto;
     }
 
     // 저장한 카드 ID 목록을 가져오는 메서드

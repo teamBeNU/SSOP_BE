@@ -40,11 +40,10 @@ public class SearchController {
         SearchDto searchDto = searchService.searchByKeyword(userId, keyword);
 
         // 검색 결과가 비어 있는 경우 예외 처리
-        if (searchDto.getCardSearchDto().isEmpty() &&
-                searchDto.getMemberSearchDto().isEmpty()) {
+        if (searchDto.getSavedCardSearchDto().isEmpty() &&
+                searchDto.getTeamSpSearchDto().isEmpty()) {
             throw new CustomException(HttpStatus.NOT_FOUND, "해당 검색어에 맞는 결과를 찾을 수 없습니다.");
         }
-
         return ResponseEntity.ok(searchDto); // 검색 결과 반환
     }
 
