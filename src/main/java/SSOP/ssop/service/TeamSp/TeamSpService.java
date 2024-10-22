@@ -69,7 +69,9 @@ public class TeamSpService {
         TeamSp teamSp = teamSpRepository.findByInviteCode(inviteCode)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 초대 코드입니다."));
 
-        return new TeamSpInfoDto(teamSp);
+        long memberCount = teamSpMemberRepository.countByTeamIdAndCardIdNotNull(teamSp.getTeamId());
+
+        return new TeamSpInfoDto(teamSp, memberCount);
     }
 
     // 팀스페이스 입장
@@ -95,8 +97,11 @@ public class TeamSpService {
         // 5. 팀스페이스 멤버 저장
         teamSpMemberRepository.saveAll(user.getTeamSpMembers());
 
+        // +) 팀별 참여 인원
+        long memberCount = teamSpMemberRepository.countByTeamIdAndCardIdNotNull(teamSp.getTeamId());
+
         // 6. TeamSpInfoDto 결과 반환
-        return new TeamSpInfoDto(teamSp);
+        return new TeamSpInfoDto(teamSp, memberCount);
     }
 
     // 모든 팀스페이스 Entity 조회

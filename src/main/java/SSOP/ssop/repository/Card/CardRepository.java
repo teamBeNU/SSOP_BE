@@ -32,10 +32,8 @@ public interface CardRepository extends JpaRepository<Card, Long> {
     // 특정 상태에 따른 수신자가 있는 카드 목록 조회
     List<Card> findAllByRecipient_UserIdAndStatus(Long userId, String status);
 
-    // 기존 카드 검색
-    @Query("SELECT new SSOP.ssop.dto.Search.CardSearchDto(" +
-            "c.cardId, c.card_name, c.card_introduction, c.card_birth, c.card_template, " +
-            "c.card_cover) " +
+    // 저장한 카드 ID 목록으로 카드 검색
+    @Query("SELECT c " +
             "FROM Card c " +
             "WHERE c.cardId IN :savedCardIds AND (" +
             "LOWER(c.card_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
@@ -52,8 +50,29 @@ public interface CardRepository extends JpaRepository<Card, Long> {
             "LOWER(c.card_hobby) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.card_address) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(c.memo) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    List<CardSearchDto> searchByKeywordAndSavedCardIds(
+    List<Card> searchByKeywordAndSavedCardIds(
             @Param("keyword") String keyword,
             @Param("savedCardIds") List<Long> savedCardIds);
 
+    // 팀스페이스 ID 목록으로 카드 검색
+    @Query("SELECT c " +
+            "FROM Card c " +
+            "WHERE c.cardId IN (SELECT t.cardId FROM TeamSpMember t WHERE t.teamSp.teamId IN :teamSpIds) AND (" +
+            "LOWER(c.card_name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_introduction) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_template) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_cover) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_tel) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_sns_insta) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_sns_x) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_email) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_MBTI) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_music) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_movie) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_hobby) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.card_address) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(c.memo) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    List<Card> searchByKeywordAndTeamSpIds(
+            @Param("keyword") String keyword,
+            @Param("teamSpIds") List<Long> teamSpIds);
 }

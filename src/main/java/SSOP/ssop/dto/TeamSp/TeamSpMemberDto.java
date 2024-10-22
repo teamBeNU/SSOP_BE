@@ -36,8 +36,11 @@ public class TeamSpMemberDto {
         this.team_comment = team_comment;
         this.filter = filter;
         this.userIds = userIds != null ? userIds : Collections.emptyList();
-        this.memberCount = this.userIds.size();
         this.cardIds = cardIds != null ? cardIds : Collections.emptyList();
         this.members = members != null ? members : Collections.emptyList();
+
+        this.memberCount = (int) (this.cardIds != null ? this.cardIds.stream()
+                .filter(cardId -> cardId != null && cardId > 0) // null 제외 및 0보다 큰 값 필터링
+                .count() : 0) + this.members.size();
     }
 }
