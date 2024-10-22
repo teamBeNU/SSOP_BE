@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -44,5 +43,4 @@ public class TeamSpMemberDto {
                 .filter(cardId -> cardId != null && cardId > 0) // null 제외 및 0보다 큰 값 필터링
                 .count() : 0) + this.members.size();
     }
-
 }
