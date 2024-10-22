@@ -1,9 +1,11 @@
 package SSOP.ssop.service.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.TeamSp.FilterMemberDto;
 import SSOP.ssop.repository.TeamSp.FilterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,12 +19,24 @@ public class FilterService {
     private FilterRepository filterRepository;
 
     // 전체 필터링
+    @Async
     public List<FilterMemberDto> getMembersByFilters(Long teamId, List<String> mbti, List<String> role, List<String> major, List<String> template) {
         List<Member> members = filterRepository.findAllByFilters(teamId, mbti, role, major, template);
+        List<Card> cards = filterRepository.findAllByCardFilters(teamId, mbti, role, major, template);
 
-        return members.stream()
+        List<FilterMemberDto> filterMemberDtos = new ArrayList<>();
+
+        // Member에서 가져온 데이터로 FilterMemberDto 생성
+        filterMemberDtos.addAll(members.stream()
                 .map(FilterMemberDto::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+        // Card에서 가져온 데이터를 FilterMemberDto로 변환하여 추가
+        filterMemberDtos.addAll(cards.stream()
+                .map(card -> new FilterMemberDto(card))
+                .collect(Collectors.toList()));
+
+        return filterMemberDtos;
     }
 
     // MBTI 목록 받아오기

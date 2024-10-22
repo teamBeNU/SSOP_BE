@@ -1,6 +1,7 @@
 package SSOP.ssop.repository.TeamSp;
 
 import SSOP.ssop.domain.TeamSp.Member;
+import SSOP.ssop.domain.card.Card;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +46,17 @@ public interface FilterRepository extends JpaRepository<Member, Long> {
             @Param("role") List<String> role,
             @Param("major") List<String> major,
             @Param("template") List<String> template);
+
+    @Query("SELECT c FROM Card c WHERE c.cardId IN (SELECT t.cardId FROM TeamSpMember t WHERE t.teamSp.teamId = :teamId) " +
+            "AND (:mbti IS NULL OR c.card_MBTI IN :mbti) " +
+            "AND (:role IS NULL OR c.cardStudent.card_student_role IN :role) " +
+            "AND (:major IS NULL OR c.cardStudent.card_student_major IN :major) " +
+            "AND (:template IS NULL OR c.card_template IN :template)")
+    List<Card> findAllByCardFilters(
+            @Param("teamId") Long teamId,
+            @Param("mbti") List<String> mbti,
+            @Param("role") List<String> role,
+            @Param("major") List<String> major,
+            @Param("template") List<String> template);
+
 }
