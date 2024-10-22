@@ -1,5 +1,6 @@
 package SSOP.ssop.dto.Search;
 
+import SSOP.ssop.domain.card.Card;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,5 @@ public class CardSearchDto {
     private String card_introduction;
     private String card_birth;
     private String card_template;
-    private String card_cover;
+    private String profile_image_url;
 }

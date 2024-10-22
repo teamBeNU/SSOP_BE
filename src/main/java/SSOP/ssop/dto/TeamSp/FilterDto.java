@@ -22,22 +22,15 @@ public class FilterDto {
     @JsonIgnore
     private Long cardId;
     private List<String> card_mbti;
-    private List<String> card_student_major;
-    private List<String> card_student_role;
+    private List<String> card_major;
+    private List<String> card_role;
     private List<String> card_template;
 
     public FilterDto(Member member) {
         this.cardId = member.getCardId();
-        this.card_mbti = filterNull(Collections.singletonList(member.getCard_MBTI()));
-        this.card_student_major = filterNull(Collections.singletonList(member.getCard_student_major()));
-        this.card_student_role = filterNull(Collections.singletonList(member.getCard_student_role()));
-        this.card_template = filterNull(Collections.singletonList(member.getCard_template()));
-    }
-
-    // 빈 값 안보이게
-    private List<String> filterNull(List<String> list) {
-        return list.stream()
-                .filter(item -> item != null && !item.isEmpty())
-                .collect(Collectors.toList());
+        this.card_mbti = Collections.singletonList(member.getCard_MBTI());
+        this.card_major = Collections.singletonList(member.getCard_student_major());
+        this.card_role = Collections.singletonList(member.getCard_student_role());
+        this.card_template = Collections.singletonList(member.getCard_template());
     }
 }

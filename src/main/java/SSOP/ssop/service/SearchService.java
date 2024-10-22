@@ -1,18 +1,16 @@
 package SSOP.ssop.service;
 
-import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.TeamSp.Member;
 import SSOP.ssop.domain.TeamSp.TeamSp;
 import SSOP.ssop.domain.TeamSp.TeamSpMember;
 import SSOP.ssop.domain.User;
-import SSOP.ssop.dto.MySp.response.MySpGroupResponse;
+import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.Search.CardSearchDto;
 import SSOP.ssop.dto.Search.MemberSearchDto;
 import SSOP.ssop.dto.Search.SearchDto;
 import SSOP.ssop.dto.TeamSp.MemberResponse;
 import SSOP.ssop.dto.TeamSp.TeamSpByUserDto;
 import SSOP.ssop.repository.Card.CardRepository;
-import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.TeamSp.MemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpMemberRepository;
 import SSOP.ssop.repository.TeamSp.TeamSpRepository;
@@ -20,10 +18,7 @@ import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,9 +31,6 @@ public class SearchService {
     private CardRepository cardRepository;
 
     @Autowired
-    private MySpRepository mySpRepository;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -47,7 +39,7 @@ public class SearchService {
     @Autowired
     private TeamSpMemberRepository teamSpMemberRepository;
 
-    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스 + 내가 만든 그룹 )
+    // 검색 기능 ( 저장한 카드 + 내가 참여중인 팀스페이스( 기존카드 / 호스트지정 카드) )
     public SearchDto searchByKeyword(Long userId, String keyword) {
         // 유저가 참여 중인 팀스페이스 ID 목록 조회
         List<TeamSpByUserDto> teamSpaces = getTeamSpByUserId(userId);
@@ -58,8 +50,29 @@ public class SearchService {
         // 저장한 카드 ID 목록을 가져옴
         List<Long> savedCardIds = getSavedCardIds(userId);
 
-        // Card 테이블에서 검색 (저장한 카드 ID를 포함하여 검색)
-        List<CardSearchDto> cardSearchDto = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
+        // 저장한 카드 ID -> Card 테이블에서 검색
+        List<Card> savedCards = cardRepository.searchByKeywordAndSavedCardIds(keyword, savedCardIds);
+        List<CardSearchDto> savedCardSearchDto = savedCards.stream()
+                .map(card -> new CardSearchDto(
+                        card.getCardId(),
+                        card.getCard_name(),
+                        card.getCard_introduction(),
+                        card.getCard_birth(),
+                        card.getCard_template(),
+                        card.getProfile_image_url()))
+                .collect(Collectors.toList());
+
+        // TeamSpMember에서 cardId가 0보다 클 때, Card테이블에서 그 cardID 데이터 검색
+        List<Card> teamSpCards = cardRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
+        List<CardSearchDto> teamSpCardSearchDto = teamSpCards.stream()
+                .map(card -> new CardSearchDto(
+                        card.getCardId(),
+                        card.getCard_name(),
+                        card.getCard_introduction(),
+                        card.getCard_birth(),
+                        card.getCard_template(),
+                        card.getProfile_image_url()))
+                .collect(Collectors.toList());
 
         // Member 테이블에서 검색
         List<Member> members = memberRepository.searchByKeywordAndTeamSpIds(keyword, teamSpIds);
@@ -67,11 +80,16 @@ public class SearchService {
                 .map(MemberSearchDto::new) // Member 객체를 사용하여 MemberSearchDto로 변환
                 .collect(Collectors.toList());
 
-        // 사용자가 속한 그룹 목록 조회 및 그룹명 필터링
-        List<MySpGroupResponse> mySpGroupResponses = getMyspGroup(userId, keyword);
-
         // 통합된 검색 결과
-        return new SearchDto(cardSearchDto, memberSearchDto, mySpGroupResponses);
+        SearchDto searchDto = new SearchDto();
+        searchDto.setSavedCardSearchDto(savedCardSearchDto);
+
+        // teamSpSearchDto에 카드와 멤버 정보를 묶어 추가
+        List<Object> teamSpDataEntry = searchDto.getTeamSpSearchDto();
+        teamSpDataEntry.addAll(teamSpCardSearchDto); // 카드 데이터 추가
+        teamSpDataEntry.addAll(memberSearchDto);     // 멤버 데이터 추가
+
+        return searchDto;
     }
 
     // 저장한 카드 ID 목록을 가져오는 메서드
@@ -135,9 +153,10 @@ public class SearchService {
                             .map(MemberResponse::new)
                             .collect(Collectors.toList());
 
-                    // 해당 팀의 총 멤버 수(userIds 사용)
-                    List<Long> userIds = totalMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
-                            .map(TeamSpMember::getUserId) // 각 팀스페이스의 멤버의 userId
+                    // 해당 팀의 총 멤버 수(cardIds 사용)
+                    List<Long> cardIds = totalMembersMap.getOrDefault(teamId, Collections.emptyList()).stream()
+                            .map(TeamSpMember::getCardId) // 각 팀스페이스의 멤버의 cardId
+                            .filter(Objects::nonNull) // null 값 제거
                             .collect(Collectors.toList());
 
                     // TeamSpByUserDto 생성 시 userIds를 기반으로 memberCount 설정
@@ -146,37 +165,11 @@ public class SearchService {
                             teamSp.getHostId(),
                             teamSp.getTeam_name(),
                             teamSp.getTeam_comment(),
-                            userIds.size(), // 참여 인원 수
+                            cardIds.size(), // 참여 인원 수
                             cardId, // 단일 카드 ID
                             membersDetail // 멤버 리스트
                     );
                 })
-                .collect(Collectors.toList());
-    }
-
-    // 그룹명 검색
-    public List<MySpGroupResponse> getMyspGroup(Long userId, String keyword) {
-        // 사용자 속한 그룹들 조회
-        List<MySp> mySpGroups = mySpRepository.findByUserId(userId);
-
-        // 그룹명으로 필터링 (대소문자 구분 없이 검색할 수 있도록 toLowerCase 사용)
-        List<MySp> filteredGroups = mySpGroups.stream()
-                .filter(group -> group.getGroup_name().toLowerCase().contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
-
-        // 필터링된 그룹이 없으면 빈 리스트 반환
-        if (filteredGroups.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        // 응답 객체로 변환
-        return filteredGroups.stream()
-                .map(mySpGroup -> new MySpGroupResponse(
-                        mySpGroup.getGroupId(),
-                        mySpGroup.getGroup_name(),
-                        mySpGroup.getCards().size(),
-                        mySpGroup.getCreatedAt()
-                ))
                 .collect(Collectors.toList());
     }
 }
