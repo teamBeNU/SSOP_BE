@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,9 +129,13 @@ public class CardService {
     // 생성 - 아바타
     private Avatar saveAvatar(Avatar avatarRequest) {
         Avatar avatar = new Avatar();
-        avatar.setFace(avatarRequest.getFace());
-        avatar.setHair(avatarRequest.getHair());
-        avatar.setHairColor(avatarRequest.getHairColor());
+        avatar.setEyes(avatarRequest.getEyes());
+        avatar.setEyebrows(avatarRequest.getEyebrows());
+        avatar.setMouth(avatarRequest.getMouth());
+        avatar.setHairFront(avatarRequest.getHairFront());
+        avatar.setHairBack(avatarRequest.getHairBack());
+        avatar.setHairFrontColor(avatarRequest.getHairFrontColor());
+        avatar.setHairBackColor(avatarRequest.getHairBackColor());
         avatar.setClothes(avatarRequest.getClothes());
         avatar.setAcc(avatarRequest.getAcc());
         avatar.setBg(avatarRequest.getBg());
