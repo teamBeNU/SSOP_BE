@@ -55,9 +55,13 @@ public class CardResponse {
 
         if (card.getAvatar() != null) {
             this.avatar = new AvatarResponse(
-                    card.getAvatar().getFace(),
-                    card.getAvatar().getHair(),
-                    card.getAvatar().getHairColor(),
+                    card.getAvatar().getEyes(),
+                    card.getAvatar().getEyebrows(),
+                    card.getAvatar().getMouth(),
+                    card.getAvatar().getHairFront(),
+                    card.getAvatar().getHairBack(),
+                    card.getAvatar().getHairFrontColor(),
+                    card.getAvatar().getHairBackColor(),
                     card.getAvatar().getClothes(),
                     card.getAvatar().getAcc(),
                     card.getAvatar().getBg(),
