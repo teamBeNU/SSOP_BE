@@ -78,12 +78,22 @@ public class MySpService {
         Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
 
         if (groupOptional.isPresent()) {
-            mySpRepository.delete(groupOptional.get());  // 그룹 삭제
-            return true;  // 삭제 성공
+            MySp group = groupOptional.get();
+
+            // 그룹과 연관된 카드와의 관계 해제
+            group.getCards().clear(); // 그룹에 연관된 모든 카드를 해제
+
+            // 변경 사항을 저장합니다.
+            mySpRepository.save(group);
+
+            // 그룹 삭제
+            mySpRepository.delete(group);
+            return true; // 삭제 성공
         } else {
             return false; // 그룹을 찾지 못했거나 권한이 없는 경우
         }
     }
+
 
     // 마이스페이스 그룹명 변경
     public MySp updateGroupName(Long userId, Long groupId, String newGroupName) {
