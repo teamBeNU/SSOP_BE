@@ -8,6 +8,7 @@ public class AvatarResponse extends Avatar {
     private int eyes;   // 얼굴 - 눈
     private int eyebrows;   // 얼굴 - 눈썹
     private int mouth;   // 얼굴 - 입
+    private int mole;       // 이목구비 - 점
     private int hairFront;   // 헤어 - 앞머리
     private int hairBack;   // 헤어 - 뒷머리
     private int hairFrontColor;  // 헤어 - 앞머리 컬러
@@ -17,10 +18,11 @@ public class AvatarResponse extends Avatar {
     private int bg;         // 배경
     private int bgColor;    // 배경색
 
-    public AvatarResponse(int eyes, int eyebrows, int mouth, int hairFront, int hairBack, int hairFrontColor, int hairBackColor, int clothes, int acc, int bg, int bgColor) {
+    public AvatarResponse(int eyes, int eyebrows, int mouth, int mole, int hairFront, int hairBack, int hairFrontColor, int hairBackColor, int clothes, int acc, int bg, int bgColor) {
         this.eyes = eyes;
         this.eyebrows = eyebrows;
         this.mouth = mouth;
+        this.mole = mole;
         this.hairFront = hairFront;
         this.hairBack = hairBack;
         this.hairFrontColor = hairFrontColor;
@@ -44,6 +46,11 @@ public class AvatarResponse extends Avatar {
     @Override
     public int getMouth() {
         return mouth;
+    }
+
+    @Override
+    public int getMole() {
+        return mole;
     }
 
     @Override
@@ -99,6 +106,11 @@ public class AvatarResponse extends Avatar {
     @Override
     public void setMouth(int mouth) {
         this.mouth = mouth;
+    }
+
+    @Override
+    public void setMole(int mole) {
+        this.mole = mole;
     }
 
     @Override

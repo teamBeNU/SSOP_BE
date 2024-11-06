@@ -15,9 +15,10 @@ public class Avatar {
     private Long card_id;
 
     // 아바타 커스텀
-    private int eyes;   // 얼굴 - 눈
-    private int eyebrows;   // 얼굴 - 눈썹
-    private int mouth;   // 얼굴 - 입
+    private int eyes;   // 이목구비 - 눈
+    private int eyebrows;   // 이목구비 - 눈썹
+    private int mouth;   // 이목구비 - 입
+    private int mole;       // 이목구비 - 점
     private int hairFront;   // 헤어 - 앞머리
     private int hairBack;   // 헤어 - 뒷머리
     private int hairFrontColor;  // 헤어 - 앞머리 컬러
