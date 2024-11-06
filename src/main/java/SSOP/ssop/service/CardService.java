@@ -132,6 +132,7 @@ public class CardService {
         avatar.setEyes(avatarRequest.getEyes());
         avatar.setEyebrows(avatarRequest.getEyebrows());
         avatar.setMouth(avatarRequest.getMouth());
+        avatar.setMole(avatarRequest.getMole());
         avatar.setHairFront(avatarRequest.getHairFront());
         avatar.setHairBack(avatarRequest.getHairBack());
         avatar.setHairFrontColor(avatarRequest.getHairFrontColor());

@@ -58,6 +58,7 @@ public class CardResponse {
                     card.getAvatar().getEyes(),
                     card.getAvatar().getEyebrows(),
                     card.getAvatar().getMouth(),
+                    card.getAvatar().getMole(),
                     card.getAvatar().getHairFront(),
                     card.getAvatar().getHairBack(),
                     card.getAvatar().getHairFrontColor(),
