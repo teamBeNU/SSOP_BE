@@ -14,10 +14,14 @@ public class Avatar {
     @Column(name = "card_id")
     private Long card_id;
 
-    // 다른 필드들
-    private int face;   // 얼굴
-    private int hair;   // 헤어
-    private int hairColor;  // 헤어 컬러
+    // 아바타 커스텀
+    private int eyes;   // 얼굴 - 눈
+    private int eyebrows;   // 얼굴 - 눈썹
+    private int mouth;   // 얼굴 - 입
+    private int hairFront;   // 헤어 - 앞머리
+    private int hairBack;   // 헤어 - 뒷머리
+    private int hairFrontColor;  // 헤어 - 앞머리 컬러
+    private int hairBackColor;  // 헤어 - 뒷머리 컬러
     private int clothes;    // 옷
     private int acc;        // 악세사리
     private int bg;         // 배경
