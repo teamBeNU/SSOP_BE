@@ -312,12 +312,51 @@ public class CardService {
             cardUtils.updateFieldIfNotNull(profileImageUrl, card::setProfile_image_url);
         }
 
+        if (request.getAvatar() != null) {
+            Avatar avatar = request.getAvatar();
+
+            if (card.getAvatar() != null) {
+                card.getAvatar().resetAvatar();
+                card.getAvatar().setEyes(avatar.getEyes());
+                card.getAvatar().setEyebrows(avatar.getEyebrows());
+                card.getAvatar().setMouth(avatar.getMouth());
+                card.getAvatar().setMole(avatar.getMole());
+                card.getAvatar().setHairFront(avatar.getHairFront());
+                card.getAvatar().setHairBack(avatar.getHairBack());
+                card.getAvatar().setHairFrontColor(avatar.getHairFrontColor());
+                card.getAvatar().setHairBackColor(avatar.getHairBackColor());
+                card.getAvatar().setClothes(avatar.getClothes());
+                card.getAvatar().setAcc(avatar.getAcc());
+                card.getAvatar().setBg(avatar.getBg());
+                card.getAvatar().setBgColor(avatar.getBgColor());
+            } else {
+                Avatar newAvatar = new Avatar();
+                newAvatar.setEyes(avatar.getEyes());
+                newAvatar.setEyebrows(avatar.getEyebrows());
+                newAvatar.setMouth(avatar.getMouth());
+                newAvatar.setMole(avatar.getMole());
+                newAvatar.setHairFront(avatar.getHairFront());
+                newAvatar.setHairBack(avatar.getHairBack());
+                newAvatar.setHairFrontColor(avatar.getHairFrontColor());
+                newAvatar.setHairBackColor(avatar.getHairBackColor());
+                newAvatar.setClothes(avatar.getClothes());
+                newAvatar.setAcc(avatar.getAcc());
+                newAvatar.setBg(avatar.getBg());
+                newAvatar.setBgColor(avatar.getBgColor());
+
+                newAvatar.setCard(card);
+
+                card.setAvatar(newAvatar);
+            }
+        }
+
+
         // 공통 필드 업데이트
         cardUtils.updateFieldIfNotNull(request.getCard_name(), card::setCard_name);
         cardUtils.updateFieldIfNotNull(request.getCard_introduction(), card::setCard_introduction);
         cardUtils.updateFieldIfNotNull(request.getCard_template(), card::setCard_template);
         cardUtils.updateFieldIfNotNull(request.getCard_cover(), card::setCard_cover);
-        cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
+        //cardUtils.updateFieldIfNotNull(request.getAvatar(), card::setAvatar);
         cardUtils.updateFieldIfNotNull(request.getCard_birth(), card::setCard_birth);
         cardUtils.updateFieldIfNotNull(request.getCard_bSecret(), card::setCard_bSecret);
         cardUtils.updateFieldIfNotNull(request.getCard_tel(), card::setCard_tel);
