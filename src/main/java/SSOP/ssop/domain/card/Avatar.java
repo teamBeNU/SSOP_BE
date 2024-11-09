@@ -32,4 +32,20 @@ public class Avatar {
     @MapsId  // Avatar의 card_id는 Card의 PK와 동일
     @JoinColumn(name = "card_id")
     private Card card;
+
+    // 아바타 값 초기화
+    public void resetAvatar() {
+        this.eyes = 0;
+        this.eyebrows = 0;
+        this.mouth = 0;
+        this.mole = 0;
+        this.hairFront = 0;
+        this.hairBack = 0;
+        this.hairFrontColor = 0;
+        this.hairBackColor = 0;
+        this.clothes = 0;
+        this.acc = 0;
+        this.bg = 0;
+        this.bgColor = 0;
+    }
 }
