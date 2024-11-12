@@ -47,8 +47,4 @@ public class TeamSpMember {
         this.user = user;
         this.cardId = cardId;
     }
-
-    public Long getUserId() {
-        return user != null ? user.getUserId() : null;
-    }
 }
