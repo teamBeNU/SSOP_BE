@@ -138,7 +138,11 @@ public class CardService {
         avatar.setHairFrontColor(avatarRequest.getHairFrontColor());
         avatar.setHairBackColor(avatarRequest.getHairBackColor());
         avatar.setClothes(avatarRequest.getClothes());
-        avatar.setAcc(avatarRequest.getAcc());
+        avatar.setAccEar(avatarRequest.getAccEar());
+        avatar.setAccNose(avatarRequest.getAccNose());
+        avatar.setAccGlasses(avatarRequest.getAccGlasses());
+        avatar.setAccPin(avatarRequest.getAccPin());
+        avatar.setAccEtc(avatarRequest.getAccEtc());
         avatar.setBg(avatarRequest.getBg());
         avatar.setBgColor(avatarRequest.getBgColor());
         return avatar;
@@ -326,7 +330,11 @@ public class CardService {
                 card.getAvatar().setHairFrontColor(avatar.getHairFrontColor());
                 card.getAvatar().setHairBackColor(avatar.getHairBackColor());
                 card.getAvatar().setClothes(avatar.getClothes());
-                card.getAvatar().setAcc(avatar.getAcc());
+                card.getAvatar().setAccEar(avatar.getAccEar());
+                card.getAvatar().setAccNose(avatar.getAccNose());
+                card.getAvatar().setAccGlasses(avatar.getAccGlasses());
+                card.getAvatar().setAccPin(avatar.getAccPin());
+                card.getAvatar().setAccEtc(avatar.getAccEtc());
                 card.getAvatar().setBg(avatar.getBg());
                 card.getAvatar().setBgColor(avatar.getBgColor());
             } else {
@@ -340,7 +348,11 @@ public class CardService {
                 newAvatar.setHairFrontColor(avatar.getHairFrontColor());
                 newAvatar.setHairBackColor(avatar.getHairBackColor());
                 newAvatar.setClothes(avatar.getClothes());
-                newAvatar.setAcc(avatar.getAcc());
+                newAvatar.setAccEar(avatar.getAccEar());
+                newAvatar.setAccNose(avatar.getAccNose());
+                newAvatar.setAccGlasses(avatar.getAccGlasses());
+                newAvatar.setAccPin(avatar.getAccPin());
+                newAvatar.setAccEtc(avatar.getAccEtc());
                 newAvatar.setBg(avatar.getBg());
                 newAvatar.setBgColor(avatar.getBgColor());
 
