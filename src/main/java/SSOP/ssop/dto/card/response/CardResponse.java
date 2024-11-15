@@ -64,7 +64,11 @@ public class CardResponse {
                     card.getAvatar().getHairFrontColor(),
                     card.getAvatar().getHairBackColor(),
                     card.getAvatar().getClothes(),
-                    card.getAvatar().getAcc(),
+                    card.getAvatar().getAccEar(),
+                    card.getAvatar().getAccNose(),
+                    card.getAvatar().getAccGlasses(),
+                    card.getAvatar().getAccPin(),
+                    card.getAvatar().getAccEtc(),
                     card.getAvatar().getBg(),
                     card.getAvatar().getBgColor()
             );
