@@ -199,15 +199,26 @@ public class MySpService {
         MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
 
+        // 사용자 정보 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        // 저장된 카드 목록 가져오기 (카드 ID와 저장된 시간 매핑)
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+
         // 그룹에 속한 카드 정보 조회
         List<CardResponse> members = group.getCards().stream()
                 .map(card -> {
+                    // 카드별 상세 정보 가져오기
                     CardStudent cardStudent = cardRepository.findCardStudentByCardId(card.getCardId());
                     CardWorker cardWorker = cardRepository.findCardWorkerByCardId(card.getCardId());
                     CardFan cardFan = cardRepository.findCardFanByCardId(card.getCardId());
-                    LocalDateTime createdAt = card.getCreatedAt();  // 카드 생성 시간
 
-                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, createdAt, null);  // CardResponse 객체 생성
+                    // 저장 시간 가져오기
+                    LocalDateTime savedAt = savedCardList.getOrDefault(card.getCardId(), null);
+
+                    // CardResponse 생성 및 반환
+                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, savedAt, card.getCreatedAt());
                 })
                 .collect(Collectors.toList());
 
@@ -215,7 +226,7 @@ public class MySpService {
         return new MySpDetailResponse(
                 group.getGroupId(),
                 group.getGroup_name(),
-                members.size(),   // 멤버 수
+                members.size(),
                 group.getCreatedAt(),
                 members
         );

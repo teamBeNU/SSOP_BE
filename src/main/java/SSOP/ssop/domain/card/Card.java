@@ -126,5 +126,4 @@ public class Card {
         this.card_hobby = card_hobby;
         this.card_address = card_address;
     }
-
 }
