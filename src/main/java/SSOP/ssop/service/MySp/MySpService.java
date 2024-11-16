@@ -16,10 +16,12 @@ import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -74,26 +76,63 @@ public class MySpService {
     }
 
     // 마이스페이스 그룹 삭제
+    @Transactional
     public boolean deleteMyspGroup(Long userId, Long groupId) {
-        Optional<MySp> groupOptional = mySpRepository.findByGroupIdAndUserId(groupId, userId);
+        // 그룹 존재 확인
+        MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
 
-        if (groupOptional.isPresent()) {
-            MySp group = groupOptional.get();
+        // 그룹 내 카드와의 관계 제거
+        for (Card card : group.getCards()) {
+            card.setMySp(null); // 그룹과 카드의 연관 관계 끊기
+            cardRepository.save(card); // 카드 상태 저장
 
-            // 그룹과 연관된 카드와의 관계 해제
-            group.getCards().clear(); // 그룹에 연관된 모든 카드를 해제
-
-            // 변경 사항을 저장합니다.
-            mySpRepository.save(group);
-
-            // 그룹 삭제
-            mySpRepository.delete(group);
-            return true; // 삭제 성공
-        } else {
-            return false; // 그룹을 찾지 못했거나 권한이 없는 경우
+            // 저장된 상대 카드 목록에서도 제거
+            deleteSavedCard(userId, List.of(card.getCardId()));
         }
+
+        // 그룹 삭제
+        mySpRepository.delete(group);
+        return true; // 성공
     }
 
+    // 저장된 상대 카드 목록에서 삭제
+    private void deleteSavedCard(Long userId, List<Long> cardIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
+
+        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
+
+        for (Long cardId : cardIds) {
+            savedCardList.remove(cardId); // 상대 카드 목록에서 삭제
+        }
+
+        userRepository.save(user); // 변경 사항 저장
+    }
+
+    // 그룹 내 카드 삭제
+    @Transactional
+    public void removeCardFromGroup(Long userId, Long groupId, Long cardId) {
+        // 그룹 확인
+        MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
+
+        // 카드 확인
+        Card card = cardRepository.findById(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("카드를 찾을 수 없습니다."));
+
+        // 카드가 그룹에 속해 있는지 확인
+        if (!group.getCards().contains(card)) {
+            throw new IllegalArgumentException("카드가 해당 그룹에 속해 있지 않습니다. 카드 ID: " + cardId);
+        }
+
+        // 그룹에서 카드 제거
+        group.removeCard(card); // 그룹과의 연관관계 해제
+        mySpRepository.save(group); // 그룹 저장
+
+        // 상대 카드 목록에서 제거
+        deleteSavedCard(userId, List.of(cardId));
+    }
 
     // 마이스페이스 그룹명 변경
     public MySp updateGroupName(Long userId, Long groupId, String newGroupName) {

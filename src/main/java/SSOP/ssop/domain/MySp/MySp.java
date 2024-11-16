@@ -35,7 +35,7 @@ public class MySp {
     // 카드 리스트 조회 메서드
     // 그룹에 속한 카드 리스트
     @Getter
-    @OneToMany(mappedBy = "mySp", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "mySp", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = false)
     private List<Card> cards = new ArrayList<>();
 
     public MySp() {}
@@ -49,5 +49,11 @@ public class MySp {
     public void addCard(Card card) {
         this.cards.add(card);
         card.setMySp(this);
+    }
+
+    // 카드 제거 메서드
+    public void removeCard(Card card) {
+        this.cards.remove(card);  // 그룹의 카드 목록에서 제거
+        card.setMySp(null);       // 카드의 그룹 연관관계 해제
     }
 }
