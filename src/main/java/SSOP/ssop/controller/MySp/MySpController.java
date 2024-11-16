@@ -66,7 +66,7 @@ public class MySpController {
     }
 
     // 마이스페이스 그룹 삭제
-    @DeleteMapping
+    @DeleteMapping("/delete-group")
     public ResponseEntity<Map<String, Object>> deleteGroup(
             @RequestParam Long groupId,
             @Login Long userId
@@ -100,11 +100,11 @@ public class MySpController {
     }
 
     // 그룹 내 카드 삭제
-    @DeleteMapping
+    @DeleteMapping("/delete-card")
     public ResponseEntity<Map<String, Object>> removeCardFromGroup(
-            @RequestParam Long groupId, // 그룹 ID를 쿼리 파라미터로 받음
-            @RequestParam Long cardId,  // 카드 ID를 쿼리 파라미터로 받음
-            @RequestParam Long userId   // 사용자 ID를 쿼리 파라미터로 받음
+            @RequestParam Long groupId,
+            @RequestParam Long cardId,
+            @Login Long userId
     ) {
         try {
             // 서비스 호출
@@ -130,6 +130,7 @@ public class MySpController {
                     ));
         }
     }
+
 
     // 마이스페이스 그룹명 변경
     @PatchMapping
