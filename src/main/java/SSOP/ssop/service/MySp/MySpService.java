@@ -14,6 +14,8 @@ import SSOP.ssop.dto.card.response.CardResponse;
 import SSOP.ssop.repository.Card.CardRepository;
 import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.service.User.UserService;
+import SSOP.ssop.service.UserCardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,19 +30,18 @@ import java.util.stream.Collectors;
 @Service
 public class MySpService {
 
-    @Autowired
-    private MySpRepository mySpRepository;
+    private final MySpRepository mySpRepository;
+    private final UserRepository userRepository;
+    private final CardRepository cardRepository;
+    private final UserCardUtils userCardUtils;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private CardRepository cardRepository;
-
-    public MySpService(MySpRepository mySpRepository, UserRepository userRepository, CardRepository cardRepository) {
+    public MySpService(MySpRepository mySpRepository, UserRepository userRepository,
+                       CardRepository cardRepository, UserCardUtils userCardUtils) {
         this.mySpRepository = mySpRepository;
         this.userRepository = userRepository;
         this.cardRepository = cardRepository;
+        this.userCardUtils = userCardUtils;
     }
 
     // 마이스페이스 그룹 생성
@@ -63,16 +64,14 @@ public class MySpService {
         }
 
         // 그룹 정보를 응답 객체로 변환
-        List<MySpGroupResponse> groupResponses = mySpGroups.stream()
+        return mySpGroups.stream()
                 .map(mySpGroup -> new MySpGroupResponse(
-                        mySpGroup.getGroupId(),         // 그룹 id
-                        mySpGroup.getGroup_name(),      // 그룹 이름
-                        mySpGroup.getCards().size(),    // 그룹 카드 개수
-                        mySpGroup.getCreatedAt()        // 그룹 생성 날짜
+                        mySpGroup.getGroupId(),
+                        mySpGroup.getGroup_name(),
+                        mySpGroup.getCards().size(),
+                        mySpGroup.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
-
-        return groupResponses;
     }
 
     // 마이스페이스 그룹 삭제
@@ -82,32 +81,22 @@ public class MySpService {
         MySp group = mySpRepository.findByGroupIdAndUserId(groupId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없거나 권한이 없습니다."));
 
+        // 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         // 그룹 내 카드와의 관계 제거
         for (Card card : group.getCards()) {
             card.setMySp(null); // 그룹과 카드의 연관 관계 끊기
             cardRepository.save(card); // 카드 상태 저장
 
-            // 저장된 상대 카드 목록에서도 제거
-            deleteSavedCard(userId, List.of(card.getCardId()));
+            // 저장된 상대 카드 목록에서도 제거 (UserCardUtils 사용)
+            userCardUtils.deleteSavedCard(user, card.getCardId());
         }
 
         // 그룹 삭제
         mySpRepository.delete(group);
         return true; // 성공
-    }
-
-    // 저장된 상대 카드 목록에서 삭제
-    private void deleteSavedCard(Long userId, List<Long> cardIds) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
-
-        Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
-
-        for (Long cardId : cardIds) {
-            savedCardList.remove(cardId); // 상대 카드 목록에서 삭제
-        }
-
-        userRepository.save(user); // 변경 사항 저장
     }
 
     // 그룹 내 카드 삭제
@@ -126,13 +115,41 @@ public class MySpService {
             throw new IllegalArgumentException("카드가 해당 그룹에 속해 있지 않습니다. 카드 ID: " + cardId);
         }
 
+        // 사용자 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
         // 그룹에서 카드 제거
-        group.removeCard(card); // 그룹과의 연관관계 해제
+        group.removeCard(card); // 그룹과의 연관 관계 해제
         mySpRepository.save(group); // 그룹 저장
 
-        // 상대 카드 목록에서 제거
-        deleteSavedCard(userId, List.of(cardId));
+        // 상대 카드 목록에서 제거 (UserCardUtils 사용)
+        userCardUtils.deleteSavedCard(user, cardId);
     }
+
+
+    // 카드가 속한 모든 그룹에서 제거
+    @Transactional
+    public void removeCardFromAllGroups(Long userId, Long cardId) {
+        // 사용자 ID로 모든 그룹 조회
+        List<MySp> groups = mySpRepository.findByUserId(userId);
+
+        // 각 그룹에서 카드 제거
+        for (MySp group : groups) {
+            group.getCards().removeIf(card -> {
+                if (card.getCardId().equals(cardId)) {
+                    card.setMySp(null); // 카드와 그룹 관계 해제
+                    cardRepository.save(card); // 카드 상태 저장
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        // 그룹 변경 사항 저장
+        mySpRepository.saveAll(groups);
+    }
+
 
     // 마이스페이스 그룹명 변경
     public MySp updateGroupName(Long userId, Long groupId, String newGroupName) {
@@ -218,7 +235,15 @@ public class MySpService {
                     LocalDateTime savedAt = savedCardList.getOrDefault(card.getCardId(), null);
 
                     // CardResponse 생성 및 반환
-                    return new CardResponse(card, cardStudent, cardWorker, cardFan, true, savedAt, card.getCreatedAt());
+                    return new CardResponse(
+                            card,
+                            cardStudent,
+                            cardWorker,
+                            cardFan,
+                            true,
+                            savedAt,              // 저장 시간
+                            card.getCreatedAt()   // 카드 생성 시간
+                    );
                 })
                 .collect(Collectors.toList());
 
