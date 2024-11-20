@@ -66,31 +66,71 @@ public class MySpController {
     }
 
     // 마이스페이스 그룹 삭제
-    @DeleteMapping
-    public ResponseEntity<Map<String, Object>> deleteGroup(@Login Long userId, @RequestParam Long groupId) {
+    @DeleteMapping("/delete-group")
+    public ResponseEntity<Map<String, Object>> deleteGroup(
+            @RequestParam Long groupId,
+            @Login Long userId
+    ) {
         try {
-            // 토큰 검증 - 유효하지 않은 경우 401 Unauthorized 반환
+            // 토큰 검증
             if (userId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(Map.of("code", 401, "message", "유효한 토큰이 없습니다."));
             }
 
-            // 그룹 삭제 시도
+            // 그룹 삭제
             boolean isDeleted = mySpService.deleteMyspGroup(userId, groupId);
 
-            // 삭제 성공 여부에 따라 응답 처리
+            // 삭제 성공 여부에 따른 응답 처리
             if (isDeleted) {
                 return ResponseEntity.ok(Map.of("message", "그룹이 삭제되었습니다."));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("message", "그룹을 삭제하지 못하였습니다."));
+                        .body(Map.of("message", "그룹 삭제에 실패했습니다. 잘못된 그룹 ID입니다."));
             }
+        } catch (IllegalArgumentException e) {
+            // 잘못된 요청 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("code", 400, "message", e.getMessage()));
         } catch (Exception e) {
-            // 예외 발생 시 500 Internal Server Error 반환
+            // 서버 오류 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("code", 500, "message", "그룹 삭제에 실패했습니다."));
+                    .body(Map.of("code", 500, "message", "그룹 삭제 중 서버 오류가 발생했습니다."));
         }
     }
+
+    // 그룹 내 카드 삭제
+    @DeleteMapping("/delete-card")
+    public ResponseEntity<Map<String, Object>> removeCardFromGroup(
+            @RequestParam Long groupId,
+            @RequestParam Long cardId,
+            @Login Long userId
+    ) {
+        try {
+            // 서비스 호출
+            mySpService.removeCardFromGroup(userId, groupId, cardId);
+
+            // 성공 응답
+            return ResponseEntity.ok(Map.of(
+                    "message", "카드가 그룹에서 제거되었습니다."
+            ));
+        } catch (IllegalArgumentException e) {
+            // 잘못된 요청 처리
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of(
+                            "code", 400,
+                            "message", e.getMessage()
+                    ));
+        } catch (Exception e) {
+            // 서버 오류 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "code", 500,
+                            "message", "그룹에서 카드 삭제 중 오류가 발생했습니다."
+                    ));
+        }
+    }
+
 
     // 마이스페이스 그룹명 변경
     @PatchMapping

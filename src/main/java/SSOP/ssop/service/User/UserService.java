@@ -1,17 +1,21 @@
 package SSOP.ssop.service.User;
 
 import SSOP.ssop.config.JwtProvider;
+import SSOP.ssop.domain.MySp.MySp;
 import SSOP.ssop.domain.User;
 import SSOP.ssop.domain.card.Card;
 import SSOP.ssop.dto.User.LoginDto;
 import SSOP.ssop.dto.User.UserDto;
 import SSOP.ssop.dto.card.response.CardSaveResponse;
 import SSOP.ssop.repository.Card.CardRepository;
+import SSOP.ssop.repository.MySp.MySpRepository;
 import SSOP.ssop.repository.UserRepository;
+import SSOP.ssop.service.MySp.MySpService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
@@ -28,13 +32,18 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final CardRepository cardRepository;
+    private final MySpService mySpService;
+    private final MySpRepository mySpRepository;
+
 
     // 생성자 주입
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, CardRepository cardRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, CardRepository cardRepository, SSOP.ssop.service.MySp.MySpService mySpService, MySpRepository mySpRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.cardRepository = cardRepository;
+        this.mySpService = mySpService;
+        this.mySpRepository = mySpRepository;
     }
 
     // 회원가입
@@ -203,18 +212,40 @@ public class UserService {
     }
 
     // 저장된 카드 삭제
+    @Transactional
     public void deleteSavedCard(Long userId, List<Long> cardIds) {
+        // 사용자 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저 아이디입니다 : " + userId));
 
         Map<Long, LocalDateTime> savedCardList = user.getSaved_card_list();
 
         for (Long cardId : cardIds) {
+            // 저장된 카드 목록에서 카드 삭제
             if (savedCardList.remove(cardId) != null) {
-                userRepository.save(user);
+                // 그룹에서 해당 카드 제거
+                List<MySp> groups = mySpRepository.findByUserId(userId);
+
+                for (MySp group : groups) {
+                    // 그룹 내 카드 제거
+                    group.getCards().removeIf(card -> {
+                        if (card.getCardId().equals(cardId)) {
+                            card.setMySp(null); // 관계 해제
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+
+                // 그룹 상태 저장
+                mySpRepository.saveAll(groups);
             } else {
-                throw new IllegalArgumentException("저장한 카드가 아닙니다");
+                throw new IllegalArgumentException("저장한 카드가 아닙니다. 카드 ID: " + cardId);
             }
         }
+
+        // 사용자 변경 사항 저장
+        userRepository.save(user);
     }
+
 }
